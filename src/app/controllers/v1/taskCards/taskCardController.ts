@@ -28,7 +28,7 @@ exports.show = (req: Request, res: Response) => {
     const index = cardsList.findIndex(card => card.id === id);
     return index >= 0 ? 
         res.status(200).send(cardsList[index]) : 
-        res.status(400).send(false);
+        res.status(400).send({"result": false});
 };
 
 //POST
@@ -37,7 +37,7 @@ exports.store = (req: Request, res: Response) => {
     const createTime = new Date().toString();
     const card = {...req.body, id, createTime};
     cardsList.push(card);
-    res.status(201).send(true);
+    res.status(201).send({"result": true});
 };
 
 //PUT
@@ -46,9 +46,9 @@ exports.update = (req: Request, res: Response) => {
     const index = cardsList.findIndex(card => card.id === id);
     if(index >= 0){
         cardsList[index] = {...req.body};
-        res.status(200).send("true");
+        res.status(200).send({"result": true});
     }
-    return res.status(400).send("false");
+    return res.status(400).send({"result": false});
 };
 
 //DELETE
@@ -57,7 +57,7 @@ exports.delete = (req: Request, res: Response) => {
     const index = cardsList.findIndex(card => card.id === id);
     if (index >= 0) {
         cardsList.splice(index, 1);
-        return res.status(200).send(true);
+        return res.status(200).send({"result": true});
     }
-    return res.status(400).send(false);
+    return res.status(400).send({"result": false});
 };
