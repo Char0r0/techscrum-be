@@ -29,8 +29,6 @@ exports.show = (req: Request, res: Response) => {
     return index >= 0 ? 
         res.status(200).send(cardsList[index]) : 
         res.status(400).send(false);
-    
-    
 };
 
 //POST
@@ -48,9 +46,9 @@ exports.update = (req: Request, res: Response) => {
     const index = cardsList.findIndex(card => card.id === id);
     if(index >= 0){
         cardsList[index] = {...req.body};
-        res.status(200).send(true);
+        res.status(200).send("true");
     }
-    return res.status(400).send(false);
+    return res.status(400).send("false");
 };
 
 //DELETE
