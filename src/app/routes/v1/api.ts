@@ -2,7 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const weatherController = require("../../controllers/example");
 const tenantValidations = require("../../validations/tenant");
-const tenantControllers = require("../../controllers/v1/clients/tenant");
+const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 
 router.get("/weathers", weatherController.index);
