@@ -3,7 +3,7 @@ const router = new express.Router();
 const weatherController = require("../../controllers/example");
 const tenantValidations = require("../../validations/tenant");
 const tenantControllers = require("../../controllers/v1/clients/tenant");
-const taskCards = require("../../controllers/v1/clients/taskCards/taskCardController");
+const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 
 router.get("/weathers", weatherController.index);
 
