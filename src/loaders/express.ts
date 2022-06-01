@@ -23,8 +23,8 @@ function startServer() {
         `⚡️[server]: Server is running at https://localhost:${config.port}`
       );
     })
-    .on("error", () => {
-      console.log("Error");
+    .on("error", (e) => {
+      console.log("Error",e);
     });
   return application;
 }
