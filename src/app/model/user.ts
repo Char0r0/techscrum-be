@@ -1,4 +1,4 @@
-interface userPage {
+interface user {
     id: number;
     fullName: string;
     Abbreviation: string;
@@ -6,4 +6,4 @@ interface userPage {
     personalFile: string;
 
 }
-export default userPage;
+export default user;
