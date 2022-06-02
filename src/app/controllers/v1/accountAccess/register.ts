@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 const JWT = require("jsonwebtoken");
 import { Token } from "../../../model/token"
-import { emailCheck, register } from "../../../services/dbAccess/dbAccess"
+import { emailCheck, register } from "../../../services/registerServices/registerService"
 
 //Check if the email exist
 exports.post = async(req: Request, res: Response) => {
@@ -21,7 +21,7 @@ exports.store = async(req: Request, res: Response) => {
     
     const notExistUser: boolean = await register(email, password);
 
-    if(!notExistUser) res.status(406).send({ "result": false })
+    if(!notExistUser) return res.status(406).send({ "result": false });
 
     const emailObj = { email }
 
