@@ -1,5 +1,7 @@
-const expressLoader = require('./express')
+const expressLoader = require("./express");
+const mongooseLoader = require("./mongoose");
 
-exports.init = () =>{
-    expressLoader()
-}
+exports.init = () => {
+  expressLoader();
+  mongooseLoader();
+};
