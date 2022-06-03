@@ -1,9 +1,9 @@
 const express = require("express");
 const router = new express.Router();
 const tenantValidations = require("../../validations/tenant");
-const tenantControllers = require("../../controllers/v1/clients/tenant");
+const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
-const { authentication_token } = require("../../middlware/auth");
+const authentication_token = require("../../middlware/auth");
 const loginControllers = require("../../controllers/v1/login/login");
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 const userControllers = require("../../controllers/v1/user/user");
