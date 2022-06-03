@@ -20,9 +20,7 @@ router.post("/tasks", taskCards.store);
 router.put("/tasks", taskCards.update);
 router.delete("/tasks/:id", taskCards.delete);
 
-
-
-router.post("/login", loginControllers.post);
-router.get("/me", authentication_token, userInfoControllers.get);
+router.post("/login", loginControllers.store);
+router.get("/me", authentication_token, userInfoControllers.index);
 
 module.exports = router;

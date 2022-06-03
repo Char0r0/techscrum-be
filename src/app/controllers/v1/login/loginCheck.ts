@@ -1,4 +1,4 @@
-import { user, users } from "../../../model/user";
+import { user, users } from "../../../model/userDB";
 
 export const userCheck = (email: String) => {
   const index = users.findIndex((user) => user.email === email);
