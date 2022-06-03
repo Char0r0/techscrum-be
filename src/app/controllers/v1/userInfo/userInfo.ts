@@ -1,5 +1,5 @@
 const JWT = require("jsonwebtoken");
-import e, { Response, Request } from "express";
+import { Response, Request } from "express";
 import { users } from "../../../model/user";
 import { Token } from "../../../model/token";
 import { json } from "stream/consumers";

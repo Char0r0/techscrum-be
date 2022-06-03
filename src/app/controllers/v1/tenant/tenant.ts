@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 const status = require("http-status");
 const { validationResult } = require("express-validator");
 const Tenant = require("../../../model/tenant");
@@ -12,7 +12,7 @@ exports.index = (req: Request, res: Response) => {
   res.send("Express + TypeScript Server5");
 };
 //POST
-exports.store = (req: Request, res: Response) => {
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -21,11 +21,10 @@ exports.store = (req: Request, res: Response) => {
   const tenant = new Tenant(req.body);
 
   try {
-    tenant.save();
+    await tenant.save();
     res.status(status.CREATED).send({ tenant });
-  } catch (e) {
-    console.log(e);
-    res.status(400).send(e);
+  } catch (e: any) {
+    next(e);
   }
 };
 
