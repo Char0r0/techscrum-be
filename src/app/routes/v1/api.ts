@@ -1,5 +1,6 @@
 const express = require("express");
 const router = new express.Router();
+const projects = require("../../controllers/v1/projects/projectsController");
 const tenantValidations = require("../../validations/tenant");
 const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
@@ -17,6 +18,7 @@ router.post("/tasks", taskCards.store);
 router.put("/tasks", taskCards.update);
 router.delete("/tasks/:id", taskCards.delete);
 
-
+router.get("/projects", projects.show);
+router.put("/projects", projects.update);
 
 module.exports = router;
