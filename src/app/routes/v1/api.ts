@@ -2,15 +2,15 @@ const express = require("express");
 const router = new express.Router();
 const tenantValidations = require("../../validations/tenant");
 const tenantControllers = require("../../controllers/v1/tenant/tenant");
-const accountAccess = require("../../controllers/v1/accountAccess/register")
+const registerController = require("../../controllers/v1/register/registerController")
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 const userControllers = require("../../controllers/v1/user/user");
 
 router.get("/tenants", tenantValidations.index, tenantControllers.index);
 router.post("/tenants", tenantValidations.store, tenantControllers.store);
 
-router.get("/register/:email", accountAccess.post);
-router.post("/register", accountAccess.store);
+router.get("/register/:email", registerController.post);
+router.post("/register", registerController.store);
 router.get("/users/:id", userControllers.show);
 router.post("/users/:id", userControllers.update);
 
