@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 const jwt = require("jsonwebtoken");
 import { Token } from "../../../model/token"
-import { emailCheck, register } from "../../../services/registerServices/register"
+import { emailCheck, register } from "../../../services/register/register"
 
 //Check if the email exist
 exports.post = async(req: Request, res: Response) => {
