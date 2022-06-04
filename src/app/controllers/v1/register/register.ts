@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-const JWT = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 import { Token } from "../../../model/token"
 import { emailCheck, register } from "../../../services/registerServices/register"
 
@@ -22,7 +22,7 @@ exports.store = async(req: Request, res: Response) => {
 
     if(!registerSuccessFlag) return res.status(406).send({ "result": false });
     const emailObj = { email };
-    const token = JWT.sign(
+    const token = jwt.sign(
         emailObj, 
         process.env.ACCESS_SECRET,
         {expiresIn: process.env.EXPERT_TIME || "24h"}
