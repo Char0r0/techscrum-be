@@ -2,9 +2,11 @@ import { UserRigister } from "../../model/userRegister"
 
 const users = Array<UserRigister>({
     email: 'abc@gmail.com',
+    name: "Kuro",
     password: '123456',
 },{
     email: 'def@gmail.com',
+    name: "Kuro2",
     password: '123456',
 });
 
@@ -14,8 +16,8 @@ export const emailCheck = (email: string) => {
     return true;
 }
 
-export const register = (email: string, password: string) =>{
-    const user: UserRigister = { email, password };
+export const register = (email: string, name: string, password: string) =>{
+    const user: UserRigister = { email, name, password };
     const index = users.findIndex(user => user.email === email);
     if(index >= 0) return false;
     users.push(user)

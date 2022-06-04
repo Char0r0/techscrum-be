@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 const JWT = require("jsonwebtoken");
 import { Token } from "../../../model/token"
-import { emailCheck, register } from "../../../services/registerServices/registerService"
+import { emailCheck, register } from "../../../services/registerServices/register"
 
 //Check if the email exist
 exports.post = async(req: Request, res: Response) => {
@@ -17,9 +17,10 @@ exports.post = async(req: Request, res: Response) => {
 //Register
 exports.store = async(req: Request, res: Response) => {
     const email = req.body.email;
+    const name = req.body.name;
     const password = req.body.password;
     
-    const notExistUser: boolean = await register(email, password);
+    const notExistUser: boolean = await register(email, name, password);
 
     if(!notExistUser) return res.status(406).send({ "result": false });
 
