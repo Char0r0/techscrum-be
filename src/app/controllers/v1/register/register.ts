@@ -16,16 +16,12 @@ exports.post = async(req: Request, res: Response) => {
 
 //Register
 exports.store = async(req: Request, res: Response) => {
-    const email = req.body.email;
-    const name = req.body.name;
-    const password = req.body.password;
+    const { email, name, password } = req.body.registerForm;
     
-    const notExistUser: boolean = await register(email, name, password);
+    const registerSuccessFlag: boolean = await register(email, name, password);
 
-    if(!notExistUser) return res.status(406).send({ "result": false });
-
-    const emailObj = { email }
-
+    if(!registerSuccessFlag) return res.status(406).send({ "result": false });
+    const emailObj = { email };
     const token = JWT.sign(
         emailObj, 
         process.env.ACCESS_SECRET,

@@ -1,4 +1,5 @@
 import { UserRigister } from "../../model/userRegister"
+import encryption from '../encryption/encryption'
 
 const users = Array<UserRigister>({
     email: 'abc@gmail.com',
@@ -16,8 +17,8 @@ export const emailCheck = (email: string) => {
     return true;
 }
 
-export const register = (email: string, name: string, password: string) =>{
-    const user: UserRigister = { email, name, password };
+export const register = async (email: string, name: string, password: string) =>{
+    const user: UserRigister = { email, name, password: await encryption(password) };
     const index = users.findIndex(user => user.email === email);
     if(index >= 0) return false;
     users.push(user)
