@@ -10,9 +10,7 @@ declare module "express-serve-static-core" {
 
 const authentication_token = (
   req: Request,
-
   res: Response,
-
   next: NextFunction
 ) => {
   const auth_header = req.headers["authorization"];
@@ -26,14 +24,10 @@ const authentication_token = (
   if (auth_type === "Bearer") {
     jwt.verify(
       auth_token,
-
       process.env.ACCESS_SECRET,
-
       (err: Error, user: object) => {
         if (err) return res.sendStatus(403).send(err);
-
         req.user = user;
-
         next();
       }
     );

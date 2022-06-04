@@ -1,5 +1,6 @@
 const express = require("express");
 const router = new express.Router();
+const projects = require("../../controllers/v1/projects/projectsController");
 const tenantValidations = require("../../validations/tenant");
 const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
@@ -22,5 +23,7 @@ router.delete("/tasks/:id", taskCards.delete);
 
 router.post("/login", loginControllers.store);
 router.get("/me", authentication_token, userInfoControllers.index);
+router.get("/projects", projects.show);
+router.put("/projects", projects.update);
 
 module.exports = router;
