@@ -6,6 +6,52 @@ const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 const userControllers = require("../../controllers/v1/user/user");
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Tenants:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The user ID.
+ *           example: 0
+ *         name:
+ *           type: string
+ *           description: The user's name.
+ *           example: Leanne Graham
+ */
+
+/**
+ * @swagger
+ * /tenants:
+ *   get:
+ *     summary: Retrieve a list of tenants
+ *     description: Retrieve a list of tenants.
+ *     parameters:
+ *       - in: query
+ *         name: domain
+ *         required: true
+ *         description: Domain of the url.
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: name
+ *         required: true
+ *         description: App name.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tenants'
+ */
 router.get("/tenants", tenantValidations.index, tenantControllers.index);
 router.post("/tenants", tenantValidations.store, tenantControllers.store);
 
