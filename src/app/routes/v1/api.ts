@@ -6,11 +6,30 @@ const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 const userControllers = require("../../controllers/v1/user/user");
 
+/* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
+
 /**
  * @swagger
  * components:
  *   schemas:
  *     Tenants:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The user ID.
+ *           example: 0
+ *         name:
+ *           type: string
+ *           description: The user's name.
+ *           example: Leanne Graham
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
  *       type: object
  *       properties:
  *         id:
@@ -55,6 +74,46 @@ const userControllers = require("../../controllers/v1/user/user");
 router.get("/tenants", tenantValidations.index, tenantControllers.index);
 router.post("/tenants", tenantValidations.store, tenantControllers.store);
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Tenants:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The user ID.
+ *           example: 0
+ *         name:
+ *           type: string
+ *           description: The user's name.
+ *           example: Leanne Graham
+ */
+
+/**
+ * @swagger
+ * /tenants:
+ *   get:
+ *     summary: Retrieve an user
+ *     description: Retrieve an user
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Domain of the url.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: return an users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
 router.get("/users/:id", userControllers.show);
 router.post("/users/:id", userControllers.update);
 
