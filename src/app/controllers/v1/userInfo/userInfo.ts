@@ -1,13 +1,14 @@
-const JWT = require("jsonwebtoken");
 import { Response, Request } from "express";
 import { users } from "../../../model/userDB";
-import { Token } from "../../../model/token";
-import { json } from "stream/consumers";
 
-exports.store = async (req: Request, res: Response) => {
-  res.json(
-    users.filter(
-      (user) => JSON.stringify(user.email) === JSON.stringify(req.user)
-    )
-  );
+exports.index = (req: Request, res: Response) => {
+  const user = req.user;
+  const searchUser = () => {
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].email === user) return users[i].email;
+    }
+  };
+  const result = users.find(() => searchUser() === user);
+
+  res.json(result);
 };

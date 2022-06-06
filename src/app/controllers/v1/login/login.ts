@@ -1,10 +1,9 @@
 const JWT = require("jsonwebtoken");
 import { Response, Request } from "express";
-import { users } from "../../../model/userDB";
+import { user, users } from "../../../model/userDB";
 import { userCheck, passwordCheck } from "./loginCheck";
-import { Token } from "../../../model/token";
 
-exports.index = async (req: Request, res: Response) => {
+exports.store = async (req: Request, res: Response) => {
   try {
     const email = req.body.email;
     const password = req.body.password;

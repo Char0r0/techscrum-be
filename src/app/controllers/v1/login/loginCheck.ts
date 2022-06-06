@@ -2,15 +2,9 @@ import { user, users } from "../../../model/userDB";
 
 export const userCheck = (email: String) => {
   const index = users.findIndex((user) => user.email === email);
-  if (index >= 0) {
-    return true;
-  }
-  return false;
+  return index >= 0 ? true : false;
 };
 export const passwordCheck = (password: String) => {
   const index = users.findIndex((user) => user.password === password);
-  if (index >= 0) {
-    return true;
-  }
-  return false;
+  return index >= 0 ? true : false;
 };
