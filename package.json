@@ -19,6 +19,7 @@
   "homepage": "https://bitbucket.org/010001/be.techscrum#readme",
   "dependencies": {
     "agenda": "^4.3.0",
+    "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
@@ -27,6 +28,7 @@
     "express-validator": "^6.14.1",
     "helmet": "^5.1.0",
     "http-status": "^1.5.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.4",
     "winston": "^3.7.2"
   },
