@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import taskCard from '../../../model/taskCard';
+import taskCard from '../../../model/task';
 
 const cardsList = Array<taskCard>({
     id: 1,
