@@ -1,6 +1,5 @@
-import { Request, Response } from 'express';
-
-import user from '../../../model/user';
+import { Request, Response } from "express";
+import user from "../../../model/user";
 
 const userList = Array<user>({
   id: 1,
