@@ -1,21 +1,35 @@
+import mongoose, { ObjectId } from "mongoose";
+const { Schema } = mongoose;
+const Joi = require("joi");
+
 export interface user {
+  _id: ObjectId;
+  tenants_id: ObjectId;
   email: string;
   password: string;
+  refresh_token: string;
+  created_at: Date;
+  last_login_at: Date;
 }
-export const users = Array<user>(
-  {
-    email: "abc@gmail.com",
 
-    password: "123456",
+const userSchema = new Schema<user>({
+  _id: Number,
+  email: {
+    type: String,
+    validate: {
+      validator: (email: String) => {
+        return !Joi.string().email().validate(email).error;
+      },
+      msg: "Invalid email format",
+    },
   },
-  {
-    email: "def@gmail.com",
+  password: String,
+  refresh_token: [
+    {
+      token: String,
+    },
+  ],
+});
 
-    password: "123456",
-  },
-  {
-    email: "regan@gmail.com",
-
-    password: "123",
-  }
-);
+const Model = mongoose.model("Users", userSchema);
+module.exports = { Model };
