@@ -6,7 +6,6 @@ const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
 const { authentication_token } = require("../../middlware/auth");
 const loginControllers = require("../../controllers/v1/login/login");
-const taskCards = require("../../controllers/v1/taskCards/taskCardController");
 const register = require("../../controllers/v1/register/register");
 const task = require("../../controllers/v1/task/task");
 const userControllers = require("../../controllers/v1/user/user");
@@ -132,7 +131,9 @@ router.delete("/tasks/:id", task.delete);
 
 router.post("/login", loginControllers.store);
 router.get("/me", authentication_token, userInfoControllers.index);
+
 router.get("/projects", projects.show);
 router.put("/projects", projects.update);
+router.delete("/projects", projects.delete);
 
 module.exports = router;
