@@ -1,15 +1,14 @@
-const express = require("express");
+const express = require('express');
 const router = new express.Router();
-const projects = require("../../controllers/v1/projects/projectsController");
-const tenantValidations = require("../../validations/tenant");
-const tenantControllers = require("../../controllers/v1/tenant/tenant");
-const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
-const { authentication_token } = require("../../middlware/auth");
-const loginControllers = require("../../controllers/v1/login/login");
-const taskCards = require("../../controllers/v1/taskCards/taskCardController");
-const register = require("../../controllers/v1/register/register");
-const task = require("../../controllers/v1/task/task");
-const userControllers = require("../../controllers/v1/user/user");
+const projects = require('../../controllers/v1/projects/projectsController');
+const tenantValidations = require('../../validations/tenant');
+const tenantControllers = require('../../controllers/v1/tenant/tenant');
+const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
+const { authenticationToken } = require('../../middlware/auth');
+const loginControllers = require('../../controllers/v1/login/login');
+const register = require('../../controllers/v1/register/register');
+const task = require('../../controllers/v1/task/task');
+const userControllers = require('../../controllers/v1/user/user');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -76,11 +75,11 @@ const userControllers = require("../../controllers/v1/user/user");
  *               items:
  *                 $ref: '#/components/schemas/Tenants'
  */
-router.get("/tenants", tenantValidations.index, tenantControllers.index);
-router.post("/tenants", tenantValidations.store, tenantControllers.store);
+router.get('/tenants', tenantValidations.index, tenantControllers.index);
+router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.get("/register/:email", register.post);
-router.post("/register", register.store);
+router.get('/register/:email', register.post);
+router.post('/register', register.store);
 /**
  * @swagger
  * components:
@@ -121,18 +120,18 @@ router.post("/register", register.store);
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-router.get("/users/:id", userControllers.show);
-router.post("/users/:id", userControllers.update);
+router.get('/users/:id', userControllers.show);
+router.post('/users/:id', userControllers.update);
 
-router.get("/tasks", task.index);
-router.get("/tasks/:id", task.show);
-router.post("/tasks", task.store);
-router.put("/tasks", task.update);
-router.delete("/tasks/:id", task.delete);
+router.get('/tasks', task.index);
+router.get('/tasks/:id', task.show);
+router.post('/tasks', task.store);
+router.put('/tasks', task.update);
+router.delete('/tasks/:id', task.delete);
 
-router.post("/login", loginControllers.store);
-router.get("/me", authentication_token, userInfoControllers.index);
-router.get("/projects", projects.show);
-router.put("/projects", projects.update);
+router.post('/login', loginControllers.store);
+router.get('/me', authenticationToken, userInfoControllers.index);
+router.get('/projects', projects.show);
+router.put('/projects', projects.update);
 
 module.exports = router;
