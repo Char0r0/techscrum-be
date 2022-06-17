@@ -29,6 +29,8 @@ const userSchema = new Schema<iUser>({
     },
   },
   password: String,
+  created_at: Date,
+  last_login_at: Date,
   refresh_token: [
     {
       token: String,
@@ -45,36 +47,12 @@ userSchema.statics.findByCredentials = async (
     throw new Error("Please Check Your UserName");
   }
   const checkPassword = await bcrypt.compare(password, user.password);
-  console.log(user.password);
-  console.log(checkPassword);
 
   if (!checkPassword) {
     throw new Error("Please Check Your Password!");
   }
-  return "Login In Successful";
+  return `Welcome ${user.email} ! Last Login In At ${user.last_login_at}`;
 };
-// userSchema.methods.generateAuthToken = async function () {
-//   const user = this;
-//   const token = jwt.sign({ _id: user._id }, process.env.ACCESS_SECRET, {
-//     expireIn: "15m",
-//   });
-//   user.refresh_token = user.refresh_token.contact({ token });
-//   await user.save();
-//   return token;
-// };
-// userSchema.methods.generateAuthToken = async function () {
-//   const user = this;
-//   const token = jwt.sign(
-//     { _id: user._id.toString() },
-//     process.env.ACCESS_SECRET,
-//     {
-//       expireIn: "15m",
-//     }
-//   );
-//   user.refresh_token = user.refresh_token.concat({ token });
-//   await user.save();
-//   return token;
-// };
 
 const User = model<iUser>("User", userSchema);
 module.exports = User;
