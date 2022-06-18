@@ -14,16 +14,16 @@ const userSchema = new Schema<UserInterface>({
   _id: Number,
   email: {
     type: String,
-    match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address']
+    match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address'],
   },
   password: String,
   created_at: Date,
   last_login_at: Date,
   refresh_token: [
     {
-      token: String
-    }
-  ]
+      token: String,
+    },
+  ],
 });
 
 userSchema.statics.findByCredentials = async (email: string, password: string) => {
