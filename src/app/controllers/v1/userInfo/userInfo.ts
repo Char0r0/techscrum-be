@@ -1,11 +1,11 @@
 import { Response, Request } from 'express';
-// import { Users } from "../../../model/userDB";
+const User = require('../../../model/userDB');
 
 exports.index = (req: Request, res: Response) => {
-  // const user = { email: "ll@!fe.com" }; //req.user;
-  // const result = Users.find(
-  //   (search: { email: string }) => search.email === user.email
-  // );
+  const user = { email: 'll@!fe.com' }; //req.user;
+  const result = User.find(
+    (search: { email: string }) => search.email === user.email
+  );
 
-  res.json('result');
+  res.json(result);
 };

@@ -1,10 +1,5 @@
-import mongoose, { model, ObjectId } from 'mongoose';
-const { Schema } = mongoose;
-import dotenv from 'dotenv';
+import mongoose, { model, ObjectId, Schema } from 'mongoose';
 const bcrypt = require('bcrypt');
-
-dotenv.config();
-
 interface iUser {
   _id: ObjectId;
   tenants_id: ObjectId;
@@ -20,7 +15,7 @@ const userSchema = new Schema<iUser>({
   email: {
     type: String,
     match: [
-      /^^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+      /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
       'Please fill a valid email address',
     ],
   },
