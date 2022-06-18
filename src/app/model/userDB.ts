@@ -1,6 +1,6 @@
-import mongoose, { model, ObjectId, Schema } from 'mongoose';
+import { model, ObjectId, Schema } from 'mongoose';
 const bcrypt = require('bcrypt');
-interface iUser {
+interface UserInterface {
   _id: ObjectId;
   tenants_id: ObjectId;
   email: string;
@@ -10,30 +10,24 @@ interface iUser {
   last_login_at: Date;
 }
 
-const userSchema = new Schema<iUser>({
+const userSchema = new Schema<UserInterface>({
   _id: Number,
   email: {
     type: String,
-    match: [
-      /^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
-      'Please fill a valid email address',
-    ],
+    match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address']
   },
   password: String,
   created_at: Date,
   last_login_at: Date,
   refresh_token: [
     {
-      token: String,
-    },
-  ],
+      token: String
+    }
+  ]
 });
 
-userSchema.statics.findByCredentials = async (
-  email: string,
-  password: string
-) => {
-  const user = await User.findOne({ email }).exec();
+userSchema.statics.findByCredentials = async (email: string, password: string) => {
+  const user = await users.findOne({ email }).exec();
   if (!user) {
     throw new Error('Please Check Your UserName');
   }
@@ -45,5 +39,5 @@ userSchema.statics.findByCredentials = async (
   return `Welcome ${user.email} ! Last Login In At ${user.last_login_at}`;
 };
 
-const User = model<iUser>('User', userSchema);
-module.exports = User;
+const users = model<UserInterface>('users', userSchema);
+module.exports = users;

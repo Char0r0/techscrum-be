@@ -7,11 +7,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const authenticationToken = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const authenticationToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   const authType = authHeader && authHeader.split(' ')[0];
