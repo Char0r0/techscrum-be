@@ -1,8 +1,8 @@
 // const JWT = require("jsonwebtoken");
-const User = require("../../../model/userDB");
-import mongoose from "mongoose";
-import { Response, Request } from "express";
-import { json } from "stream/consumers";
+const User = require('../../../model/userDB');
+import mongoose from 'mongoose';
+import { Response, Request } from 'express';
+import { json } from 'stream/consumers';
 
 exports.store = async (req: Request, res: Response) => {
   const { email, password } = req.body;

@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Response, Request } from 'express';
 // import { Users } from "../../../model/userDB";
 
 exports.index = (req: Request, res: Response) => {
@@ -7,5 +7,5 @@ exports.index = (req: Request, res: Response) => {
   //   (search: { email: string }) => search.email === user.email
   // );
 
-  res.json("result");
+  res.json('result');
 };

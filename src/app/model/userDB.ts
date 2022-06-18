@@ -1,9 +1,7 @@
-import mongoose, { model, ObjectId } from "mongoose";
+import mongoose, { model, ObjectId } from 'mongoose';
 const { Schema } = mongoose;
-import dotenv from "dotenv";
-import { isError, string } from "joi";
-const joi = require("joi");
-const bcrypt = require("bcrypt");
+import dotenv from 'dotenv';
+const bcrypt = require('bcrypt');
 
 dotenv.config();
 
@@ -21,12 +19,10 @@ const userSchema = new Schema<iUser>({
   _id: Number,
   email: {
     type: String,
-    validate: {
-      validator: (email: String) => {
-        return !joi.string().email().validate(email).error;
-      },
-      msg: "Invalid email format",
-    },
+    match: [
+      /^^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+      'Please fill a valid email address',
+    ],
   },
   password: String,
   created_at: Date,
@@ -44,15 +40,15 @@ userSchema.statics.findByCredentials = async (
 ) => {
   const user = await User.findOne({ email }).exec();
   if (!user) {
-    throw new Error("Please Check Your UserName");
+    throw new Error('Please Check Your UserName');
   }
   const checkPassword = await bcrypt.compare(password, user.password);
 
   if (!checkPassword) {
-    throw new Error("Please Check Your Password!");
+    throw new Error('Please Check Your Password!');
   }
   return `Welcome ${user.email} ! Last Login In At ${user.last_login_at}`;
 };
 
-const User = model<iUser>("User", userSchema);
+const User = model<iUser>('User', userSchema);
 module.exports = User;
