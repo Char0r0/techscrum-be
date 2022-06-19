@@ -7,11 +7,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const authenticationToken = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const authenticationToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   const authType = authHeader && authHeader.split(' ')[0];
@@ -20,15 +16,11 @@ const authenticationToken = (
   if (!authHeader || !authToken) return res.sendStatus(401);
 
   if (authType === 'Bearer') {
-    jwt.verify(
-      authToken,
-      process.env.ACCESS_SECRET,
-      (err: Error) => {
-        if (err) return res.sendStatus(403).send(err);
-        req.user = { email: 'll@!fe.com' };
-        next();
-      },
-    );
+    jwt.verify(authToken, process.env.ACCESS_SECRET, (err: Error) => {
+      if (err) return res.sendStatus(403).send(err);
+      req.user = { email: 'll@!fe.com' };
+      next();
+    });
   }
 };
 
