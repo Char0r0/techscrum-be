@@ -4,7 +4,7 @@ const projects = require("../../controllers/v1/projects/projectsController");
 const tenantValidations = require("../../validations/tenant");
 const tenantControllers = require("../../controllers/v1/tenant/tenant");
 const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
-const { authentication_token } = require("../../middlware/auth");
+const { authenticationToken } = require("../../middlware/auth");
 const loginControllers = require("../../controllers/v1/login/login");
 const register = require("../../controllers/v1/register/register");
 const task = require("../../controllers/v1/task/task");
@@ -130,9 +130,10 @@ router.put("/tasks", task.update);
 router.delete("/tasks/:id", task.delete);
 
 router.post("/login", loginControllers.store);
-router.get("/me", authentication_token, userInfoControllers.index);
+router.get("/me", authenticationToken, userInfoControllers.index);
 
-router.get("/projects", projects.show);
+router.get("/projects/:projectId", projects.index);
+// router.get("/projects/:id", projects.show);
 router.put("/projects", projects.update);
 router.delete("/projects", projects.delete);
 

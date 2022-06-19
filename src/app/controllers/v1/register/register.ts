@@ -5,7 +5,8 @@ import { emailCheck, register } from "../../../services/register/register"
 import { UserRegister } from '../../../model/userRegister'
 
 //Check if the email exist
-exports.post = async(req: Request, res: Response) => {
+exports.post = async (req: Request, res: Response) => {
+    console.log("test");
     const email = req.params.email;
 
     const existUser: boolean = await emailCheck(email);
