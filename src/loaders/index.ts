@@ -4,6 +4,6 @@ const mongooseLoader = require("./mongoose");
 
 exports.init = () => {
   const app = expressLoader();
-  swaggerLoader(app);
+  //swaggerLoader(app);
   mongooseLoader();
 };
