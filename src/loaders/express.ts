@@ -20,7 +20,7 @@ function startServer() {
   application
     .listen(config.port, () => {
       console.log(
-        `⚡️[server]: Server is running at https://localhost:${config.port}`
+        `⚡️[server]: Server is running at http://localhost:${config.port}`
       );
     })
     .on("error", (e) => {
