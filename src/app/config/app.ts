@@ -4,7 +4,7 @@ dotenv.config();
 
 module.exports = {
   name: process.env.NAME || "techscrumapp",
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 80,
   api: {
     prefix: process.env.API_PREFIX || "/api/v1",
   },
