@@ -8,7 +8,7 @@ export interface Projects {
     key: string;
     type: string;
     leader: { userId: number; userName: string; userIcon: string };
-    assign:string;
+    assign: string;
   }
 
 const projectsSchema = new Schema<Projects>({
