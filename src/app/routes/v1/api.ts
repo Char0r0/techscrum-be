@@ -9,6 +9,7 @@ const loginControllers = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
 const task = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
+const commitControllers = require('../../controllers/v1/commit/commit');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -122,6 +123,10 @@ router.post('/register', register.store);
  */
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
+router.get('/commits', commitControllers.index);
+router.post('/commits', commitControllers.store);
+router.put('/commits', commitControllers.update);
+router.delete('/commits', commitControllers.delete);
 
 router.get('/tasks', task.index);
 router.get('/tasks/:id', task.show);
