@@ -1,14 +1,14 @@
 const express = require("express");
 const router = new express.Router();
-const projects = require("../../controllers/v1/projects/projectsController");
-const tenantValidations = require("../../validations/tenant");
-const tenantControllers = require("../../controllers/v1/tenant/tenant");
-const userInfoControllers = require("../../controllers/v1/userInfo/userInfo");
-const { authenticationToken } = require("../../middlware/auth");
-const loginControllers = require("../../controllers/v1/login/login");
-const register = require("../../controllers/v1/register/register");
-const task = require("../../controllers/v1/task/task");
-const userControllers = require("../../controllers/v1/user/user");
+const projects = require('../../controllers/v1/projects/projectsController');
+const tenantValidations = require('../../validations/tenant');
+const tenantControllers = require('../../controllers/v1/tenant/tenant');
+const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
+const { authenticationToken } = require('../../middleware/auth');
+const loginControllers = require('../../controllers/v1/login/login');
+const register = require('../../controllers/v1/register/register');
+const task = require('../../controllers/v1/task/task');
+const userControllers = require('../../controllers/v1/user/user');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
