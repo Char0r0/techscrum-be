@@ -1,20 +1,20 @@
-import { ObjectId, Schema, model, isObjectIdOrHexString } from 'mongoose';
+import { ObjectId, Schema, model } from 'mongoose';
 const mongoose = require('mongoose');
 interface CommitInterFace {
   _id: ObjectId;
-  taskId: ObjectId;
-  senderId: ObjectId;
+  task_id: ObjectId;
+  sender_id: ObjectId;
   content: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 const commitSchema = new Schema<CommitInterFace>({
-  taskId: { ref: 'task', type: mongoose.Schema.Types.ObjectId },
-  senderId: { ref: 'users', type: mongoose.Schema.Types.ObjectId },
+  task_id: { ref: 'task', type: mongoose.Schema.Types.ObjectId },
+  sender_id: { ref: 'users', type: mongoose.Schema.Types.ObjectId },
   content: String,
-  createdAt: Date,
-  updatedAt: Date,
+  created_at: Date,
+  updated_at: Date,
 });
 
 const commits = model<CommitInterFace>('commits', commitSchema);

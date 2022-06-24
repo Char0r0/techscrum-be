@@ -11,14 +11,18 @@ exports.store = async (req: Request, res: Response) => {
   try {
     const { taskId, senderId, content } = req.body;
     const createdAt = Date.now();
-    const newCommit = await commits.create({ taskId, senderId, content, createdAt });
-    if (newCommit) {
+    const newCommitFlag = await commits.create({
+      task_id: taskId,
+      sender_id: senderId,
+      content,
+      created_at: createdAt,
+    });
+    if (newCommitFlag) {
       res.send('New Comment Created');
     }
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error);
-      res.status(406).send('Something Went Wrong');
+      res.status(500).send('Something Went Wrong');
     }
   }
 };
@@ -27,16 +31,16 @@ exports.update = async (req: Request, res: Response) => {
   try {
     const { commitId, content } = req.body;
     const updatedAt = Date.now();
-    const updatedCommit = await commits.findByIdAndUpdate(
+    const successUpdatedFlag = await commits.findByIdAndUpdate(
       { _id: commitId },
-      { content, updatedAt }
+      { content, updated_at: updatedAt }
     );
-    if (updatedCommit) {
+    if (successUpdatedFlag) {
       res.send('Comment Updated');
     }
   } catch (error) {
     if (error instanceof Error) {
-      res.status(406).send('Something Went Wrong');
+      res.status(500).send('Something Went Wrong');
     }
   }
 };
@@ -44,13 +48,13 @@ exports.update = async (req: Request, res: Response) => {
 exports.delete = async (req: Request, res: Response) => {
   try {
     const { commitId } = req.body;
-    const deletedCommit = await commits.deleteOne({ _id: commitId });
-    if (deletedCommit) {
+    const successDeletedFlag = await commits.deleteOne({ _id: commitId });
+    if (successDeletedFlag) {
       res.send('Comment has been deleted');
     }
   } catch (error) {
     if (error instanceof Error) {
-      res.status(406).send('Something Went Wrong');
+      res.status(500).send('Something Went Wrong');
     }
   }
 };
