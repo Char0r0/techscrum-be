@@ -1,7 +1,7 @@
 import { ObjectId, Schema, model } from 'mongoose';
 const mongoose = require('mongoose');
 interface CommitInterFace {
-  _Id: ObjectId;
+  _id: ObjectId;
   taskId: ObjectId;
   senderId: ObjectId;
   content: string;
@@ -10,7 +10,7 @@ interface CommitInterFace {
 }
 
 const commitSchema = new Schema<CommitInterFace>({
-  _Id: Number,
+  _id: { type: mongoose.Schema.Types.ObjectId },
   taskId: { ref: 'task', type: mongoose.Schema.Types.ObjectId },
   senderId: { ref: 'users', type: mongoose.Schema.Types.ObjectId },
   content: String,

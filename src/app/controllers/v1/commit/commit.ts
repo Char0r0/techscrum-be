@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-// import commits from '../../../model/commit';
 const mongoose = require('mongoose');
 const commits = require('../../../model/commit');
 
@@ -9,21 +8,48 @@ exports.index = async (req: Request, res: Response) => {
 };
 
 exports.store = async (req: Request, res: Response) => {
-  const { taskId, senderId, content } = req.body;
-  const createdAt = Date.now();
-  const newCommit = await commits.create({ taskId, senderId, content, createdAt });
-  const result = newCommit ? res.send('Success') : res.status(406).send('Something Went Wrong');
+  try {
+    const { taskId, senderId, content } = req.body;
+    const createdAt = Date.now();
+    const newCommit = await commits.create({ taskId, senderId, content, createdAt });
+    if (newCommit) {
+      res.send('New Comment Created');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(406).send('Something Went Wrong');
+    }
+  }
 };
 
 exports.update = async (req: Request, res: Response) => {
-  const { _id, content } = req.body;
-  const updatedAt = Date.now();
-  const updatedCommit = await commits.findByIdAndUpdate({ _id }, { content, updatedAt });
-  const result = updatedCommit ? res.send('Success') : res.status(406).send('Something Went Wrong');
+  try {
+    const { commitId, content } = req.body;
+    const updatedAt = Date.now();
+    const updatedCommit = await commits.findByIdAndUpdate(
+      { _id: commitId },
+      { content, updatedAt }
+    );
+    if (updatedCommit) {
+      res.send('Comment Updated');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(406).send('Something Went Wrong');
+    }
+  }
 };
 
 exports.delete = async (req: Request, res: Response) => {
-  const { _id } = req.body;
-  const deletedCommit = await commits.deleteOne({ _id });
-  const result = deletedCommit ? res.send('Success') : res.status(406).send('Something Went Wrong');
+  try {
+    const { commitId } = req.body;
+    const deletedCommit = await commits.deleteOne({ _id: commitId });
+    if (deletedCommit) {
+      res.send('Comment has been deleted');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(406).send('Something Went Wrong');
+    }
+  }
 };
