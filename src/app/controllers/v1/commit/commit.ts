@@ -17,6 +17,7 @@ exports.store = async (req: Request, res: Response) => {
     }
   } catch (error) {
     if (error instanceof Error) {
+      console.log(error);
       res.status(406).send('Something Went Wrong');
     }
   }

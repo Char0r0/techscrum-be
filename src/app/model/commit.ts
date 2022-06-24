@@ -1,4 +1,4 @@
-import { ObjectId, Schema, model } from 'mongoose';
+import { ObjectId, Schema, model, isObjectIdOrHexString } from 'mongoose';
 const mongoose = require('mongoose');
 interface CommitInterFace {
   _id: ObjectId;
@@ -10,7 +10,6 @@ interface CommitInterFace {
 }
 
 const commitSchema = new Schema<CommitInterFace>({
-  _id: { type: mongoose.Schema.Types.ObjectId },
   taskId: { ref: 'task', type: mongoose.Schema.Types.ObjectId },
   senderId: { ref: 'users', type: mongoose.Schema.Types.ObjectId },
   content: String,
