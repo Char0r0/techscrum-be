@@ -123,6 +123,7 @@ router.post('/register', register.store);
  */
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
+
 router.get('/commits', commitControllers.index);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
