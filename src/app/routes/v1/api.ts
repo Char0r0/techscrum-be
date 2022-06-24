@@ -7,6 +7,7 @@ const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
 const { authenticationToken } = require('../../middleware/auth');
 const loginControllers = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
+const board = require('../../controllers/v1/board/board');
 const task = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 
@@ -136,5 +137,7 @@ router.get("/projects/:projectId", projects.index);
 // router.get("/projects/:id", projects.show);
 router.put("/projects", projects.update);
 router.delete("/projects", projects.delete);
+
+router.get('/board/:boardId', board.index);
 
 module.exports = router;

@@ -1,86 +1,56 @@
-import { Request, Response } from 'express';
-import { Projects } from '../../../model/projects';
-import { getProjectById } from '../../../services/projects/projects';
-import { Schema } from 'mongoose';
-import { ObjectId } from 'mongodb';
-const projectsSchema = require('../../../model/projects');
-// const projectsData = [
-//   {
-//     id: 0,
-//     star: false,
-//     icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10418?size=small',
-//     name: 'example',
-//     key: 'EX',
-//     type: 'Team-managed software',
-//     lead: 'Evan Lin',
-//     avatar:
-//       'https://i2.wp.com/avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/EL-3.png?ssl=1',
-//     lastEditTime: new Date('2021-05-10'),
-//   },
-//   {
-//     id: 1,
-//     star: false,
-//     icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10411?size=small',
-//     name: 'TECHSCRUM',
-//     key: 'TEC',
-//     type: 'Team-managed software',
-//     lead: 'Yiu Kitman',
-//     avatar:
-//       'https://i2.wp.com/avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/YK-3.png?ssl=1',
-//     lastEditTime: new Date('2021-05-11'),
-//   },
-//   {
-//     id: 2,
-//     star: false,
-//     icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10412?size=small',
-//     name: 'Template',
-//     key: 'TEM',
-//     type: 'Company-managed software',
-//     lead: 'Yiu Kitman',
-//     avatar:
-//       'https://i2.wp.com/avatar-management--avatars.us-west-2.prod.public.atl-paas.net/initials/YK-3.png?ssl=1',
-//     lastEditTime: new Date('2021-05-8'),
-//   },
-// ];
-
-exports.index = async (req: Request, res: Response) => {
-  const projectId = req.params.projectId;
-  const result = await getProjectById(projectId);
-  console.log(result);
-  console.log((result[0]._id as ObjectId).toString());
-  res.status(200).send(result);
-};
+import { Request, Response, NextFunction } from 'express';
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+const { validationResult } = require('express-validator');
+const Project = require('../../../model/project');
+const status = require('http-status');
 //get
-exports.show = (req: Request, res: Response) => {
-  console.log('test');
-  const id = parseInt(req.params.id);
-  const result = projectsSchema.find({ id });
-  if (result.length >= 0) return res.status(200).send(index);
-  return res.status(400).send({ result: false });
+exports.show = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  }
+
+  const projects = await Project.project.find({});
+  res.send(projects);
 };
 
 // put
 
 exports.update = (req: Request, res: Response) => {
-  console.log('test');
-  const id = parseInt(req.body.id);
-  let result = projectsSchema.find({ id });
-  if (result.length >= 0) {
-    result = { ...req.body };
-    res.status(200).send(true);
-  }
-
-  return res.status(400).send(false);
+  Project.findOneAndUpdate(ObjectId(req.params.id), function (err: any) {
+    if (err) {
+      return res.status(status.BAD_REQUEST).send(false);
+    }
+    return res.send('Successfully saved.');
+  });
 };
 
-// delete
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  }
+
+  const project = new Project.project(req.body);
+
+  try {
+    await project.save();
+    res.status(status.CREATED).send(project);
+  } catch (e: any) {
+    next(e);
+  }
+};
 
 exports.delete = (req: Request, res: Response) => {
-  const id = parseInt(req.body.id);
-  const result = projectsSchema.find({ id });
-  if (result.length >= 0) {
-    projects.splice(index);
-    return res.status(200).send({ result: true });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
   }
-  return res.status(400).send({ result: false });
+  Project.project.findByIdAndRemove(ObjectId(req.params.id), function (err: any) {
+    if (err) {
+      res.status(status.INTERNAL_SERVER_ERROR).send(err);
+    }
+    res.status(status.NO_CONTENT).json({});
+  });
 };
