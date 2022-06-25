@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const config = require("../app/config/app");
+const mongoose = require('mongoose');
+const config = require('../app/config/app');
 module.exports = async function () {
   const connection = await mongoose
     .connect(config.db, {
@@ -7,7 +7,7 @@ module.exports = async function () {
       useUnifiedTopology: true,
     })
     .catch((e: any) => {
-      console.log("mongodb error", e);
+      console.log('mongodb error', e);
       process.exit(1);
     });
 
