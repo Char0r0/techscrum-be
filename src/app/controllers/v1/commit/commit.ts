@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
+import { send } from 'process';
 const mongoose = require('mongoose');
 const commits = require('../../../model/commit');
 
-exports.index = async (req: Request, res: Response) => {
-  const result = await commits.find();
+exports.show = async (req: Request, res: Response) => {
+  const senderId = req.params.senderid;
+  const result = await commits.find({ sender_id: senderId });
   res.send(result);
 };
 
