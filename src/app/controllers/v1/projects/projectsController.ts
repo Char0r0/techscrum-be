@@ -1,3 +1,4 @@
+import { Schema } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -16,9 +17,12 @@ exports.show = async (req: Request, res: Response) => {
 };
 
 // put
-
 exports.update = (req: Request, res: Response) => {
-  Project.findOneAndUpdate(ObjectId(req.params.id), function (err: any) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  }
+  Project.project.findByIdAndUpdate(ObjectId(req.params.id, req.body), function (err: any) {
     if (err) {
       return res.status(status.BAD_REQUEST).send(false);
     }
@@ -26,6 +30,7 @@ exports.update = (req: Request, res: Response) => {
   });
 };
 
+//POST
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -42,10 +47,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+//delete
 exports.delete = (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+    return res.status(status.FORBIDDEN).json({ errors: errors.array() });
   }
   Project.project.findByIdAndRemove(ObjectId(req.params.id), function (err: any) {
     if (err) {

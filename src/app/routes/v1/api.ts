@@ -121,8 +121,9 @@ router.post("/register", register.store);
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-router.get("/users/:id", userControllers.show);
-router.post("/users/:id", userControllers.update);
+
+router.get('/users/:id', userControllers.show);
+router.post('/users/:id', userControllers.update);
 
 router.get("/tasks", task.index);
 router.get("/tasks/:id", task.show);
@@ -130,13 +131,14 @@ router.post("/tasks", task.store);
 router.put("/tasks", task.update);
 router.delete("/tasks/:id", task.delete);
 
-router.post("/login", loginControllers.store);
-router.get("/me", authenticationToken, userInfoControllers.index);
+router.post('/login', loginControllers.store);
+router.get('/me', authenticationToken, userInfoControllers.index);
 
-router.get("/projects/:projectId", projects.index);
-// router.get("/projects/:id", projects.show);
-router.put("/projects", projects.update);
-router.delete("/projects", projects.delete);
+
+router.get('/projects', projects.show);
+router.put('/projects/:id', projects.update);
+router.post('/projects', projects.store);
+router.delete('/projects/:id', projects.delete);
 
 router.get('/board/:boardId', board.index);
 
