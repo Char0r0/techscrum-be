@@ -4,7 +4,7 @@ dotenv.config();
 
 module.exports = {
   name: process.env.NAME || "techscrumapp",
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 8000,
   api: {
     prefix: process.env.API_PREFIX || "/api/v1",
   },
@@ -15,4 +15,3 @@ module.exports = {
   email: process.env.EMAIL || "techscrumtest@gmail.com",
   emailPassword: process.env.EMAIL_PASSWORD || "Tech-123456",
 };
-console.log(process.env.PORT)
