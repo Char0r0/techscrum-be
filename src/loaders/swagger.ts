@@ -1,9 +1,9 @@
-const swaggerUi = require("swagger-ui-express");
-const swaggerJSDoc = require("swagger-jsdoc");
-const config = require("../app/config/app");
-const swaggerConfig = require("../app/config/swagger");
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const config = require('../app/config/app');
+const swaggerConfig = require('../app/config/swagger');
 
-import { Express } from "express";
+import { Express } from 'express';
 
 const options = {
   definition: {
@@ -14,7 +14,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:{port}{basePath}",
+        url: 'http://localhost:{port}{basePath}',
         variables: {
           port: {
             default: config.port,
@@ -23,15 +23,15 @@ const options = {
             default: config.api.prefix,
           },
         },
-        description: "Local Server",
+        description: 'Local Server',
       },
     ],
   },
-  apis: ["./src/app/routes/v1/api.ts"],
+  apis: ['./src/app/routes/v1/api.ts'],
 };
 
 module.exports = (app: Express) => {
   const swaggerSpec = swaggerJSDoc(options);
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   return app;
 };
