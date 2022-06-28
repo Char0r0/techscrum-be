@@ -27,7 +27,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
     },
   ]);
-  if(boardInfo[0].taskList.length > 0) {
+  if (boardInfo[0].taskList.length > 0) {
     const boardInfoWithCard = await await this.aggregate([
       {
         $match: { _id: objId },
