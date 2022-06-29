@@ -11,6 +11,7 @@ const board = require('../../controllers/v1/board/board');
 const task = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
+const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -139,6 +140,9 @@ router.delete('/tasks/:id', task.delete);
 
 router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
+
+router.patch('/account', accountSettingControllers.update);
+router.delete('/account', accountSettingControllers.destroy);
 
 router.get('/projects', projects.show);
 router.put('/projects', projects.update);
