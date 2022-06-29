@@ -10,9 +10,12 @@ const boardSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
   task_status: { type: [String], alias: 'taskStatus' },
-}, { timestamps: true });
+});
 
 boardSchema.statics.findBoardById = async function (id: string) {
+  if (!Types.ObjectId.isValid(id)) {
+    return [];
+  }
   const objId = new Types.ObjectId(id);
   const boardInfo = await this.aggregate([
     {
