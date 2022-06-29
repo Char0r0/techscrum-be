@@ -31,7 +31,7 @@ const status = require('http-status');
 //   return index >= 0 ? 
 //     res.status(200).send(cardsList[index]) : 
 //     res.status(400).send({ 'result': false });
-// };
+// };;
 
 // //POST
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,9 +39,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-
   const task = new Task(req.body);
-
   try {
     await task.save();
     res.status(status.CREATED).send(task);
