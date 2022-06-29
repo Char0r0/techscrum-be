@@ -4,8 +4,9 @@ import replaceAll from '../../../services/propertyNameShift/propertyNameShift';
 
 const board = require('../../../model/board');
 
-exports.show = async (req: Request, res: Response) => {
+exports.index = async (req: Request, res: Response) => {
   const boardId = req.params.boardId;
+
   try {
     const boardInfo = await board.findBoardById(boardId);
     const boardinfoString = replaceAll(JSON.stringify(boardInfo), '_id', 'id');
