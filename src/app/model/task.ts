@@ -27,6 +27,10 @@ const taskSchema = new Schema(
       type: Number,
       default:0,
     },
+    project_id:{
+      type: Types.ObjectId,
+      ref: 'project',
+    },
     board_id:{
       type: Types.ObjectId,
       ref: 'board',
