@@ -10,7 +10,7 @@ const boardSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
   task_status: { type: [String], alias: 'taskStatus' },
-});
+}, { timestamps: true });
 
 boardSchema.statics.findBoardById = async function (id: string) {
   const objId = new Types.ObjectId(id);
