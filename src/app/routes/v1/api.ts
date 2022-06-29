@@ -126,8 +126,6 @@ router.post('/register', register.store);
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
 
-// router.get('/tasks', task.index);
-// router.get('/tasks/:id', task.show);
 router.get('/commits/:senderid', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
