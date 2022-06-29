@@ -125,11 +125,11 @@ router.post('/register', register.store);
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
 
-router.get('/tasks', task.index);
-router.get('/tasks/:id', task.show);
+// router.get('/tasks', task.index);
+// router.get('/tasks/:id', task.show);
 router.post('/tasks', task.store);
-router.put('/tasks', task.update);
-router.delete('/tasks/:id', task.delete);
+router.put('/tasks/:id', task.update);
+// router.delete('/tasks/:id', task.delete);
 
 router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
