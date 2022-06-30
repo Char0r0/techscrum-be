@@ -131,11 +131,11 @@ router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
 
-router.get('/tasks', task.index);
-router.get('/tasks/:id', task.show);
+// router.get('/tasks', task.index);
+// router.get('/tasks/:id', task.show);
 router.post('/tasks', task.store);
-router.put('/tasks', task.update);
-router.delete('/tasks/:id', task.delete);
+router.put('/tasks/:id', task.update);
+// router.delete('/tasks/:id', task.delete);
 
 router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);

@@ -1,2 +1,2 @@
-const loader = require("./src/loaders");
+const loader = require('./src/loaders');
 loader.init();
