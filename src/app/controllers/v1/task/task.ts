@@ -31,7 +31,7 @@ const status = require('http-status');
 //   return index >= 0 ? 
 //     res.status(200).send(cardsList[index]) : 
 //     res.status(400).send({ 'result': false });
-// };;
+// };
 
 // //POST
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,7 +39,9 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
+
   const task = new Task(req.body);
+  
   try {
     await task.save();
     res.status(status.CREATED).send(task);
@@ -51,8 +53,9 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 //PUT
 exports.update = async (req: Request, res: Response) => {
   const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body);
+  //console.log(updateTask, req.params.id);
   if (!updateTask) {
-    res.status(503).send({ 'f':req.params.id });
+    res.status(500).send({ 'f':req.params.id });
   }
   res.status(200).send(updateTask);
 };
