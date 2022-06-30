@@ -8,8 +8,6 @@ import passwordEncryption from '../../../services/encryption/encryption';
 import passwordAuth from '../../../services/passwordAuth/passwordAuth';
 
 exports.update = async (req: Request, res: Response) => {
-  //old password : 123
-  //test object id : 62a96f7477325ae11a04adc0
   const { newPassword, oldPassword } = req.body;
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOiI2MmE5NmY3NDc3MzI1YWUxMWEwNGFkYzAiLCJpYXQiOjE2NTY0ODMzMDl9.jaR1gqBTyn6RC6fRx4sJ20iQhwo7h-SvDzqEa9_yipo';
@@ -18,7 +16,7 @@ exports.update = async (req: Request, res: Response) => {
     const user = await Users.findOne({ _id: verifyUser.userid });
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
     if (!checkPasswordFlag) {
-      return res.status(406).send();
+      return res.status(status.NOT_ACCEPTABLE).send();
     }
     const newHashPassword = await passwordEncryption(newPassword);
     const passwordUpdateFlag = await Users.updateOne(
@@ -26,13 +24,13 @@ exports.update = async (req: Request, res: Response) => {
       { password: newHashPassword },
     );
     if (!passwordUpdateFlag) {
-      return res.status(406).send();
+      return res.status(status.NOT_ACCEPTABLE).send();
     }
 
     res.status(204).send();
   } catch (error) {
     logger.error(error);
-    res.status(500).send();
+    return res.status(status.INTERNAL_SERVER_ERROR).send();
   }
 };
 exports.destroy = async (req: Request, res: Response) => {
@@ -44,15 +42,15 @@ exports.destroy = async (req: Request, res: Response) => {
     const user = await Users.findOne({ _id: verifyUser.userid });
     const checkPasswordFlag = await passwordAuth(password, user.password);
     if (!checkPasswordFlag) {
-      res.status(403).send();
+      res.status(status.FORBIDDEN).send();
     }
     const deleteAccountFlag = await Users.deleteOne({ _id: user._id });
     if (!deleteAccountFlag) {
-      res.status(406).send();
+      return res.status(status.NOT_ACCEPTABLE).send();
     }
-    res.status(204).send();
+    return res.status(204).send();
   } catch (error) {
     logger.error(error);
-    res.status(500).send();
+    return res.status(status.INTERNAL_SERVER_ERROR).send();
   }
 };
