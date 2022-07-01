@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
+const Users = require('../model/userDB');
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -16,9 +17,11 @@ const authenticationToken = (req: Request, res: Response, next: NextFunction) =>
   if (!authHeader || !authToken) return res.sendStatus(401);
 
   if (authType === 'Bearer') {
-    jwt.verify(authToken, process.env.ACCESS_SECRET, (err: Error) => {
+    jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return res.sendStatus(403).send(err);
-      req.user = { email: 'll@!fe.com' };
+      const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
+      const user = await Users.findOne({ _id: verifyUser.userid });
+      req.user = user;
       next();
     });
   }
