@@ -34,6 +34,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
+
   const board = new Board({ title: req.body.name });
   board.save();
   const boardObj = { board_id: board._id };

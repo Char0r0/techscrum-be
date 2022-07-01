@@ -35,7 +35,7 @@ exports.update = async (req: Request, res: Response) => {
     const updatedAt = Date.now();
     const successUpdatedFlag = await commits.findByIdAndUpdate(
       { _id: commitId },
-      { content, updated_at: updatedAt }
+      { content, updated_at: updatedAt },
     );
     if (successUpdatedFlag) {
       res.send('Comment Updated');
