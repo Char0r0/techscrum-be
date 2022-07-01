@@ -20,8 +20,9 @@ const projectSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    board_id:{
+    board_id: {
       type: String,
+      required: true,
     },
     icon: { type: String, required: false },
     star: { type: Boolean, required: false },
