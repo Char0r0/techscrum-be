@@ -9,7 +9,7 @@ interface Board {
 const boardSchema = new Schema({
   title: { type: String, required: true },
   description: { type: String },
-  task_status: { type: [String], alias: 'taskStatus' },
+  task_status: { type: [String], alias: 'taskStatus', default: ['To Do', 'Programming', 'Review', 'Done'] },
 }, { timestamps: true });
 
 boardSchema.statics.findBoardById = async function (id: string) {
