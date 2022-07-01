@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const { validationResult } = require('express-validator');
 const Project = require('../../../model/project');
+const Board = require('../../../model/board');
 const status = require('http-status');
 //get
 exports.show = async (req: Request, res: Response) => {
@@ -34,7 +35,10 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(422).json({ errors: errors.array() });
   }
 
-  const project = new Project.project(req.body);
+  const board = new Board({ title: req.body.name });
+  board.save();
+  const boardObj = { board_id: board._id };
+  const project = new Project.project({ ...req.body, ...boardObj });
 
   try {
     await project.save();
