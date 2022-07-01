@@ -149,6 +149,6 @@ router.put('/projects', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.get('/board/:boardId', board.index);
+router.get('/board/:boardId', board.show);
 
 module.exports = router;
