@@ -141,8 +141,8 @@ router.put('/tasks/:id', task.update);
 router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
 
-router.patch('/account', accountSettingControllers.update);
-router.delete('/account', accountSettingControllers.destroy);
+router.patch('/account', authenticationToken, accountSettingControllers.update);
+router.delete('/account', authenticationToken, accountSettingControllers.destroy);
 
 router.get('/projects', projects.show);
 router.put('/projects', projects.update);
