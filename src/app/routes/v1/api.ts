@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const router = new express.Router();
 const projects = require('../../controllers/v1/projects/projectsController');
 const tenantValidations = require('../../validations/tenant');
@@ -77,11 +77,11 @@ const commitControllers = require('../../controllers/v1/commit/commit');
  *               items:
  *                 $ref: '#/components/schemas/Tenants'
  */
-router.get("/tenants", tenantValidations.index, tenantControllers.index);
-router.post("/tenants", tenantValidations.store, tenantControllers.store);
+router.get('/tenants', tenantValidations.index, tenantControllers.index);
+router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.get("/register/:email", register.post);
-router.post("/register", register.store);
+router.get('/register/:email', register.post);
+router.post('/register', register.store);
 /**
  * @swagger
  * components:
@@ -139,7 +139,6 @@ router.put('/tasks/:id', task.update);
 
 router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
-
 
 router.get('/projects', projects.show);
 router.put('/projects/:id', projects.update);

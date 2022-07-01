@@ -1,4 +1,3 @@
-import { Schema } from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
