@@ -1,7 +1,6 @@
 import { Response, Request } from 'express';
 const Users = require('../../../model/userDB');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const logger = require('../../../../loaders/logger');
 const status = require('http-status');
 import passwordEncryption from '../../../services/encryption/encryption';
