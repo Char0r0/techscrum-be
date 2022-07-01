@@ -11,7 +11,6 @@ interface UserInterface {
 }
 
 const userSchema = new Schema<UserInterface>({
-  _id: Number,
   email: {
     type: String,
     match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address'],
