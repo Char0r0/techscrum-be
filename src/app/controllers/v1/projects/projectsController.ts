@@ -9,7 +9,7 @@ const status = require('http-status');
 exports.show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
   }
 
   const projects = await Project.project.find({});
@@ -17,22 +17,24 @@ exports.show = async (req: Request, res: Response) => {
 };
 
 // put
-
 exports.update = (req: Request, res: Response) => {
-  // const id = parseInt(req.body.id);
-  // const index = projectsList.findIndex((project) => project.id === id);
-  // if (index >= 0) {
-  //   projectsList[index] = { ...req.body };
-  //   res.status(200).send(true);
-  // }
-
-  return res.status(400).send(false);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
+  }
+  Project.project.findByIdAndUpdate(ObjectId(req.params.id, req.body), function (err: any) {
+    if (err) {
+      return res.status(status.BAD_REQUEST).send(false);
+    }
+    return res.send('Successfully saved.');
+  });
 };
 
+//POST
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(status.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
   }
 
   const board = new Board({ title: req.body.name });
@@ -48,14 +50,15 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+//delete
 exports.delete = (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(status.FORBIDDEN).json({ errors: errors.array() });
   }
   Project.project.findByIdAndRemove(ObjectId(req.params.id), function (err: any) {
     if (err) {
-      res.status(500).send(err);
+      res.status(status.INTERNAL_SERVER_ERROR).send(err);
     }
     res.status(status.NO_CONTENT).json({});
   });
