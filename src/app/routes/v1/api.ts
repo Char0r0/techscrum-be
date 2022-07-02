@@ -145,7 +145,7 @@ router.patch('/account/me', authenticationToken, accountSettingControllers.updat
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
 router.get('/projects', projects.show);
-router.put('/projects', projects.update);
+router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
