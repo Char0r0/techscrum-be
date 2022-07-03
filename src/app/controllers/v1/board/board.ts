@@ -1,20 +1,14 @@
 import { Request, Response } from 'express';
-import replaceAll from '../../../services/propertyNameShift/propertyNameShift';
-
+const replaceId = require('../../../services/replace/replace');
+const status = require('http-status');
 const board = require('../../../model/board');
 
 exports.show = async (req: Request, res: Response) => {
-  const boardId = req.params.boardId;
-  try {
-    if (boardId === 'undefined' || boardId === 'null') {
-      return res.sendStatus(406);
-    }
-
-    const boardInfo = await board.findBoardById(boardId);
-    const boardinfoString = replaceAll(JSON.stringify(boardInfo), '_id', 'id');
-    return res.send(JSON.parse(boardinfoString));
-  } catch (e) {
-    if (e instanceof Error) return res.sendStatus(404).send({ Error: e.message });
-    return res.sendStatus(500).send({ Error: 'Unknow Error' });
+  const boardId = req.params.id;
+  if (boardId === 'undefined' || boardId === 'null') {
+    return res.sendStatus(status.NOT_ACCEPTABLE);
   }
+
+  const boardInfo = await board.findBoardById(boardId);
+  return res.send(replaceId(boardInfo));
 };

@@ -1,14 +1,13 @@
-const users = require('../../../model/userDB');
 import { Response, Request } from 'express';
+const users = require('../../../model/user');
+const status = require('http-status');
 
 exports.store = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  try {
-    const user = await users.findByCredentials(email, password);
-    res.send(user);
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).send({ Error: 'Unexpected Error' });
-    }
-  }
+  const user = await users.findOne({ email, password });
+
+  if (!user) res.send(status.unprocessable_entity);
+  const token = tokenGenerate(user._id);
+  const refreshToken = user.refreshToken;
+  res.send({ token, refreshToken });
 };

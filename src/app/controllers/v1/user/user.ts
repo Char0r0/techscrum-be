@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import user from "../../../model/user";
+import { Request, Response } from 'express';
+import User from '../../../model/user';
 
-const userList = Array<user>({
+const userList = Array<User>({
   id: 1,
-  fullName: "Vivian Qi",
-  Abbreviation: "VQ",
-  userName: "cat",
-  personalFile: "vivian.doc",
+  fullName: 'Vivian Qi',
+  Abbreviation: 'VQ',
+  userName: 'cat',
+  personalFile: 'vivian.doc',
 });
 
 exports.show = (req: Request, res: Response) => {

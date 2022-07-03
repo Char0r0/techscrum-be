@@ -1,4 +1,4 @@
-const mongosse = require("mongoose");
+const mongosse = require('mongoose');
 
 const tenantsSchema = new mongosse.Schema(
   {
@@ -13,8 +13,8 @@ const tenantsSchema = new mongosse.Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-const tenants = mongosse.model("tenants", tenantsSchema);
+const tenants = mongosse.model('tenants', tenantsSchema);
 module.exports = tenants;

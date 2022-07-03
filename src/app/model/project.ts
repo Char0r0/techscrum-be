@@ -1,4 +1,5 @@
-const { mongoose } = require('mongoose');
+export {};
+const mongoose = require('mongoose');
 
 const projectSchema = mongoose.Schema(
   {
@@ -12,15 +13,15 @@ const projectSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    project_lead_id: {
+    projectLeadId: {
       type: String,
       trim: true,
     },
-    assignee_id: {
+    assigneeId: {
       type: String,
       trim: true,
     },
-    board_id: {
+    boardId: {
       type: String,
       required: true,
     },
@@ -32,4 +33,4 @@ const projectSchema = mongoose.Schema(
 );
 
 const project = mongoose.model('project', projectSchema);
-export { project };
+module.exports = project;
