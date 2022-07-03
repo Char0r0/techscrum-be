@@ -1,17 +1,16 @@
 import { Request, Response } from 'express';
-const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId;
-const { validationResult } = require('express-validator');
 const Project = require('../../../model/project');
-const replaceId = require('../../../services/replace/replace');
 const Board = require('../../../model/board');
 const status = require('http-status');
+const { Types } = require('mongoose');
+const { validationResult } = require('express-validator');
+const { replaceId } = require('../../../services/replace/replace');
 
 //get
 exports.show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const projects = await Project.find({});
   res.send(replaceId(projects));
@@ -21,7 +20,7 @@ exports.show = async (req: Request, res: Response) => {
 exports.store = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
   const board = new Board({ title: req.body.name });
@@ -36,19 +35,25 @@ exports.store = async (req: Request, res: Response) => {
 exports.update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const project = await Project.findByIdAndUpdate(ObjectId(req.params.id, req.body));
-  if (project) return res.send(replaceId(project));
-  return res.status(status.BAD_REQUEST);
+  if (Types.ObjectId.isValid(req.params.id)) {
+    const project = await Project.findByIdAndUpdate(Types.ObjectId(req.params.id, req.body));
+    if (project) return res.send(replaceId(project));
+    return res.sendStatus(status.BAD_REQUEST);
+  }
+  res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };
 
 //delete
 exports.delete = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.FORBIDDEN).json({ errors: errors.array() });
+    return res.sendStatus(status.FORBIDDEN);
   }
-  await Project.findByIdAndRemove(ObjectId(req.params.id));
-  res.status(status.NO_CONTENT);
+  if (Types.ObjectId.isValid(req.params.id)) {
+    await Project.findByIdAndRemove(Types.ObjectId(req.params.id));
+    res.sendStatus(status.NO_CONTENT);
+  }
+  res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };

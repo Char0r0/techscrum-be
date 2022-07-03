@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 const commits = require('../../../model/commit');
-const replaceId = require('../../../services/replace/replace');
 const status = require('http-status');
+const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response) => {
   const senderId = req.params.senderid;
@@ -19,7 +19,7 @@ exports.store = async (req: Request, res: Response) => {
   if (newComment) {
     res.send(replaceId(newComment));
   }
-  res.status(status.UNPROCESSABLE_ENTITY);
+  res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };
 
 exports.update = async (req: Request, res: Response) => {
@@ -27,19 +27,16 @@ exports.update = async (req: Request, res: Response) => {
   const updatedAt = Date.now();
   const updatedComment = await commits.findByIdAndUpdate(
     { _id: commitId },
-    { content, updated_at: updatedAt },
+    { content, updatedAt },
   );
   if (updatedComment) {
     res.send(replaceId(updatedComment));
   }
-  res.status(status.UNPROCESSABLE_ENTITY);
+  res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };
 
 exports.delete = async (req: Request, res: Response) => {
   const { commitId } = req.body;
-  const successDeletedFlag = await commits.deleteOne({ _id: commitId });
-  if (successDeletedFlag) {
-    res.status(status.No_Content);
-  }
-  res.status(status.UNPROCESSABLE_ENTITY);
+  await commits.deleteOne({ _id: commitId });
+  res.sendStatus(status.NOTCONNECTED);
 };

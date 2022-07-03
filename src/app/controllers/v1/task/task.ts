@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-const validationResult = require('express-validator');
 const Task = require('../../../model/task');
 const status = require('http-status');
 const replaceId = require('../../../services/replace/replace');
+const { validationResult } = require('express-validator');
 
 // const cardsList = Array<taskCard>({
 //   id: 1,
@@ -38,7 +38,7 @@ const replaceId = require('../../../services/replace/replace');
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
   const task = new Task(req.body);

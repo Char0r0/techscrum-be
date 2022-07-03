@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
-const Users = require('../model/user');
+const Users = require('../model/userAccount');
 
 declare module 'express-serve-static-core' {
   interface Request {
