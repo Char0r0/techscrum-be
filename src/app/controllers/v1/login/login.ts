@@ -1,14 +1,22 @@
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 const users = require('../../../model/userAccount');
 const status = require('http-status');
-const { tokenGenerate } = require('../../../services/tokenGenerate/tokenGenerate');
+const bcrypt = require('bcrypt');
+const tokenGenerate = require('../../../services/tokenGenerate/tokenGenerate');
 
-exports.store = async (req: Request, res: Response) => {
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
-  const user = await users.findOne({ email, password });
+  try {
+    const user = await users.findOne({ email });
+    if (!user) return res.sendStatus(status.UNAUTHORIZED);
 
-  if (!user) res.sendStatus(status.UNPROCESSABLE_ENTITY);
-  const token = tokenGenerate(user._id);
-  const refreshToken = user.refreshToken;
-  res.send({ token, refreshToken });
+    const validationREsult = bcrypt.compare(user.password, password);
+    if (!validationREsult) return res.sendStatus(status.UNAUTHORIZED);
+
+    const token = tokenGenerate(user._id);
+    const refreshToken = user.refreshToken;
+    res.send({ token, refreshToken });
+  } catch (e) {
+    next(e);
+  }
 };

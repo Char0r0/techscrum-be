@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-export function tokenGenerate(email: string) {
-  const emailObj = { email };
-  const token = jwt.sign(emailObj, process.env.ACCESS_SECRET, {
+export function tokenGenerate(input: string) {
+  const encryptObj = { input };
+  const token = jwt.sign(encryptObj, process.env.ACCESS_SECRET, {
     expiresIn: process.env.EXPERT_TIME || '24h',
   });
 

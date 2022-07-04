@@ -41,9 +41,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const task = new Task(req.body);
-
   try {
+    const task = new Task(req.body);
     await task.save();
     res.status(status.CREATED).send(replaceId(task));
   } catch (e: any) {
@@ -52,13 +51,17 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 //PUT
-exports.update = async (req: Request, res: Response) => {
-  const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body);
-  //console.log(updateTask, req.params.id);
-  if (!updateTask) {
-    res.status(status.ServerInternalError).send({ f: req.params.id });
+exports.update = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body);
+    //console.log(updateTask, req.params.id);
+    if (!updateTask) {
+      res.status(status.ServerInternalError).send({ f: req.params.id });
+    }
+    res.send(replaceId(updateTask));
+  } catch (e) {
+    next(e);
   }
-  res.send(replaceId(updateTask));
 };
 
 // //DELETE
