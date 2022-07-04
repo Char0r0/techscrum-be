@@ -26,7 +26,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
       $lookup: {
         from: 'tasks',
         localField: '_id',
-        foreignField: 'board_id',
+        foreignField: 'boardId',
         as: 'taskList',
       },
     },
@@ -40,7 +40,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
         $lookup: {
           from: 'tasks',
           localField: '_id',
-          foreignField: 'board_id',
+          foreignField: 'boardId',
           as: 'taskList',
         },
       },
@@ -69,7 +69,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
         $group: {
           _id: '$_id',
           title: { $first: '$title' },
-          taskStatus: { $first: '$task_status' },
+          taskStatus: { $first: '$taskStatus' },
           taskList: { $push: '$taskList' },
         },
       },
@@ -87,7 +87,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
                 tag: '$$task.tag',
                 title: '$$task.title',
                 description: '$$task.description',
-                statusId: '$$task.status_id',
+                statusId: '$$task.statusId',
                 assignInfo: '$$task.assignInfo',
               },
             },
