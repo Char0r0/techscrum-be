@@ -1,17 +1,8 @@
-import { Types, model, Schema } from 'mongoose';
+export {};
+const mongoose = require('mongoose');
+const { Types } = require('mongoose');
 
-interface ITask {
-  _id: String;
-  title: String;
-  statusId: String;
-  boardId: Types.ObjectId;
-  typeId: String;
-  description: String;
-  storyPoints: String;
-  tag: String;
-}
-
-const taskSchema = new Schema(
+const taskSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -27,11 +18,11 @@ const taskSchema = new Schema(
       type: Number,
       default:0,
     },
-    project_id:{
+    projectId:{
       type: Types.ObjectId,
       ref: 'project',
     },
-    board_id:{
+    boardId:{
       type: Types.ObjectId,
       ref: 'board',
     },
@@ -43,7 +34,7 @@ const taskSchema = new Schema(
       type: String,
       trim: true,
     },
-    story_point: {
+    storyPoint: {
       type: Number,
       default:0,
     },  
@@ -63,6 +54,6 @@ const taskSchema = new Schema(
   { timestamps: true },
 );
 
-const taskModel = model<ITask>('task', taskSchema);
+const task = mongoose.model('task', taskSchema);
 
-module.exports = taskModel;
+module.exports = task;

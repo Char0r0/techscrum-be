@@ -1,8 +1,8 @@
-interface user {
+interface User {
   id: number;
   fullName: string;
   Abbreviation: string;
   userName: string;
   personalFile: string;
 }
-export default user;
+export default User;

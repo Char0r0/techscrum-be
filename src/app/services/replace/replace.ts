@@ -7,4 +7,8 @@ const replaceAll = (source: string, targetString: string, shiftString: string) =
   return source;
 };
 
-export default replaceAll;
+export const replaceId = (input: any) => {
+  const inputString = replaceAll(JSON.stringify(input), '_id', 'id');
+  const result = JSON.parse(inputString);
+  return result;
+};

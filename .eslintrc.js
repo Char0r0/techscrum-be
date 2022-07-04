@@ -8,4 +8,7 @@ module.exports = {
   rules: {
     'no-console': 'error',
   },
+  env: {
+    node: true,
+  },
 };
