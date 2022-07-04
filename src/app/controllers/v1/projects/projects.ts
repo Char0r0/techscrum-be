@@ -49,11 +49,10 @@ exports.update = async (req: Request, res: Response) => {
 exports.delete = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.FORBIDDEN);
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     await Project.findByIdAndRemove(Types.ObjectId(req.params.id));
-    res.sendStatus(status.NO_CONTENT);
+    res.status(status.NO_CONTENT).json({});
   }
-  res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };

@@ -4,11 +4,10 @@ const replaceAll = (source: string, targetString: string, shiftString: string) =
     source = source.replace(targetString, shiftString);
     targetStringExistFlag = source.includes(targetString);
   }
-  return source;
+  return source.replace(/\"Id\"/g, '"id"');
 };
 
-export const replaceId = (input: string) => {
-  const inputString = replaceAll(JSON.stringify(input), '_id', 'id');
-  const result = JSON.parse(inputString);
-  return result;
+export const replaceId = (input: any) => {
+  const inputString = replaceAll(JSON.stringify(input), '_id', 'Id');
+  return JSON.parse(inputString);
 };
