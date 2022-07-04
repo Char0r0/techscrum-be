@@ -2,7 +2,7 @@ export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
 
-const boardSchema = mongoose.Schema({
+const boardSchema = new mongoose.Schema({
   title: { 
     type: String, 
     required: true,

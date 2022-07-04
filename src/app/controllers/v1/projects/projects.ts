@@ -26,7 +26,7 @@ exports.store = async (req: Request, res: Response) => {
   const board = new Board({ title: req.body.name });
   board.save();
   const boardObj = { boardId: board._id };
-  const project = new Project.create({ ...req.body, ...boardObj });
+  const project = new Project({ ...req.body, ...boardObj });
   await project.save();
   res.status(status.CREATED).send(replaceId(project));
 };

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 const Task = require('../../../model/task');
 const status = require('http-status');
-const replaceId = require('../../../services/replace/replace');
+const { replaceId } = require('../../../services/replace/replace');
 const { validationResult } = require('express-validator');
 
 // const cardsList = Array<taskCard>({

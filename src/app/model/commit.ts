@@ -2,7 +2,7 @@ export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
 
-const commitSchema = mongoose.Schema(
+const commitSchema = new mongoose.Schema(
   {
     taskId: {
       ref: 'task',
