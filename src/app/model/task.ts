@@ -14,7 +14,7 @@ const taskSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    status_id: {
+    statusId: {
       type: Number,
       default:0,
     },
@@ -38,7 +38,7 @@ const taskSchema = new mongoose.Schema(
       type: Number,
       default:0,
     },  
-    due_at:{
+    dueAt:{
       type: Date,
       default:0,
     },
