@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
 const status = require('http-status');
-const user = require('../../../model/userAccount');
-const tokenGenerate = require('../../../services/tokenGenerate/tokenGenerate');
+const User = require('../../../model/userAccount');
 const { emailCheck } = require('../../../services/emailCheck/emailCheck');
-const { encryption } = require('../../../services/encryption/encryption');
 
 //Check if the email exist
 exports.get = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,22 +18,15 @@ exports.get = async (req: Request, res: Response, next: NextFunction) => {
 
 //Register
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+  
   try {
-    const userNotExistFlag = await emailCheck(email);
-    if (!userNotExistFlag) return res.sendStatus(status.UNPROCESSABLE_ENTITY);
-
-    const hashPassword = await encryption(password);
-    const refreshToken = await encryption(`${email}+${password}`);
-    const newUser = new user({
-      email,
-      password: hashPassword,
-      refreshToken: refreshToken,
-    });
-    await newUser.save();
-
-    const token = tokenGenerate(newUser._id);
-    return res.status(status.CREATED).send({ token, refreshToken });
+    const user = new User(req.body);
+    await user.save();
+    return res.status(status.CREATED).send(user);
   } catch (e) {
     next(e);
   }
