@@ -1,41 +1,41 @@
-import { Request, Response } from 'express';
-import { Token } from '../../../model/token';
-import { emailCheck, register } from '../../../services/register/register';
-import { UserRegister } from '../../../model/userRegister';
-const logger = require('../../../../loaders/logger');
+import { Request, Response, NextFunction } from 'express';
+const status = require('http-status');
+const user = require('../../../model/userAccount');
+const tokenGenerate = require('../../../services/tokenGenerate/tokenGenerate');
+const { emailCheck } = require('../../../services/emailCheck/emailCheck');
+const { encryption } = require('../../../services/encryption/encryption');
 
 //Check if the email exist
-exports.post = async (req: Request, res: Response) => {
+exports.get = async (req: Request, res: Response, next: NextFunction) => {
   const email = req.params.email;
   try {
     const existUser: boolean = await emailCheck(email);
-    if (existUser) return res.status(200).send({ result: true });
 
-    return res.status(406).send({ result: false });
+    res.send({ existUser });
   } catch (e) {
-    return res.status(500).send({ result: false });
+    next(e);
   }
 };
 
 //Register
-exports.store = async (req: Request, res: Response) => {
-  const tokenGenerate = require('../../../services/tokenGenerate/tokenGenerate');
-  const newUser: UserRegister = req.body.registerForm;
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
   try {
-    const registerSuccessFlag: boolean = await register(newUser);
+    const userNotExistFlag = await emailCheck(email);
+    if (!userNotExistFlag) return res.sendStatus(status.UNPROCESSABLE_ENTITY);
 
-    if (!registerSuccessFlag) return res.status(406).send({ result: false });
-  } catch (e) {
-    logger.error(e);
-    return res.status(500).send({ result: false });
-  }
+    const hashPassword = await encryption(password);
+    const refreshToken = await encryption(`${email}+${password}`);
+    const newUser = new user({
+      email,
+      password: hashPassword,
+      refreshToken: refreshToken,
+    });
+    await newUser.save();
 
-  try {
-    const token = tokenGenerate(newUser.email);
-    const resToken: Token = { token };
-    return res.status(201).send(resToken);
+    const token = tokenGenerate(newUser._id);
+    return res.status(status.CREATED).send({ token, refreshToken });
   } catch (e) {
-    logger.error(e);
-    return res.status(500).send({ result: false });
+    next(e);
   }
 };

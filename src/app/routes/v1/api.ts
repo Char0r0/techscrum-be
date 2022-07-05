@@ -1,6 +1,6 @@
 const express = require('express');
 const router = new express.Router();
-const projects = require('../../controllers/v1/projects/projectsController');
+const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
 const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
@@ -81,7 +81,7 @@ const accountSettingControllers = require('../../controllers/v1/accountSetting/a
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.get('/register/:email', register.post);
+router.get('/register/:email', register.get);
 router.post('/register', register.store);
 /**
  * @swagger
@@ -145,10 +145,10 @@ router.patch('/account/me', authenticationToken, accountSettingControllers.updat
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
 router.get('/projects', projects.show);
-router.put('/projects', projects.update);
+router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.get('/board/:boardId', board.show);
+router.get('/board/:id', board.show);
 
 module.exports = router;

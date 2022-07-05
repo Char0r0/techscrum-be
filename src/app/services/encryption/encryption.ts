@@ -1,6 +1,7 @@
-export default async function encryption(plainText: string){
-    const bcrypt = require('bcrypt');
-    const salt = bcrypt.genSaltSync(10);
+export async function encryption(plainText: string) {
+  const bcrypt = require('bcrypt');
+  const salt = bcrypt.genSaltSync(10);
 
-    return await bcrypt.hash(plainText, salt);
+  const hashPassword = await bcrypt.hash(plainText, salt);
+  return hashPassword;
 }
