@@ -39,8 +39,9 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     );
     if (updateShortcutFlag) {
       res.status(status.NO_CONTENT).send();
+    } else {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
     next(e);
   }
@@ -52,8 +53,9 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
     const deleteShortcutFlag = await project.updateOne({ _id: id }, { $unset: { shortcut: 1 } });
     if (deleteShortcutFlag) {
       res.status(status.NO_CONTENT).send();
+    } else {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
     next(e);
   }
