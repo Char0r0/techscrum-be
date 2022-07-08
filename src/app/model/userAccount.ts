@@ -9,26 +9,37 @@ const userSchema = new mongoose.Schema(
       type: String,
       match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address'],
       required: true,
+      unique: true,
     },
     password: {
       type: String,
-      required: true,
       trim: true,
     },
-    refreshToken: { 
-      type: String, 
+    refreshToken: {
+      type: String,
       trim: true,
     },
-    tokens: [{
-      token: {
-        type: String,
-        required: true,
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
       },
-    }],
+    ],
+    activeCode: {
+      type: String,
+      trim: true,
+    },
+    active: {
+      type: Boolean,
+      trim: true,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true },
 );
-
 
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
@@ -42,16 +53,21 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
+userSchema.statics.activeAccount = async function (email: string, password: string) {
+  const user = await this.findOneAndUpdate({ email }, { password: await bcrypt.hash(password, 8), active: true }).exec();
+  if (!user) throw new Error('Cannot find user');
+  return user;
+};
+
 //TODO: https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters-in-callbacks
 userSchema.pre('save', async function (this: any, next: NextFunction) {
-  const user  = this;
+  const user = this;
 
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
   next();
 });
-
 
 userSchema.methods.toJSON = function () {
   const user = this;
@@ -68,7 +84,9 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.ACCESS_SECRET, { expiresIn: '48h' });
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.ACCESS_SECRET, {
+    expiresIn: '48h',
+  });
   user.tokens = user.tokens.concat({ token });
   await user.save();
   return token;
