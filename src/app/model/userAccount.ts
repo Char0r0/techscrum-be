@@ -2,6 +2,7 @@ import { NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const { randomStringGenerator } = require('../utils/randomStringGenerator');
 
 const userSchema = new mongoose.Schema(
   {
@@ -88,8 +89,13 @@ userSchema.methods.generateAuthToken = async function () {
     expiresIn: '48h',
   });
   user.tokens = user.tokens.concat({ token });
+  if (user.refreshToken == null || user.refreshToken == undefined) {
+    const randomeString = randomStringGenerator(10);
+    const refreshToken = jwt.sign({ randomeString }, process.env.ACCESS_SECRET);
+    user.refreshToken = refreshToken;
+  }
   await user.save();
-  return token;
+  return { token, refreshToken: user.refreshToken };
 };
 
 const users = mongoose.model('users', userSchema);
