@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const project = require('../../../model/project');
 const status = require('http-status');
-const { replaceId } = require('../../../services/replace/replace');
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,7 +17,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
         { _id: id },
         { shortcut: [{ shortcutLink: webAddress, name: shortcutName }] },
       );
-      res.send(replaceId(newShortcut));
+      if (newShortcut) {
+        res.status(status.NO_CONTENT).send();
+      } else {
+        res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      }
     }
   } catch (e) {
     next(e);
@@ -35,7 +38,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
       { shortcut: [{ shortcutLink: newShortcutLink, name: newShortcutName }] },
     );
     if (updateShortcutFlag) {
-      res.status(204).send();
+      res.status(status.NO_CONTENT).send();
     }
     res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
@@ -48,7 +51,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
     const deleteShortcutFlag = await project.updateOne({ _id: id }, { $unset: { shortcut: 1 } });
     if (deleteShortcutFlag) {
-      res.status(204).send();
+      res.status(status.NO_CONTENT).send();
     }
     res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
