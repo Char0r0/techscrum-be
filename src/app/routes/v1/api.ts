@@ -151,7 +151,6 @@ router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
 router.post('/project/shortcut/:id', shortcutControllers.store);
-router.get('/project/shortcut/:id', shortcutControllers.show);
 router.put('/project/shortcut/:id', shortcutControllers.update);
 router.delete('/project/shortcut/:id', shortcutControllers.destroy);
 
