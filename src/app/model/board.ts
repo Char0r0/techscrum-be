@@ -1,5 +1,3 @@
-import { Schema } from 'mongoose';
-
 export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
