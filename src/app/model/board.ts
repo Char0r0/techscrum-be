@@ -2,22 +2,19 @@ export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
 
-const boardSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-    },
-    taskStatus: {
-      type: [String],
-      default: ['To Do', 'Programming', 'Review', 'Done'],
-    },
+const boardSchema = new mongoose.Schema({
+  title: { 
+    type: String, 
+    required: true,
   },
-  { timestamps: true },
-);
+  taskStatus: { 
+    type: [String], 
+    default: ['To Do', 'Programming', 'Review', 'Done'],
+  },
+}, { timestamps: true });
 
 boardSchema.statics.findBoardById = async function (id: string) {
-  if (!Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id)) {  
     return [];
   }
   const objId = new Types.ObjectId(id);
