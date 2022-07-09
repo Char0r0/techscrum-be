@@ -28,7 +28,9 @@ const projectSchema = mongoose.Schema(
     icon: { type: String, required: false },
     star: { type: Boolean, required: false },
     detail: { type: 'string', required: false },
-    shortcut: [{ name: { type: String, unique: true }, shortcutLink: String }],
+    shortcut: [
+      { name: { type: String }, shortcutLink: { type: String } },
+    ],
   },
   { timestamps: true },
 );
