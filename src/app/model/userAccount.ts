@@ -1,6 +1,8 @@
-export {};
+import { NextFunction } from 'express';
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const randomStringGenerator = require('../utils/randomStringGenerator');
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,11 +16,18 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    refreshToken: { 
-      type: String, 
-      required: true, 
+    refreshToken: {
+      type: String,
       trim: true,
     },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );
@@ -29,11 +38,48 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
     throw new Error('Please Check Your UserName');
   }
   const checkPassword = await bcrypt.compare(password, user.password);
-
   if (!checkPassword) {
     throw new Error('Please Check Your Password!');
   }
-  return `Welcome ${user.email} ! Last Login In At ${user.last_login_at}`;
+  return user;
+};
+
+//TODO: https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters-in-callbacks
+userSchema.pre('save', async function (this: any, next: NextFunction) {
+  const user = this;
+
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
+
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+  const id = userObject._id;
+  userObject.id = id;
+  delete userObject._id;
+  delete userObject.password;
+  delete userObject.tokens;
+  delete userObject.refreshToken;
+  delete userObject.__v;
+  return userObject;
+};
+
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.ACCESS_SECRET, {
+    expiresIn: '48h',
+  });
+  user.tokens = user.tokens.concat({ token });
+  if (user.refreshToken == null || user.refreshToken == undefined) {
+    const randomeString = randomStringGenerator(10);
+    const refreshToken = jwt.sign({ randomeString }, process.env.ACCESS_SECRET);
+    user.refreshToken = refreshToken;
+  }
+  await user.save();
+  return { token, refreshToken: user.refreshToken };
 };
 
 const users = mongoose.model('users', userSchema);
