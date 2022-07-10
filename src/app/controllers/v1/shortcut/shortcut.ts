@@ -9,9 +9,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
-    const id = req.params.id;
-    const webAddress = req.body.webaddress;
-    const shortcutName = req.body.name;
+    const { id } = req.params;
+    const { webAddress, shortcutName } = req.body;
     const newShortcut = await project.findByIdAndUpdate(
       { _id: id },
       {
@@ -36,10 +35,8 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
-    const id = req.params.id;
-    const shortcutId = req.params.shortcutid;
-    const newShortcutLink = req.body.shortcutlink;
-    const newShortcutName = req.body.shortcutname;
+    const { id, shortcutId } = req.params;
+    const { newShortcutLink, newShortcutName } = req.body;
     const updateShortcutFlag = await project.updateOne(
       { _id: id, 'shortcut._id': shortcutId },
       {
@@ -62,8 +59,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
-    const id = req.params.id;
-    const shortcutId = req.params.shortcutid;
+    const { id, shortcutId } = req.params;
     const deleteShortcutFlag = await project.updateOne(
       { _id: id },
       { $pull: { shortcut: { _id: shortcutId } } },
