@@ -12,6 +12,7 @@ const task = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
+const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -148,6 +149,10 @@ router.get('/projects', projects.show);
 router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
+
+router.post('/project/shortcut/:id', shortcutControllers.store);
+router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
+router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
 
 router.get('/board/:id', board.show);
 
