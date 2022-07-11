@@ -2,7 +2,7 @@ import { NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const randomStringGenerator = require('../utils/randomStringGenerator');
+const { randomStringGenerator } = require('../utils/randomStringGenerator');
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,10 +10,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       match: [/^[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, 'Please fill a valid email address'],
       required: true,
+      unique: true,
     },
     password: {
       type: String,
-      required: true,
       trim: true,
     },
     refreshToken: {
@@ -28,6 +28,16 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    activeCode: {
+      type: String,
+      trim: true,
+    },
+    active: {
+      type: Boolean,
+      trim: true,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true },
 );
@@ -41,6 +51,12 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   if (!checkPassword) {
     throw new Error('Please Check Your Password!');
   }
+  return user;
+};
+
+userSchema.statics.activeAccount = async function (email: string, password: string) {
+  const user = await this.findOneAndUpdate({ email }, { password: await bcrypt.hash(password, 8), active: true }).exec();
+  if (!user) throw new Error('Cannot find user');
   return user;
 };
 
