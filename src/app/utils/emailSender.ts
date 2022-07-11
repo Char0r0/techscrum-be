@@ -1,15 +1,10 @@
 const aws = require('aws-sdk');
-//aws.config.loadFromPath('./src/config/config.json');
-// const s3 = new aws.S3({
-//     region: 'ap-southeast-2',
-//     accessKeyId: 'AKIAUWGE66XZVH4NOGUG',
-//     secretAccessKey: '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'
-// });
+const config = require('../config/app');
 
 aws.config.update({
-  region: 'ap-southeast-2',
-  accessKeyId: 'AKIAUWGE66XZVH4NOGUG',
-  secretAccessKey: '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',
+  region: process.env.Region,
+  accessKeyId: process.env.Access_Key_Id,
+  secretAccessKey: process.env.Secret_Access_Key,
 });
 
 export const emailSender = (email: string, validationCode: string) => {
@@ -26,7 +21,7 @@ export const emailSender = (email: string, validationCode: string) => {
       Body: {
         Html: {
           Charset: 'UTF-8',
-          Data: `http://localhost:3000/register/${validationCode}`,
+          Data: `${config.frontEndAddress}/register/${validationCode}`,
         },
         Text: {
           Charset: 'UTF-8',
