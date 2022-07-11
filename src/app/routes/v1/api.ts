@@ -4,8 +4,8 @@ const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
 const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
-const { authenticationToken } = require('../../middleware/auth');
-const loginControllers = require('../../controllers/v1/login/login');
+const { authenticationEmailToken, authenticationToken } = require('../../middleware/auth');
+const login = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
 const board = require('../../controllers/v1/board/board');
 const task = require('../../controllers/v1/task/task');
@@ -82,8 +82,11 @@ const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.get('/register/:email', register.get);
-router.post('/register', register.store);
+router.post('/login', login.store);
+
+router.get('/register/:token', authenticationEmailToken, register.get);
+router.post('/register/:email', register.emailRegister);
+router.put('/register/:token', authenticationEmailToken, register.store);
 /**
  * @swagger
  * components:
@@ -139,7 +142,6 @@ router.post('/tasks', task.store);
 router.put('/tasks/:id', task.update);
 router.delete('/tasks/:id', task.delete);
 
-router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
