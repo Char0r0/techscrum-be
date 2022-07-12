@@ -2,9 +2,9 @@ const aws = require('aws-sdk');
 const config = require('../config/app');
 
 aws.config.update({
-  region: process.env.Region,
-  accessKeyId: process.env.Access_Key_Id,
-  secretAccessKey: process.env.Secret_Access_Key,
+  region: process.env.REGION,
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
 });
 
 export const emailSender = (email: string, validationCode: string) => {
@@ -25,7 +25,7 @@ export const emailSender = (email: string, validationCode: string) => {
         },
         Text: {
           Charset: 'UTF-8',
-          Data: 'HTML_FORMAT_Body',
+          Data: '',
         },
       },
     },
