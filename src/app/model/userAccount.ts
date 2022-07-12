@@ -2,6 +2,7 @@ import { NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const UserProfile = require('./userProfile');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 
 const userSchema = new mongoose.Schema(
@@ -54,9 +55,18 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
-userSchema.statics.activeAccount = async function (email: string, password: string) {
-  const user = await this.findOneAndUpdate({ email }, { password: await bcrypt.hash(password, 8), active: true }).exec();
+userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
+  const user = await this.findOneAndUpdate(
+    { email },
+    { password: await bcrypt.hash(password, 8), active: true },
+  ).exec();
   if (!user) throw new Error('Cannot find user');
+  
+  const avatarIcon = `${name?.substring(0, 1) || 'A'}.png`;
+  const userProfile = new UserProfile({ userId: user._id, name, avatarIcon });
+  await userProfile.save();
+  user.name = name;
+  user.avatarIcon = userProfile.avatarIcon;
   return user;
 };
 
@@ -79,6 +89,8 @@ userSchema.methods.toJSON = function () {
   delete userObject.password;
   delete userObject.tokens;
   delete userObject.refreshToken;
+  delete userObject.activeCode;
+  delete userObject.active;
   delete userObject.__v;
   return userObject;
 };

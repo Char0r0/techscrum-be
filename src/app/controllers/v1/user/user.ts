@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import User from '../../../model/user';
 
-const userList = Array<User>({
+
+const userList = Array<any>({
   id: 1,
   fullName: 'Vivian Qi',
   Abbreviation: 'VQ',
