@@ -12,6 +12,5 @@ module.exports = {
   db:
     process.env.MONGODB_URL ||
     'mongodb+srv://admin:12345678910@cluster0.c7jps.mongodb.net/techscrumapp?retryWrites=true&w=majority',
-  email: process.env.EMAIL || 'techscrumtest@gmail.com',
-  emailPassword: process.env.EMAIL_PASSWORD || 'Tech-123456',
+  frontEndAddress: process.env.FRONTEND_ADDRESS || 'http://localhost:3000',
 };

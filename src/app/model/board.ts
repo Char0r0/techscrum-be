@@ -1,16 +1,20 @@
-import { model, Schema, Types } from 'mongoose';
+export {};
+const mongoose = require('mongoose');
+const { Types } = require('mongoose');
 
-interface Board {
-  _id: String;
-  title: String;
-  taskStatus: [String];
-}
-
-const boardSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  task_status: { type: [String], alias: 'taskStatus', default: ['To Do', 'Programming', 'Review', 'Done'] },
-}, { timestamps: true });
+const boardSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    taskStatus: {
+      type: [String],
+      default: ['To Do', 'In Progress ', 'Review', 'Done'],
+    },
+  },
+  { timestamps: true },
+);
 
 boardSchema.statics.findBoardById = async function (id: string) {
   if (!Types.ObjectId.isValid(id)) {
@@ -25,7 +29,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
       $lookup: {
         from: 'tasks',
         localField: '_id',
-        foreignField: 'board_id',
+        foreignField: 'boardId',
         as: 'taskList',
       },
     },
@@ -39,7 +43,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
         $lookup: {
           from: 'tasks',
           localField: '_id',
-          foreignField: 'board_id',
+          foreignField: 'boardId',
           as: 'taskList',
         },
       },
@@ -68,7 +72,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
         $group: {
           _id: '$_id',
           title: { $first: '$title' },
-          taskStatus: { $first: '$task_status' },
+          taskStatus: { $first: '$taskStatus' },
           taskList: { $push: '$taskList' },
         },
       },
@@ -86,7 +90,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
                 tag: '$$task.tag',
                 title: '$$task.title',
                 description: '$$task.description',
-                statusId: '$$task.status_id',
+                statusId: '$$task.statusId',
                 assignInfo: '$$task.assignInfo',
               },
             },
@@ -99,6 +103,6 @@ boardSchema.statics.findBoardById = async function (id: string) {
   return boardInfo;
 };
 
-const board = model<Board>('boards', boardSchema);
+const boardModel = mongoose.model('boards', boardSchema);
 
-module.exports = board;
+module.exports = boardModel;

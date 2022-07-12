@@ -1,14 +1,14 @@
-const users = require('../../../model/userDB');
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
+const User = require('../../../model/userAccount');
+const UserProfile = require('../../../model/userProfile');
 
-exports.store = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await users.findByCredentials(email, password);
-    res.send(user);
-  } catch (err) {
-    if (err instanceof Error) {
-      res.status(500).send({ Error: 'Unexpected Error' });
-    }
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const userProfile = await UserProfile.findNameAndIconById(user._id);
+    const token = await user.generateAuthToken();
+    res.send({ user, userProfile, ...token });
+  } catch (e) {
+    next(e);
   }
 };

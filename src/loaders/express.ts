@@ -1,12 +1,12 @@
-import express, { Request, Response, NextFunction } from "express";
-import rateLimit from "express-rate-limit";
-const apiRouter = require("../app/routes/v1/api");
-const config = require("../app/config/app");
-const cors = require("cors");
-const helmet = require("helmet");
-const { errorHandler } = require("./errorHandler");
-const status = require("http-status");
-const compression = require("compression");
+import express from 'express';
+import rateLimit from 'express-rate-limit';
+const apiRouter = require('../app/routes/v1/api');
+const config = require('../app/config/app');
+const cors = require('cors');
+const helmet = require('helmet');
+const { errorHandler } = require('./errorHandler');
+const status = require('http-status');
+const compression = require('compression');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -19,12 +19,12 @@ function startServer() {
 
   application
     .listen(config.port, () => {
-      console.log(
-        `⚡️[server]: Server is running at http://localhost:${config.port}`
-      );
+      // eslint-disable-next-line no-console
+      console.log(`⚡️[server]: Server is running at http://localhost:${config.port}`);
     })
-    .on("error", (e) => {
-      console.log("Error",e);
+    .on('error', (e) => {
+      // eslint-disable-next-line no-console
+      console.log('Error', e);
     });
   return application;
 }
@@ -46,7 +46,8 @@ module.exports = () => {
   //     res.status(status.INTERNAL_SERVER_ERROR).send();
   //   }
   // });
-  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+
+  app.use((err: Error, req: express.Request, res: express.Response) => {
     errorHandler.handleError(err, res);
     res.status(status.INTERNAL_SERVER_ERROR).send();
   });

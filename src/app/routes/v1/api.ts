@@ -1,17 +1,18 @@
 const express = require('express');
 const router = new express.Router();
-const projects = require('../../controllers/v1/projects/projectsController');
+const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
 const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
-const { authenticationToken } = require('../../middleware/auth');
-const loginControllers = require('../../controllers/v1/login/login');
+const { authenticationEmailToken, authenticationToken } = require('../../middleware/auth');
+const login = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
 const board = require('../../controllers/v1/board/board');
 const task = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
+const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -81,8 +82,11 @@ const accountSettingControllers = require('../../controllers/v1/accountSetting/a
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.get('/register/:email', register.post);
-router.post('/register', register.store);
+router.post('/login', login.store);
+
+router.get('/register/:token', authenticationEmailToken, register.get);
+router.post('/register/:email', register.emailRegister);
+router.put('/register/:token', authenticationEmailToken, register.store);
 /**
  * @swagger
  * components:
@@ -133,12 +137,11 @@ router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
 
 // router.get('/tasks', task.index);
-// router.get('/tasks/:id', task.show);
+router.get('/tasks/:id', task.show);
 router.post('/tasks', task.store);
 router.put('/tasks/:id', task.update);
-// router.delete('/tasks/:id', task.delete);
+router.delete('/tasks/:id', task.delete);
 
-router.post('/login', loginControllers.store);
 router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
@@ -149,6 +152,10 @@ router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.get('/board/:boardId', board.show);
+router.post('/project/shortcut/:id', shortcutControllers.store);
+router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
+router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
+
+router.get('/board/:id', board.show);
 
 module.exports = router;

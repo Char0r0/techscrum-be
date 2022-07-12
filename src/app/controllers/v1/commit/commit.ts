@@ -1,62 +1,58 @@
-import { Request, Response } from 'express';
-import { send } from 'process';
-const mongoose = require('mongoose');
+import { Request, Response, NextFunction } from 'express';
 const commits = require('../../../model/commit');
+const status = require('http-status');
+const { replaceId } = require('../../../services/replace/replace');
 
-exports.show = async (req: Request, res: Response) => {
+exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const senderId = req.params.senderid;
-  const result = await commits.find({ sender_id: senderId });
-  res.send(result);
+  try {
+    const result = await commits.find({ sender_id: senderId });
+    res.send(replaceId(result));
+  } catch (e) {
+    next(e);
+  }
 };
 
-exports.store = async (req: Request, res: Response) => {
+exports.store = async (req: Request, res: Response, next: NextFunction) => {
+  const { taskId, senderId, content } = req.body;
   try {
-    const { taskId, senderId, content } = req.body;
-    const createdAt = Date.now();
-    const newCommitFlag = await commits.create({
-      task_id: taskId,
-      sender_id: senderId,
+    const newComment = await commits.create({
+      taskId,
+      senderId,
       content,
-      created_at: createdAt,
     });
-    if (newCommitFlag) {
-      res.send('New Comment Created');
+    if (newComment) {
+      res.send(replaceId(newComment));
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).send('Something Went Wrong');
-    }
+    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  } catch (e) {
+    next(e);
   }
 };
 
-exports.update = async (req: Request, res: Response) => {
+exports.update = async (req: Request, res: Response, next: NextFunction) => {
+  const { commitId, content } = req.body;
+  const updatedAt = Date.now();
   try {
-    const { commitId, content } = req.body;
-    const updatedAt = Date.now();
-    const successUpdatedFlag = await commits.findByIdAndUpdate(
+    const updatedComment = await commits.findByIdAndUpdate(
       { _id: commitId },
-      { content, updated_at: updatedAt },
+      { content, updatedAt },
     );
-    if (successUpdatedFlag) {
-      res.send('Comment Updated');
+    if (updatedComment) {
+      res.send(replaceId(updatedComment));
     }
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).send('Something Went Wrong');
-    }
+    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  } catch (e) {
+    next(e);
   }
 };
 
-exports.delete = async (req: Request, res: Response) => {
+exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+  const { commitId } = req.body;
   try {
-    const { commitId } = req.body;
-    const successDeletedFlag = await commits.deleteOne({ _id: commitId });
-    if (successDeletedFlag) {
-      res.send('Comment has been deleted');
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).send('Something Went Wrong');
-    }
+    await commits.deleteOne({ _id: commitId });
+    res.sendStatus(status.NOTCONNECTED);
+  } catch (e) {
+    next(e);
   }
 };

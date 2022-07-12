@@ -1,5 +1,6 @@
-const { mongoose } = require('mongoose');
-
+export {};
+const mongoose = require('mongoose');
+//TODO: need to find out why crash and did application stop
 const projectSchema = mongoose.Schema(
   {
     name: {
@@ -12,24 +13,27 @@ const projectSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    project_lead_id: {
+    projectLeadId: {
       type: String,
       trim: true,
     },
-    assignee_id: {
+    assigneeId: {
       type: String,
       trim: true,
     },
-    board_id: {
+    boardId: {
       type: String,
       required: true,
     },
     icon: { type: String, required: false },
     star: { type: Boolean, required: false },
     detail: { type: 'string', required: false },
+    shortcut: [
+      { name: { type: String }, shortcutLink: { type: String } },
+    ],
   },
   { timestamps: true },
 );
 
 const project = mongoose.model('project', projectSchema);
-export { project };
+module.exports = project;

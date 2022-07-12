@@ -1,3 +1,3 @@
 module.exports = {
-  openapi: "3.0.0",
+  openapi: '3.0.0',
 };
