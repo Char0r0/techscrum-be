@@ -20,12 +20,4 @@ const activeEmail = async (email: string, name: string, password: string, active
   return user;
 };
 
-const activeAccount = async (email: string, name: string, password: string) => {
-  const user = await User.findOne({ email });
-  user.password = password;
-  user.active = true;
-  await user.save();
-  return user;
-};
-
-export { emailRegister, activeEmail, activeAccount };
+export { emailRegister, activeEmail };
