@@ -28,6 +28,22 @@ const profileSchema = mongoose.Schema(
     avatarIcon: {
       type: String,
     },
+    fullName: {
+      type: String,
+      trim: true,
+    },
+    abbreviation: {
+      type: String,
+      trim: true,
+    },
+    userName: {
+      type: String,
+      trim: true,
+    },
+    personalFile: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true },
 );
