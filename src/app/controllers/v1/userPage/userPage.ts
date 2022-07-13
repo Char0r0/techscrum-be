@@ -9,7 +9,17 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
-    res.send('ok')
+    const { userId } = req.params;
+    const userPageContentObject = req.body;
+    const updateUserPageFlag = await userProfile.findOneAndUpdate(
+      { userId },
+      userPageContentObject,
+    );
+    if (updateUserPageFlag) {
+      res.status(status.NO_CONTENT).send();
+    } else {
+      res.status(status.NOT_ACCEPTABLE).send();
+    }
   } catch (e) {
     next(e);
   }

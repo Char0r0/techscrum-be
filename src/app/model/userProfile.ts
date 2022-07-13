@@ -13,7 +13,7 @@ const profileSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    title: {
+    jobTitle: {
       type: String,
       trim: true,
     },
@@ -37,10 +37,6 @@ const profileSchema = mongoose.Schema(
       trim: true,
     },
     userName: {
-      type: String,
-      trim: true,
-    },
-    personalFile: {
       type: String,
       trim: true,
     },
