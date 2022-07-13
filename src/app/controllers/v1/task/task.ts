@@ -39,7 +39,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 //PUT
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body);
+    const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body, { new:true });
+    updateTask.save();
     //console.log(updateTask, req.params.id);
     if (!updateTask) {
       res.status(status.ServerInternalError).send({ f: req.params.id });
