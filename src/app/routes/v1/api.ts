@@ -13,6 +13,7 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
+const userPageControllers = require('../../controllers/v1/userPage/userPage');
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -130,6 +131,8 @@ router.put('/register/:token', authenticationEmailToken, register.store);
 
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
+
+router.post('/users/userPage/:userId', userPageControllers.update);
 
 router.get('/commits/:senderid', commitControllers.show);
 router.post('/commits', commitControllers.store);
