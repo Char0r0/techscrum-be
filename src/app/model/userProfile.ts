@@ -48,5 +48,10 @@ profileSchema.methods.toJSON = function () {
   return userProfleObject;
 };
 
-const userProfile = mongoose.model('userProfiles', profileSchema);
-module.exports = userProfile;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('userProfiles', profileSchema);
+};
+

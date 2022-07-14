@@ -28,10 +28,10 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const board = new Board({ title: req.body.name });
+    const board = new Board.getModel(req.dbConnection)({ title: req.body.name });
     board.save();
     const boardObj = { boardId: board._id };
-    const project = new Project.getModel(req.connection)({ ...req.body, ...boardObj });
+    const project = new Project.getModel(req.dbConnection)({ ...req.body, ...boardObj });
     await project.save();
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
@@ -47,7 +47,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     try {
-      const project = await Project.getModel(req.connection).findByIdAndUpdate(Types.ObjectId(req.params.id, req.body));
+      const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id, req.body));
       if (project) return res.send(replaceId(project));
       return res.sendStatus(status.BAD_REQUEST);
     } catch (e) {
@@ -65,7 +65,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     try {
-      await Project.getModel(req.connection).findByIdAndRemove(Types.ObjectId(req.params.id));
+      await Project.getModel(req.dbConnection).findByIdAndRemove(Types.ObjectId(req.params.id));
       res.status(status.NO_CONTENT).json({});
     } catch (e) {
       next(e);

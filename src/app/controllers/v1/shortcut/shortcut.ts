@@ -11,7 +11,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { webAddress, shortcutName } = req.body;
-    const newShortcut = await project.findByIdAndUpdate(
+    const newShortcut = await project.getModel(req.dbConnection).findByIdAndUpdate(
       { _id: id },
       {
         $push: {
@@ -37,7 +37,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id, shortcutId } = req.params;
     const { newShortcutLink, newShortcutName } = req.body;
-    const updateShortcutFlag = await project.updateOne(
+    const updateShortcutFlag = await project.getModel(req.dbConnection).updateOne(
       { _id: id, 'shortcut._id': shortcutId },
       {
         $set: { 'shortcut.$.shortcutLink': newShortcutLink, 'shortcut.$.name': newShortcutName },
@@ -60,7 +60,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const { id, shortcutId } = req.params;
-    const deleteShortcutFlag = await project.updateOne(
+    const deleteShortcutFlag = await project.getModel(req.dbConnection).updateOne(
       { _id: id },
       { $pull: { shortcut: { _id: shortcutId } } },
     );

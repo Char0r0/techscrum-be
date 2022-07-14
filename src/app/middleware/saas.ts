@@ -6,6 +6,7 @@ const config = require('../../app/config/app');
 const { dataConnectionPool } = require('../utils/dbContext');
 
 const saas = async (req: Request, res: Response, next: NextFunction) => {
+  console.log('middleware1');
   const tenantId: string = req.params.id?.toString() || '629173f74060424a41145125';
   const url = config.db.replace('techscrumapp', tenantId);
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
@@ -17,6 +18,11 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
       req.tenantId = tenantId;
       return next();
     });
+  } else {
+    req.dataConnectionPool = dataConnectionPool;
+    req.dbConnection = dataConnectionPool[tenantId];
+    req.tenantId = tenantId;
+    return next();
   }
 };
 
