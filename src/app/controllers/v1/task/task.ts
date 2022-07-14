@@ -28,7 +28,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const task = new Task.getModel(req.dbConnection)(req.body);
+    const taskModel = Task.getModel(req.dbConnection);
+    const task = new taskModel(req.body);
     await task.save();
     res.status(status.CREATED).send(replaceId(task));
   } catch (e: any) {

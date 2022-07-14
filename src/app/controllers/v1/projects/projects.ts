@@ -12,6 +12,7 @@ exports.show = async (req: any, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+  console.log(Project);
   try {
     const projects = await Project.getModel(req.dbConnection).find({});
     res.send(replaceId(projects));
@@ -26,12 +27,14 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-
   try {
-    const board = new Board.getModel(req.dbConnection)({ title: req.body.name });
+    const boardModel = Board.getModel(req.dbConnection); 
+    const projectModel = Project.getModel(req.dbConnection);
+
+    const board = new boardModel({ title: req.body.name });
     board.save();
     const boardObj = { boardId: board._id };
-    const project = new Project.getModel(req.dbConnection)({ ...req.body, ...boardObj });
+    const project = new projectModel({ ...req.body, ...boardObj });
     await project.save();
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {

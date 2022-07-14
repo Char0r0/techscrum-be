@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 const status = require('http-status');
-const board = require('../../../model/board');
+const Board = require('../../../model/board');
 const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response) => {
@@ -10,6 +10,6 @@ exports.show = async (req: Request, res: Response) => {
     return; 
   }
 
-  const boardInfo = await board.getModel(req.dbConnection).findBoardById(boardId);
+  const boardInfo = await Board.getModel(req.dbConnection).findBoardById(boardId);
   res.send(replaceId(boardInfo));
 };

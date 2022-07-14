@@ -128,6 +128,8 @@ router.put('/register/:token', authenticationEmailToken, register.store);
  *                 $ref: '#/components/schemas/User'
  */
 
+router.all('*', saasMiddleware.saas);
+
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
 
@@ -147,7 +149,7 @@ router.get('/me', authenticationToken, userInfoControllers.index);
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
-router.get('/projects', saasMiddleware.saas, projects.show);
+router.get('/projects', projects.show);
 router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
@@ -155,6 +157,8 @@ router.delete('/projects/:id', projects.delete);
 router.post('/project/shortcut/:id', shortcutControllers.store);
 router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
 router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
+
+
 
 router.get('/board/:id', board.show);
 
