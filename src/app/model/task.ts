@@ -64,6 +64,9 @@ taskSchema.methods.toJSON = function () {
   return taskObject;
 };
 
-const task = mongoose.model('task', taskSchema);
-
-module.exports = task;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('task', taskSchema);
+};
