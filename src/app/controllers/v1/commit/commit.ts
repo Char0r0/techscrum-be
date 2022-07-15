@@ -4,7 +4,7 @@ const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
-  const senderId = req.params.senderid;
+  const senderId = req.params;
   try {
     const result = await commits.find({ sender_id: senderId });
     res.send(replaceId(result));
@@ -51,7 +51,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
     await commits.deleteOne({ _id: commitId });
-    res.sendStatus(status.NOTCONNECTED);
+    res.sendStatus(status.NOT_CONNECTED);
   } catch (e) {
     next(e);
   }

@@ -134,7 +134,7 @@ router.post('/users/:id', userControllers.update);
 
 router.put('/users/userPage/:userId', userPageControllers.update);
 
-router.get('/commits/:senderid', commitControllers.show);
+router.get('/commits/:senderId', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
