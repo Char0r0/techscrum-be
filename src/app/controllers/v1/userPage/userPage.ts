@@ -15,10 +15,10 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
       { userId },
       userPageContentObject,
     );
-    if (updateUserPageFlag) {
-      res.status(status.NO_CONTENT).send();
+    if (!updateUserPageFlag) {
+      res.status(status.ServerInternalError).send();
     } else {
-      res.status(status.NOT_ACCEPTABLE).send();
+      res.status(status.NO_CONTENT).send();
     }
   } catch (e) {
     next(e);
