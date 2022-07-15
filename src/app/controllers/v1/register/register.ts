@@ -47,7 +47,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const { email, name, password } = req.body;
-    const user = await User.activeAccount(email, name, password);
+    const user = await User.getModel(req.dbConnection).activeAccount(email, name, password);
     res.status(status.OK).send(user);
   } catch (e) {
     next(e);

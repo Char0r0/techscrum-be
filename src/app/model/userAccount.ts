@@ -110,5 +110,9 @@ userSchema.methods.generateAuthToken = async function () {
   return { token, refreshToken: user.refreshToken };
 };
 
-const users = mongoose.model('users', userSchema);
-module.exports = users;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('task', userSchema);
+};

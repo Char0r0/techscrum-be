@@ -13,7 +13,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const task = await Task.findOne({ _id: req.params.id });
+    const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
     res.status(200).send(task);
   } catch (e) {
     next(e);
@@ -28,7 +28,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const task = new Task(req.body);
+    const taskModel = Task.getModel(req.dbConnection);
+    const task = new taskModel(req.body);
     await task.save();
     res.status(status.CREATED).send(replaceId(task));
   } catch (e: any) {
@@ -39,7 +40,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 //PUT
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const updateTask = await Task.findOneAndUpdate({ _id: req.params.id }, req.body, { new:true });
+    const updateTask = await Task.getModel(req.dbConnection).findOneAndUpdate({ _id: req.params.id }, req.body, { new:true });
     updateTask.save();
     //console.log(updateTask, req.params.id);
     if (!updateTask) {
@@ -59,7 +60,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    await Task.findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params.id) });
+    await Task.getModel(req.dbConnection).findOneAndDelete({ _id: mongoose.Types.ObjectId(req.params.id) });
     res.status(200).send();
   } catch (e) {
     next(e);
