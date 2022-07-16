@@ -4,9 +4,9 @@ const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
-  const { senderId } = req.params;
+  const { id } = req.params;
   try {
-    const result = await commits.find({ senderId });
+    const result = await commits.find({ senderId: id });
     res.send(replaceId(result));
   } catch (e) {
     next(e);

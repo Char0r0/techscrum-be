@@ -131,9 +131,9 @@ router.put('/register/:token', authenticationEmailToken, register.store);
 
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
-router.put('/users/:userId', userPageControllers.update);
+router.put('/users/:id', userPageControllers.update);
 
-router.get('/commits/:senderId', commitControllers.show);
+router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
