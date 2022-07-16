@@ -5,8 +5,11 @@ const status = require('http-status');
 
 declare module 'express-serve-static-core' {
   interface Request {
+    userId?: string;
     user?: object;
     verifyEmail?: string;
+    token?: string;
+    refreshToken?: string;
   }
 }
 
@@ -31,13 +34,54 @@ const authenticationToken = (req: Request, res: Response, next: NextFunction) =>
 
   if (authType === 'Bearer') {
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
-      if (err) return res.status(403).send(err);
+      if (err) return next();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const user = await User.findOne({ _id: verifyUser.userid });
+      const user = await User.findOne({ _id: verifyUser.id });
       req.user = user;
-      next();
+      req.token = authToken;
+      req.userId = user.id;
+      return next();
     });
+    return;
   }
+  res.status(status.FORBIDDEN).send();
 };
 
-module.exports = { authenticationEmailToken, authenticationToken };
+const authenticationRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+  if (Object.keys(req.user ?? {}).length !== 0) return next();
+  const authHeader = req.headers.authorization;
+
+  const authType = authHeader && authHeader.split(' ')[0];
+  const authRefreshToken = authHeader && authHeader.split(' ')[2];
+
+  if (!authHeader || !authRefreshToken) return res.sendStatus(401);
+
+  if (authType === 'Bearer') {
+    jwt.verify(authRefreshToken, process.env.ACCESS_SECRET, async (err: Error) => {
+      if (err) return next();
+      const verifyUser = jwt.verify(authRefreshToken, process.env.ACCESS_SECRET);
+      const user = await User.findOne({
+        _id: verifyUser.id,
+        refreshToken: verifyUser.refreshToken,
+      });
+      req.user = user;
+
+      req.token = await jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
+        expiresIn: '48h',
+      });
+      req.refreshToken = jwt.sign(
+        { id: user._id, refreshToken: user.refreshToken },
+        process.env.ACCESS_SECRET,
+        {
+          expiresIn: '360h',
+        },
+      );
+      req.userId = user.id;
+      return next();
+    });
+    return;
+  }
+  res.status(status.FORBIDDEN).send();
+};
+
+module.exports = { authenticationEmailToken, authenticationToken, authenticationRefreshToken };

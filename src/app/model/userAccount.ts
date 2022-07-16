@@ -97,17 +97,24 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.ACCESS_SECRET, {
+  const token = jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
     expiresIn: '48h',
   });
   user.tokens = user.tokens.concat({ token });
-  if (user.refreshToken == null || user.refreshToken == undefined) {
+  if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
     const randomeString = randomStringGenerator(10);
-    const refreshToken = jwt.sign({ randomeString }, process.env.ACCESS_SECRET);
-    user.refreshToken = refreshToken;
+    const refreshToken = jwt.sign({ id: user._id, refreshToken: randomeString }, process.env.ACCESS_SECRET, {
+      expiresIn: '360h',
+    });
+    user.refreshToken = randomeString;
+    await user.save();
+    return { token, refreshToken: refreshToken };
   }
-  await user.save();
-  return { token, refreshToken: user.refreshToken };
+
+  const refreshToken = jwt.sign({ id: user._id, refreshToken: user.refreshToken }, process.env.ACCESS_SECRET, {
+    expiresIn: '360h',
+  });
+  return { token, refreshToken };
 };
 
 module.exports.getModel = (connection: any) => {
