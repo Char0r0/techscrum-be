@@ -4,7 +4,7 @@ const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
 const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
-const { authenticationEmailToken, authenticationToken } = require('../../middleware/auth');
+const { authenticationEmailToken, authenticationRefreshToken, authenticationToken } = require('../../middleware/auth');
 const login = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
 const board = require('../../controllers/v1/board/board');
@@ -142,10 +142,12 @@ router.post('/tasks', task.store);
 router.put('/tasks/:id', task.update);
 router.delete('/tasks/:id', task.delete);
 
-router.get('/me', authenticationToken, userInfoControllers.index);
+//router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
+
+router.post('/autoFetchUserInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
 
 router.get('/projects', projects.show);
 router.put('/projects/:id', projects.update);
