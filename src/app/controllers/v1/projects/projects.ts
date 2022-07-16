@@ -12,7 +12,6 @@ exports.show = async (req: any, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  console.log(Project);
   try {
     const projects = await Project.getModel(req.dbConnection).find({});
     res.send(replaceId(projects));

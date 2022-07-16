@@ -68,5 +68,5 @@ module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('task', taskSchema);
+  return connection.model('tasks', taskSchema);
 };

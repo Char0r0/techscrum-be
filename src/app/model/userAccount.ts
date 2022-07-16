@@ -121,5 +121,5 @@ module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('task', userSchema);
+  return connection.model('users', userSchema);
 };
