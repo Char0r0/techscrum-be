@@ -103,6 +103,9 @@ boardSchema.statics.findBoardById = async function (id: string) {
   return boardInfo;
 };
 
-const boardModel = mongoose.model('boards', boardSchema);
-
-module.exports = boardModel;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('boards', boardSchema);
+};

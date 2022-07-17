@@ -13,7 +13,7 @@ exports.store = async (req: Request, res: Response) => {
   const shortcutId = new mongoose.Types.ObjectId();
   const { id } = req.params;
   const { webAddress, shortcutName } = req.body;
-  const updatedProject = await project.findByIdAndUpdate(
+  const updatedProject = await project.getModel(req.dbConnection).findByIdAndUpdate(
     { _id: id },
     {
       $push: {
@@ -40,9 +40,10 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
+
     const { projectId, shortcutId } = req.params;
     const { webAddress, shortcutName } = req.body;
-    const updateShortcutFlag = await project.updateOne(
+    const updateShortcutFlag = await project.getModel(req.dbConnection).updateOne(
       { _id: projectId, 'shortcut._id': shortcutId },
       {
         $set: { 'shortcut.$.shortcutLink': webAddress, 'shortcut.$.name': shortcutName },
@@ -65,8 +66,9 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const { projectId, shortcutId } = req.params;
-    const updatedProject = await project.updateOne(
+    const updatedProject = await project.getModel(req.dbConnection).updateOne(
       { _id: projectId },
+
       { $pull: { shortcut: { _id: shortcutId } } },
     );
     if (updatedProject) {
