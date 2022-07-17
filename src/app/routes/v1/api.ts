@@ -14,6 +14,9 @@ const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 const saasMiddleware = require('../../middleware/saas');
+const userPageControllers = require('../../controllers/v1/userPage/userPage');
+
+router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
 /**
@@ -128,12 +131,13 @@ router.put('/register/:token', authenticationEmailToken, register.store);
  *                 $ref: '#/components/schemas/User'
  */
 
-router.all('*', saasMiddleware.saas);
+
 
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
+router.put('/users/:id', userPageControllers.update);
 
-router.get('/commits/:senderid', commitControllers.show);
+router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
@@ -156,9 +160,9 @@ router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.post('/project/shortcut/:id', shortcutControllers.store);
-router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
-router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
+router.post('/projects/:id/shortcuts', shortcutControllers.store);
+router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
+router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
 
 
 

@@ -13,7 +13,7 @@ const profileSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    title: {
+    jobTitle: {
       type: String,
       trim: true,
     },
@@ -27,6 +27,18 @@ const profileSchema = mongoose.Schema(
     },
     avatarIcon: {
       type: String,
+    },
+    fullName: {
+      type: String,
+      trim: true,
+    },
+    abbreviation: {
+      type: String,
+      trim: true,
+    },
+    userName: {
+      type: String,
+      trim: true,
     },
   },
   { timestamps: true },

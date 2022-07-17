@@ -55,7 +55,7 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
-userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
+userSchema.statics.activeAccount = async function (email: string, name: string, password: string, req:any) {
   const user = await this.findOneAndUpdate(
     { email },
     { password: await bcrypt.hash(password, 8), active: true },
@@ -63,7 +63,8 @@ userSchema.statics.activeAccount = async function (email: string, name: string, 
   if (!user) throw new Error('Cannot find user');
   
   const avatarIcon = `${name?.substring(0, 1) || 'A'}.png`;
-  const userProfile = new UserProfile({ userId: user._id, name, avatarIcon });
+  const userProfileModel = UserProfile.getModel(req.dbConnection);
+  const userProfile = new userProfileModel({ userId: user._id, name, avatarIcon });
   await userProfile.save();
   user.name = name;
   user.avatarIcon = userProfile.avatarIcon;

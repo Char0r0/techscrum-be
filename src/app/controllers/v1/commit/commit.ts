@@ -4,9 +4,9 @@ const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
-  const senderId = req.params.senderid;
+  const { id } = req.params;
   try {
-    const result = await commits.getModel(req.dbConnection).find({ sender_id: senderId });
+    const result = await commits.getModel(req.dbConnection).find({ senderId: id });
     res.send(replaceId(result));
   } catch (e) {
     next(e);
@@ -51,7 +51,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
     await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
-    res.sendStatus(status.NOTCONNECTED);
+    res.sendStatus(status.NOT_CONNECTED);
   } catch (e) {
     next(e);
   }
