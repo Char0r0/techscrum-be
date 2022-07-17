@@ -16,17 +16,17 @@ const taskSchema = new mongoose.Schema(
     },
     statusId: {
       type: Number,
-      default:0,
+      default: 0,
     },
-    projectId:{
+    projectId: {
       type: Types.ObjectId,
       ref: 'project',
     },
-    boardId:{
+    boardId: {
       type: Types.ObjectId,
       ref: 'board',
     },
-    typeId:{
+    typeId: {
       type: String,
       default: 'Task',
     },
@@ -36,19 +36,23 @@ const taskSchema = new mongoose.Schema(
     },
     storyPoint: {
       type: Number,
-      default:0,
-    },  
-    dueAt:{
+      default: 0,
+    },
+    dueAt: {
       type: Date,
-      default:0,
+      default: 0,
     },
     assign: {
       type: Types.ObjectId,
       ref: 'user',
     },
-    type:{
+    poster: {
+      type: Types.ObjectId,
+      ref: 'user',
+    },
+    type: {
       type: String,
-      trim: true,  
+      trim: true,
     },
   },
   { timestamps: true },
