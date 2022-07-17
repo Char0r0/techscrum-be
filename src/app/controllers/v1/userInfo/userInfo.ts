@@ -21,7 +21,7 @@ exports.post = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     if (!req.userId) return res.status(status.FORBIDDEN).send();
-    const userInfo = await UserProfile.findOne({ userId: req.userId ?? '' });
+    const userInfo = await UserProfile.getModel(req.dbConnection).findOne({ userId: req.userId ?? '' });
     res.send({ user: req.user, userInfo, token: req.token, refreshToken: req.refreshToken });
   } catch (e) {
     next(e);

@@ -1,20 +1,20 @@
-const mongosse = require('mongoose');
+export {};
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const tenantsSchema = new mongosse.Schema(
-  {
-    domain: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+var tenantSchema = new Schema({
+  tenantId: {
+    type: String,
+    required: true,
   },
-  { timestamps: true },
-);
+  origin: {
+    type: String,
+    required: true,
+  },
+  passwordSecret: {
+    type: String, 
+    required: true,
+  },
+});
 
-const tenants = mongosse.model('tenants', tenantsSchema);
-module.exports = tenants;
+module.exports = tenantSchema;

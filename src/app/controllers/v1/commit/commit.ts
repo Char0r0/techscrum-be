@@ -4,9 +4,9 @@ const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
-  const senderId = req.params.senderid;
+  const { id } = req.params;
   try {
-    const result = await commits.find({ sender_id: senderId });
+    const result = await commits.getModel(req.dbConnection).find({ senderId: id });
     res.send(replaceId(result));
   } catch (e) {
     next(e);
@@ -16,7 +16,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const { taskId, senderId, content } = req.body;
   try {
-    const newComment = await commits.create({
+    const newComment = await commits.getModel(req.dbConnection).create({
       taskId,
       senderId,
       content,
@@ -34,7 +34,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId, content } = req.body;
   const updatedAt = Date.now();
   try {
-    const updatedComment = await commits.findByIdAndUpdate(
+    const updatedComment = await commits.getModel(req.dbConnection).findByIdAndUpdate(
       { _id: commitId },
       { content, updatedAt },
     );
@@ -50,8 +50,8 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
-    await commits.deleteOne({ _id: commitId });
-    res.sendStatus(status.NOTCONNECTED);
+    await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
+    res.sendStatus(status.NOT_CONNECTED);
   } catch (e) {
     next(e);
   }

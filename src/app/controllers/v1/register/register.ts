@@ -16,9 +16,9 @@ declare module 'express-serve-static-core' {
 exports.emailRegister = async (req: Request, res: Response, next: NextFunction) => {
   const email = req.params.email;
   try {
-    const existUser: boolean = await emailCheck(email);
+    const existUser: boolean = await emailCheck(email, req);
     if (!existUser) {
-      await emailRegister(email);
+      await emailRegister(email, req);
       return res.status(status.CREATED).send();
     }
     res.status(status.FOUND).send();
@@ -46,8 +46,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const { email, name, password } = req.body;
-    const user = await User.activeAccount(email, name, password);
-    const userProfile = await UserProfile.findOne({ userId: user.id });
+    const user = await User.getModel(req.dbConnection).activeAccount(email, name, password, req);
+    const userProfile = await UserProfile.getModel(req.dbConnection).findOne({ userId: user.id });
     const token = await user.generateAuthToken();
     res.send({ user, userProfile, ...token });
   } catch (e) {
