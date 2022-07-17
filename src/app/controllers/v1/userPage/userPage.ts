@@ -11,7 +11,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userPageContentObject = req.body;
-    const updateUserPageFlag = await userProfile.findOneAndUpdate(
+    const updateUserPageFlag = await userProfile.getModel(req.dbConnection).findOneAndUpdate(
       { userId: id },
       userPageContentObject,
     );
