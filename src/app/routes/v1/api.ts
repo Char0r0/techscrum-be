@@ -155,7 +155,8 @@ router.delete('/account/me', authenticationToken, accountSettingControllers.dest
 
 router.post('/autoFetchUserInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
 
-router.get('/projects', projects.show);
+router.get('/projects', projects.index);
+router.get('/projects/:id', projects.show);
 router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
