@@ -4,7 +4,7 @@ const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
 const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
-const { authenticationEmailToken, authenticationToken } = require('../../middleware/auth');
+const { authenticationEmailToken, authenticationRefreshToken, authenticationToken } = require('../../middleware/auth');
 const login = require('../../controllers/v1/login/login');
 const register = require('../../controllers/v1/register/register');
 const board = require('../../controllers/v1/board/board');
@@ -14,6 +14,9 @@ const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 const saasMiddleware = require('../../middleware/saas');
+const userPageControllers = require('../../controllers/v1/userPage/userPage');
+
+router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
 /**
@@ -128,12 +131,13 @@ router.put('/register/:token', authenticationEmailToken, register.store);
  *                 $ref: '#/components/schemas/User'
  */
 
-router.all('*', saasMiddleware.saas);
+
 
 router.get('/users/:id', userControllers.show);
 router.post('/users/:id', userControllers.update);
+router.put('/users/:id', userPageControllers.update);
 
-router.get('/commits/:senderid', commitControllers.show);
+router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.delete);
@@ -144,19 +148,22 @@ router.post('/tasks', task.store);
 router.put('/tasks/:id', task.update);
 router.delete('/tasks/:id', task.delete);
 
-router.get('/me', authenticationToken, userInfoControllers.index);
+//router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
-router.get('/projects', projects.show);
+router.post('/autoFetchUserInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
+
+router.get('/projects', projects.index);
+router.get('/projects/:id', projects.show);
 router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.post('/project/shortcut/:id', shortcutControllers.store);
-router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
-router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
+router.post('/projects/:id/shortcuts', shortcutControllers.store);
+router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
+router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
 
 
 

@@ -39,5 +39,5 @@ module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('project', projectSchema);
+  return connection.model('projects', projectSchema);
 };
