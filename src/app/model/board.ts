@@ -54,7 +54,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
       {
         $lookup: {
-          from: 'useraccounts',
+          from: 'users',
           localField: 'taskList.assign',
           foreignField: '_id',
           as: 'taskList.assignInfo',

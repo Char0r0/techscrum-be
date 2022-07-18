@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 const status = require('http-status');
 const { emailCheck } = require('../../../services/accountAccess/emailCheck');
 const { emailRegister } = require('../../../services/accountAccess/register');
-const User = require('../../../model/userAccount');
+const User = require('../../../model/user');
 const UserProfile = require('../../../model/userProfile');
 
 declare module 'express-serve-static-core' {

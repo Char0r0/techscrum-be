@@ -38,14 +38,6 @@ module.exports = () => {
   app.use(limiter);
   app.use(helmet());
   app.use(config.api.prefix, apiRouter);
-  // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  //   try {
-  //     next();
-  //   } catch (e: any) {
-  //     errorHandler.handleError(err, res);
-  //     res.status(status.INTERNAL_SERVER_ERROR).send();
-  //   }
-  // });
 
   app.use((err: Error, req: express.Request, res: express.Response, next : NextFunction) => {
     errorHandler.handleError(err, res);
