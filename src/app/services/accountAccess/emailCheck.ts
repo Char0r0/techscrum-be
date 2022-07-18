@@ -1,4 +1,4 @@
-const users = require('../../model/userAccount');
+const users = require('../../model/user');
 
 export const emailCheck = async (email: string, req:any) => {
   const result = await users.getModel(req.dbConnection).findOne({ email });

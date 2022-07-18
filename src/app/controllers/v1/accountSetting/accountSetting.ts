@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-const Users = require('../../../model/userAccount');
+const Users = require('../../../model/user');
 const status = require('http-status');
 const { encryption } = require('../../../services/encryption/encryption');
 const { passwordAuth } = require('../../../services/passwordAuth/passwordAuth');
