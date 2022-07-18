@@ -153,7 +153,7 @@ router.delete('/tasks/:id', task.delete);
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
-router.post('/autoFetchUserInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
+router.post('/auto-fetch-userInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
 
 router.get('/projects', projects.index);
 router.get('/projects/:id', projects.show);
