@@ -25,7 +25,7 @@ const projectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    icon: { type: String, required: false },
+    iconUrl: { type: String, required: false },
     star: { type: Boolean, required: false },
     detail: { type: 'string', required: false },
     shortcut: [
