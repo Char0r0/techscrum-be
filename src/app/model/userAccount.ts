@@ -55,7 +55,7 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
-userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
+userSchema.statics.activeAccount = async function (email: string, name: string, password: string, req:any) {
   const user = await this.findOneAndUpdate(
     { email },
     { password: await bcrypt.hash(password, 8), active: true },
@@ -63,7 +63,8 @@ userSchema.statics.activeAccount = async function (email: string, name: string, 
   if (!user) throw new Error('Cannot find user');
   
   const avatarIcon = `${name?.substring(0, 1) || 'A'}.png`;
-  const userProfile = new UserProfile({ userId: user._id, name, avatarIcon });
+  const userProfileModel = UserProfile.getModel(req.dbConnection);
+  const userProfile = new userProfileModel({ userId: user._id, name, avatarIcon });
   await userProfile.save();
   user.name = name;
   user.avatarIcon = userProfile.avatarIcon;
@@ -97,22 +98,29 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.ACCESS_SECRET, {
+  const token = jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
     expiresIn: '48h',
   });
   user.tokens = user.tokens.concat({ token });
-  if (user.refreshToken == null || user.refreshToken == undefined) {
+  if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
     const randomeString = randomStringGenerator(10);
-    const refreshToken = jwt.sign({ randomeString }, process.env.ACCESS_SECRET);
-    user.refreshToken = refreshToken;
+    const refreshToken = jwt.sign({ id: user._id, refreshToken: randomeString }, process.env.ACCESS_SECRET, {
+      expiresIn: '360h',
+    });
+    user.refreshToken = randomeString;
+    await user.save();
+    return { token, refreshToken: refreshToken };
   }
-  await user.save();
-  return { token, refreshToken: user.refreshToken };
+
+  const refreshToken = jwt.sign({ id: user._id, refreshToken: user.refreshToken }, process.env.ACCESS_SECRET, {
+    expiresIn: '360h',
+  });
+  return { token, refreshToken };
 };
 
 module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('task', userSchema);
+  return connection.model('users', userSchema);
 };

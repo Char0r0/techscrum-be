@@ -16,16 +16,16 @@ export const emailSender = (email: string, validationCode: string) => {
     Message: {
       Subject: {
         Charset: 'UTF-8',
-        Data: 'New Test email',
+        Data: 'Techscrum - Email Verification',
       },
       Body: {
         Html: {
           Charset: 'UTF-8',
-          Data: `${config.frontEndAddress}/register/${validationCode}`,
-        },
-        Text: {
-          Charset: 'UTF-8',
-          Data: '',
+          Data: '<p>Thanks for registering your Techscrum account.</p>' +
+          `<p>Please verify your email address by clicking on the link below to complete your registration.</p>
+          <a href = '${config.frontEndAddress}/register/${validationCode}'>Verify your email address</a>
+          <p>If you have any question, please contact us on admin@techscrumapp.com</p>
+          <p>Techscrum Team</p>`,
         },
       },
     },
