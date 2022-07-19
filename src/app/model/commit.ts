@@ -25,5 +25,9 @@ const commitSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const commits = mongoose.model('commits', commitSchema);
-module.exports = commits;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('commits', commitSchema);
+};

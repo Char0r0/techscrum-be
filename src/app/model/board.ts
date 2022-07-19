@@ -54,7 +54,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
       {
         $lookup: {
-          from: 'useraccounts',
+          from: 'users',
           localField: 'taskList.assign',
           foreignField: '_id',
           as: 'taskList.assignInfo',
@@ -103,6 +103,9 @@ boardSchema.statics.findBoardById = async function (id: string) {
   return boardInfo;
 };
 
-const boardModel = mongoose.model('boards', boardSchema);
-
-module.exports = boardModel;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('boards', boardSchema);
+};

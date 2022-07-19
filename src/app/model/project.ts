@@ -25,7 +25,7 @@ const projectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    icon: { type: String, required: false },
+    iconUrl: { type: String, required: false },
     star: { type: Boolean, required: false },
     detail: { type: 'string', required: false },
     shortcut: [
@@ -35,5 +35,9 @@ const projectSchema = mongoose.Schema(
   { timestamps: true },
 );
 
-const project = mongoose.model('project', projectSchema);
-module.exports = project;
+module.exports.getModel = (connection: any) => {
+  if (!connection) {
+    throw new Error('No connection');
+  }
+  return connection.model('projects', projectSchema);
+};

@@ -13,8 +13,12 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
+const  labelController = require('../../controllers/v1/label/label');
+const multerMiddleware = require('../../middleware/multer');
+const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
 
+router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
 /**
@@ -129,8 +133,10 @@ router.put('/register/:token', authenticationEmailToken, register.store);
  *                 $ref: '#/components/schemas/User'
  */
 
-router.get('/users/:id', userControllers.show);
-router.post('/users/:id', userControllers.update);
+
+router.get('/users', userControllers.index);
+// router.get('/users/:id', userControllers.show);
+// router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageControllers.update);
 
 router.get('/commits/:id', commitControllers.show);
@@ -149,17 +155,25 @@ router.delete('/tasks/:id', task.delete);
 router.patch('/account/me', authenticationToken, accountSettingControllers.update);
 router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
 
-router.post('/autoFetchUserInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
+router.post('/auto-fetch-userInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
 
-router.get('/projects', projects.show);
+router.get('/projects', projects.index);
+router.get('/projects/:id', projects.show);
 router.put('/projects/:id', projects.update);
 router.post('/projects', projects.store);
 router.delete('/projects/:id', projects.delete);
 
-router.post('/project/shortcut/:id', shortcutControllers.store);
-router.put('/project/shortcut/:id/:shortcutId', shortcutControllers.update);
-router.delete('/project/shortcut/:id/:shortcutId', shortcutControllers.destroy);
+router.post('/projects/:id/shortcuts', shortcutControllers.store);
+router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
+router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
+
+router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
+  res.status(200).json(req.files);
+});
 
 router.get('/board/:id', board.show);
+
+router.get('/labels/:projectId', labelController.index);
+
 
 module.exports = router;

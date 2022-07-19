@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-const Users = require('../../../model/userAccount');
+const Users = require('../../../model/user');
 const status = require('http-status');
 const { encryption } = require('../../../services/encryption/encryption');
 const { passwordAuth } = require('../../../services/passwordAuth/passwordAuth');
@@ -19,7 +19,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
         return res.sendStatus(status.NOT_ACCEPTABLE);
       }
       const newHashPassword = await encryption(newPassword);
-      const passwordUpdateFlag = await Users.updateOne(
+      const passwordUpdateFlag = await Users.getModel(req.dbConnection).updateOne(
         { _id: user._id },
         { password: newHashPassword },
       );
@@ -44,7 +44,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      await Users.deleteOne({ _id: user._id });
+      await Users.getModel(req.dbConnection).deleteOne({ _id: user._id });
       return res.sendStatus(status.NOTCONNECTED);
     } catch (e) {
       next(e);

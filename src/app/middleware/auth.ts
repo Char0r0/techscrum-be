@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
-const User = require('../model/userAccount');
+const User = require('../model/user');
 const status = require('http-status');
 
 declare module 'express-serve-static-core' {
@@ -16,7 +16,7 @@ declare module 'express-serve-static-core' {
 const authenticationEmailToken = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.params.token;
   const { email, activeCode } = jwt.verify(token, process.env.EMAIL_SECRET);
-  const user = await User.findOne({ email, activeCode }).exec();
+  const user = await User.getModel(req.dbConnection).findOne({ email, activeCode }).exec();
   if (user && !user.active) {
     req.verifyEmail = email;
     return next();
@@ -36,7 +36,11 @@ const authenticationToken = (req: Request, res: Response, next: NextFunction) =>
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const user = await User.findOne({ _id: verifyUser.id });
+      const user = await User.getModel(req.dbConnection).findOne({ _id: verifyUser.id });
+      if (!user) {
+        res.status(status.FORBIDDEN).send();
+        return;
+      }
       req.user = user;
       req.token = authToken;
       req.userId = user.id;
@@ -60,7 +64,7 @@ const authenticationRefreshToken = async (req: Request, res: Response, next: Nex
     jwt.verify(authRefreshToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authRefreshToken, process.env.ACCESS_SECRET);
-      const user = await User.findOne({
+      const user = await User.getModel(req.dbConnection).findOne({
         _id: verifyUser.id,
         refreshToken: verifyUser.refreshToken,
       });
