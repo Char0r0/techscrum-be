@@ -13,6 +13,7 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
+const  labelController = require('../../controllers/v1/label/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
@@ -171,5 +172,8 @@ router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => 
 });
 
 router.get('/board/:id', board.show);
+
+router.get('/labels/:projectId', labelController.index);
+
 
 module.exports = router;
