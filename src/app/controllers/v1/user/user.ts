@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
+const User = require('../../../model/user');
 const status = require('http-status');
-const User = require('../../../model/userAccount');
 
 exports.index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -13,7 +13,6 @@ exports.index = async (req: Request, res: Response) => {
   const users = await User.getModel(req.dbConnection).find({});
   res.send(replaceId(users));
 };
-
 
 // exports.show = (req: Request, res: Response) => {
 //   const id = parseInt(req.params.id);
