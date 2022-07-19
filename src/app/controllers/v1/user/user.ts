@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
 const status = require('http-status');
-const User = require('../../../model/userAccount');
+const User = require('../../../model/user');
 
 exports.index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
