@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const policySchema = new mongoose.Schema(
   {
-    title: {
+    name: {
       type: String,
       required: true,
       unique: true,

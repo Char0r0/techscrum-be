@@ -17,6 +17,13 @@ const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
 
+
+const Role = require('../../model/role');
+const Policy = require('../../model/policy');
+const RolePolicy = require('../../model/rolePolicy');
+
+
+
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
@@ -171,5 +178,40 @@ router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => 
 });
 
 router.get('/board/:id', board.show);
+
+router.get('/abc', (req:any)=>{
+  // const Role = require('../../model/role');
+  // const Policy = require('../../model/policy');
+  // const RolePolicy = require('../../model/rolePolicy');
+
+  const role = Role.getModel(req.dbConnection);
+  const policy = Policy.getModel(req.dbConnection);
+  const rolePolicy = RolePolicy.getModel(req.dbConnection);
+
+  const adminRole = new role({ name:'admin', status:1 });
+  const developerRole = new role({ name:'developer', status:1 });
+  const projectManagerRole = new role({ name:'project-manager', status:1 });
+  const viewRole = new role({ name:'view', status:1 });
+  
+  adminRole.save();
+  developerRole.save();
+  projectManagerRole.save();
+  viewRole.save();
+
+  const viewProjectPolicy = new policy({ name: 'view-project', urls: ['view-project'], status:1 });
+  const editProjectPolicy = new policy({ name: 'edit-project', urls: ['edit-project'], status:1 });
+  const deleteProjectPolicy = new policy({ name: 'delete-project', urls: ['delete-project'], status:1 });
+  const addProjectPolicy = new policy({ name: 'add-project', urls: ['add-project'], status:1 });
+
+  viewProjectPolicy.save();
+  editProjectPolicy.save();
+  deleteProjectPolicy.save();
+  addProjectPolicy.save();
+
+  const adminViewProjectPolicy = new rolePolicy({ roleId:adminRole._id, policiesId: viewProjectPolicy._id });
+  const adminEditProjectPolicy = new rolePolicy({ roleId:adminRole._id, policiesId: editProjectPolicy._id });
+  adminViewProjectPolicy.save();
+  adminEditProjectPolicy.save();
+});
 
 module.exports = router;

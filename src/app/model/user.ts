@@ -1,4 +1,5 @@
 import { NextFunction } from 'express';
+import { Types } from 'mongoose';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -42,6 +43,10 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: true,
       default: false,
+    },
+    roleId: {
+      ref: 'roles',
+      type: Types.ObjectId,
     },
   },
   { timestamps: true },
