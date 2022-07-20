@@ -174,6 +174,8 @@ router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => 
 router.get('/board/:id', board.show);
 
 router.get('/labels/:projectId', labelController.index);
-
-
+router.get('/projects/:projectId/labels', labelController.index);
+router.post('/labels', labelController.store);
+router.put('/labels/:id', labelController.update);
+router.delete('/labels/:id', labelController.delete);
 module.exports = router;
