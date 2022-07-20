@@ -34,10 +34,9 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId, content } = req.body;
   const updatedAt = Date.now();
   try {
-    const updatedComment = await commits.getModel(req.dbConnection).findByIdAndUpdate(
-      { _id: commitId },
-      { content, updatedAt },
-    );
+    const updatedComment = await commits
+      .getModel(req.dbConnection)
+      .findByIdAndUpdate({ _id: commitId }, { content, updatedAt });
     if (updatedComment) {
       res.send(replaceId(updatedComment));
     }
@@ -47,7 +46,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
     await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
