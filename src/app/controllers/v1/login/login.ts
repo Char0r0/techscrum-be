@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-const User = require('../../../model/userAccount');
+const User = require('../../../model/user');
 const UserProfile = require('../../../model/userProfile');
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
