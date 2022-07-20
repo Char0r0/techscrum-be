@@ -23,8 +23,9 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     });
     if (newComment) {
       res.send(replaceId(newComment));
+    } else {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
     next(e);
   }
@@ -39,8 +40,9 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
       .findByIdAndUpdate({ _id: commitId }, { content, updatedAt });
     if (updatedComment) {
       res.send(replaceId(updatedComment));
+    } else {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
   } catch (e) {
     next(e);
   }
@@ -50,7 +52,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
     await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
-    res.sendStatus(status.NOT_CONNECTED);
+    res.sendStatus(status.NO_CONTENT);
   } catch (e) {
     next(e);
   }
