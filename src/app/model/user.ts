@@ -46,11 +46,11 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {
-    throw new Error('Please Check Your UserName');
+    return null;
   }
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) {
-    throw new Error('Please Check Your Password!');
+    return null;
   }
   return user;
 };

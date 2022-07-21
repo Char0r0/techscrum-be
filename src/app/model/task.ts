@@ -15,8 +15,7 @@ const taskSchema = new mongoose.Schema(
       trim: true,
     },
     statusId: {
-      type: Number,
-      default: 0,
+      type: Types.ObjectId,
     },
     projectId: {
       type: Types.ObjectId,
@@ -43,10 +42,6 @@ const taskSchema = new mongoose.Schema(
       default: 0,
     },
     assign: {
-      type: Types.ObjectId,
-      ref: 'user',
-    },
-    poster: {
       type: Types.ObjectId,
       ref: 'user',
     },

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Task = require('../../../model/task');
 const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
+const Board = require('../../../model/board');
 const { validationResult } = require('express-validator');
 
 // GET ONE
@@ -28,8 +29,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
+    const { boardId } = req.body;
+    const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
+    const statusId = board.taskStatus[0]._id;
     const taskModel = Task.getModel(req.dbConnection);
-    const task = new taskModel(req.body);
+    const task = new taskModel({ ...req.body, statusId });
     await task.save();
     res.status(status.CREATED).send(replaceId(task));
   } catch (e: any) {
@@ -39,6 +43,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
 //PUT
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
   try {
     const updateTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
       { _id: req.params.id },
@@ -50,7 +59,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     if (!updateTask) {
       res.status(status.ServerInternalError).send({ f: req.params.id });
     }
-    res.send(replaceId(updateTask));
+    res.send(updateTask);
   } catch (e) {
     next(e);
   }
