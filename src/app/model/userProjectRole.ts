@@ -3,13 +3,18 @@ const mongoose = require('mongoose');
 
 const roleSchema = new mongoose.Schema(
   {
+    user_id: {
+      ref: 'users',
+      type: Types.ObjectId,
+      required: true,  
+    },
     roleId: {
       ref: 'roles',
       type: Types.ObjectId,
       required: true,
     },
-    policiesId: {
-      ref: 'policies',
+    projectId: {
+      ref: 'permissions',
       type: Types.ObjectId,
       required: true,
     },
@@ -21,5 +26,5 @@ module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('user_role', roleSchema);
+  return connection.model('user_roles_project', roleSchema);
 };

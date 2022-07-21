@@ -47,11 +47,24 @@ const userSchema = new mongoose.Schema(
     roleId: {
       ref: 'roles',
       type: Types.ObjectId,
+      // required: true,
     },
+    projectsRoles: [
+      {
+        projectId:{
+          ref: 'projects',
+          type: Types.ObjectId,
+        }, 
+        roleId:{
+          ref: 'roles',
+          type: Types.ObjectId,
+        },
+      },
+    ],
   },
   { timestamps: true },
 );
-
+//limitation for 16MB //AWS 16KB 
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {

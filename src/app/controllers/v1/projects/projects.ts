@@ -22,16 +22,14 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
 
 //get one
 exports.show = async (req: any, res: Response, next: NextFunction) => {
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  try {
-    const projects = await Project.getModel(req.dbConnection).findById(req.params.id);
-    res.send(replaceId(projects));
-  } catch (e) {
-    next(e);
-  }
+
+  const project = await Project.getModel(req.dbConnection).findById(req.params.id);
+  res.status(200).send(replaceId(project));
 };
 
 //POST

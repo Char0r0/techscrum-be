@@ -1,3 +1,5 @@
+export {};
+import { Types } from 'mongoose';
 const mongoose = require('mongoose');
 
 const roleSchema = new mongoose.Schema(
@@ -7,9 +9,21 @@ const roleSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    status: {
-      type: Number,
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
     },
+    description: {
+      type: String,
+    },
+    permission: [
+      { 
+        ref: 'permissions',
+        type: Types.ObjectId,
+        required: true, 
+      },
+    ],
   },
   { timestamps: true },
 );

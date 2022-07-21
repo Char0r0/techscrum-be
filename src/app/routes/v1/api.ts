@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = new express.Router();
 const projects = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
@@ -16,13 +17,12 @@ const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
-
-
+const permissionMiddleware = require('../../middleware/permission');
+const User = require('../../model/user');
 const Role = require('../../model/role');
-const Policy = require('../../model/policy');
-const RolePolicy = require('../../model/rolePolicy');
-
-
+const Permission = require('../../model/permission');
+const memberController = require('../../controllers/v1/member/member');
+const roleController = require('../../controllers/v1/role/role');
 
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
@@ -164,14 +164,21 @@ router.delete('/account/me', authenticationToken, accountSettingControllers.dest
 router.post('/auto-fetch-userInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
 
 router.get('/projects', projects.index);
-router.get('/projects/:id', projects.show);
-router.put('/projects/:id', projects.update);
-router.post('/projects', projects.store);
-router.delete('/projects/:id', projects.delete);
+router.get('/projects/:id', authenticationToken, permissionMiddleware.permission('view:projects'), projects.show);
+router.put('/projects/:id', authenticationToken, permissionMiddleware.permission('edit:projects'), projects.update);
+router.post('/projects', authenticationToken, permissionMiddleware.permission('create:projects'), projects.store);
+router.delete('/projects/:id', authenticationToken, permissionMiddleware.permission('delete:projects'), projects.delete);
 
 router.post('/projects/:id/shortcuts', shortcutControllers.store);
 router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
 router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
+
+router.get('/projects/:id/members', memberController.index);
+router.put('/projects/:projectId/members/:userId', memberController.update);
+router.delete('/projects/:projectId/members/:userId', memberController.delete);
+router.post('/projects/:projectId/members/invite', memberController.invite);
+router.get('/members', projects.index);
+router.get('/roles', roleController.index);
 
 router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
   res.status(200).json(req.files);
@@ -179,39 +186,52 @@ router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => 
 
 router.get('/board/:id', board.show);
 
-router.get('/abc', (req:any)=>{
+router.get('/abc', async (req:any)=>{
   // const Role = require('../../model/role');
-  // const Policy = require('../../model/policy');
-  // const RolePolicy = require('../../model/rolePolicy');
+  // const Permission = require('../../model/permission');
 
   const role = Role.getModel(req.dbConnection);
-  const policy = Policy.getModel(req.dbConnection);
-  const rolePolicy = RolePolicy.getModel(req.dbConnection);
-
-  const adminRole = new role({ name:'admin', status:1 });
-  const developerRole = new role({ name:'developer', status:1 });
-  const projectManagerRole = new role({ name:'project-manager', status:1 });
-  const viewRole = new role({ name:'view', status:1 });
+  const permission = Permission.getModel(req.dbConnection);
   
-  adminRole.save();
-  developerRole.save();
-  projectManagerRole.save();
+
+  const viewRole = await role.findOne({ name:'view', slug:'view' });
+  const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
+  viewRole.permission.push(viewP._id);
   viewRole.save();
+  // const adminRole = new role({ name:'admin', slug:'admin' });
+  // const developerRole = new role({ name:'developer', slug:'developer' });
+  // const projectManagerRole = new role({ name:'project-manager', slug:'project-manager' });
+  // const viewRole = new role({ name:'view', slug:'view' });
+  
+  // adminRole.save();
+  // developerRole.save();
+  // projectManagerRole.save();
+  // viewRole.save();
 
-  const viewProjectPolicy = new policy({ name: 'view-project', urls: ['view-project'], status:1 });
-  const editProjectPolicy = new policy({ name: 'edit-project', urls: ['edit-project'], status:1 });
-  const deleteProjectPolicy = new policy({ name: 'delete-project', urls: ['delete-project'], status:1 });
-  const addProjectPolicy = new policy({ name: 'add-project', urls: ['add-project'], status:1 });
+  // const viewProjectPolicy = new permission({ slug: 'view:projects', description: 'view-project' });
+  // const editProjectPolicy = new permission({ slug: 'edit:projects', description: 'edit-project' });
+  // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
+  // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
 
-  viewProjectPolicy.save();
-  editProjectPolicy.save();
-  deleteProjectPolicy.save();
-  addProjectPolicy.save();
+  // viewProjectPolicy.save();
+  // editProjectPolicy.save();
+  // deleteProjectPolicy.save();
+  // addProjectPolicy.save();
 
-  const adminViewProjectPolicy = new rolePolicy({ roleId:adminRole._id, policiesId: viewProjectPolicy._id });
-  const adminEditProjectPolicy = new rolePolicy({ roleId:adminRole._id, policiesId: editProjectPolicy._id });
-  adminViewProjectPolicy.save();
-  adminEditProjectPolicy.save();
+  const users = await User.getModel(req.dbConnection).find({ _id:'62d3b849741c5a203c16bdc4' });
+
+  users[0].projectsRoles = [
+    {
+      projectId: mongoose.Types.ObjectId('62d66e42300c4840ea633801'),
+      roleId:mongoose.Types.ObjectId('62d7f009e4713aab33380392'),
+    },
+  ];
+  users[0].save();
+
+  console.log(users[0]);
+
+
+
 });
 
 module.exports = router;
