@@ -87,7 +87,7 @@ router.all('*', saasMiddleware.saas);
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.post('/login', login.store);
+router.post('/login', login.login);
 
 router.get('/register/:token', authenticationEmailToken, register.get);
 router.post('/register/:email', register.emailRegister);
