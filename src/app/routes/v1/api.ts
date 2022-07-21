@@ -1,13 +1,13 @@
 const express = require('express');
 const router = new express.Router();
-const projects = require('../../controllers/v1/projects/projects');
+const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
-const { authenticationEmailToken, authenticationToken, authenticationTokenValidation, authenticationRefreshToken } = require('../../middleware/auth');
-const login = require('../../controllers/v1/login/login');
-const register = require('../../controllers/v1/register/register');
-const board = require('../../controllers/v1/board/board');
-const task = require('../../controllers/v1/task/task');
+const { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware } = require('../../middleware/auth');
+const loginController = require('../../controllers/v1/login/login');
+const registerController = require('../../controllers/v1/register/register');
+const boardController = require('../../controllers/v1/board/board');
+const taskController = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
@@ -86,11 +86,11 @@ router.all('*', saasMiddleware.saas);
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.post('/login', login.login);
+router.post('/login', loginController.login);
 
-router.get('/register/:token', authenticationEmailToken, register.get);
-router.post('/register/:email', register.emailRegister);
-router.put('/register/:token', authenticationEmailToken, register.store);
+router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
+router.post('/register/:email', registerController.emailRegister);
+router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
  * components:
@@ -144,23 +144,23 @@ router.put('/commits', commitControllers.update);
 router.delete('/commits', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
-router.get('/tasks/:id', task.show);
-router.post('/tasks', task.store);
-router.put('/tasks/:id', task.update);
-router.delete('/tasks/:id', task.delete);
+router.get('/tasks/:id', taskController.show);
+router.post('/tasks', taskController.store);
+router.put('/tasks/:id', taskController.update);
+router.delete('/tasks/:id', taskController.delete);
 
 //router.get('/me', authenticationToken, userInfoControllers.index);
 
-router.patch('/account/me', authenticationToken, accountSettingControllers.update);
-router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
+router.patch('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
+router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
-router.post('/auto-fetch-userInfo', authenticationTokenValidation, authenticationRefreshToken, login.autoFetchUserInfo);
+router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
 
-router.get('/projects', projects.index);
-router.get('/projects/:id', projects.show);
-router.put('/projects/:id', projects.update);
-router.post('/projects', projects.store);
-router.delete('/projects/:id', projects.delete);
+router.get('/projects', projectsController.index);
+router.get('/projects/:id', projectsController.show);
+router.put('/projects/:id', projectsController.update);
+router.post('/projects', projectsController.store);
+router.delete('/projects/:id', projectsController.delete);
 
 router.post('/projects/:id/shortcuts', shortcutControllers.store);
 router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
@@ -170,7 +170,7 @@ router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => 
   res.status(200).json(req.files);
 });
 
-router.get('/board/:id', board.show);
+router.get('/board/:id', boardController.show);
 
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
