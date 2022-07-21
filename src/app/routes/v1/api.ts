@@ -142,7 +142,7 @@ router.put('/users/:id', userPageControllers.update);
 router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
-router.delete('/commits', commitControllers.delete);
+router.delete('/commits', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', task.show);
