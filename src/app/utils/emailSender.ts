@@ -33,5 +33,5 @@ export const emailSender = (email: string, validationCode: string) => {
   };
 
   // Create the promise and SES service object
-  new aws.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+  return new aws.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
 };
