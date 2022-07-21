@@ -51,6 +51,33 @@ const authenticationToken = (req: Request, res: Response, next: NextFunction) =>
   res.status(status.FORBIDDEN).send();
 };
 
+const authenticationTokenValidation = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  const authType = authHeader && authHeader.split(' ')[0];
+  const authToken = authHeader && authHeader.split(' ')[1];
+
+  if (!authHeader || !authToken) return res.sendStatus(401);
+
+  if (authType === 'Bearer') {
+    jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
+      if (err) return res.status(status.FORBIDDEN).send();
+      const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
+      const user = await User.getModel(req.dbConnection).findOne({ _id: verifyUser.id });
+      if (!user) {
+        res.status(status.FORBIDDEN).send();
+        return;
+      }
+      req.user = user;
+      req.token = authToken;
+      req.userId = user.id;
+      return next();
+    });
+    return;
+  }
+  res.status(status.FORBIDDEN).send();
+};
+
 const authenticationRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
   if (Object.keys(req.user ?? {}).length !== 0) return next();
   const authHeader = req.headers.authorization;
@@ -88,4 +115,4 @@ const authenticationRefreshToken = async (req: Request, res: Response, next: Nex
   res.status(status.FORBIDDEN).send();
 };
 
-module.exports = { authenticationEmailToken, authenticationToken, authenticationRefreshToken };
+module.exports = { authenticationEmailToken, authenticationToken, authenticationTokenValidation, authenticationRefreshToken };
