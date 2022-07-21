@@ -18,8 +18,9 @@ exports.emailRegister = async (req: Request, res: Response, next: NextFunction) 
   try {
     const existUser: boolean = await emailCheck(email, req);
     if (!existUser) {
-      await emailRegister(email, req);
-      return res.status(status.CREATED).send();
+      const user = await emailRegister(email, req);
+      if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
+      return res.status(status.CREATED).send(user);
     }
     res.status(status.FOUND).send();
   } catch (e) {
