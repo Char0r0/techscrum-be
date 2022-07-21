@@ -2,7 +2,6 @@ import { NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const UserProfile = require('./userProfile');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 
 const userSchema = new mongoose.Schema(
@@ -21,14 +20,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
     activeCode: {
       type: String,
       trim: true,
@@ -39,6 +30,33 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    name: {
+      type: String,
+      trim: true,
+    },
+    jobTitle: {
+      type: String,
+      trim: true,
+    },
+    department: {
+      type: String,
+      trim: true,
+    },
+    location: {
+      type: String,
+      trim: true,
+    },
+    avatarIcon: {
+      type: String,
+    },
+    abbreviation: {
+      type: String,
+      trim: true,
+    },
+    userName: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true },
 );
@@ -46,28 +64,23 @@ const userSchema = new mongoose.Schema(
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {
-    throw new Error('Please Check Your UserName');
+    return null;
   }
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) {
-    throw new Error('Please Check Your Password!');
+    return null;
   }
   return user;
 };
 
-userSchema.statics.activeAccount = async function (email: string, name: string, password: string, req:any) {
+userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
+  const avatarIcon = `${name?.substring(0, 1) || 'avatar'}.png`;
   const user = await this.findOneAndUpdate(
     { email },
-    { password: await bcrypt.hash(password, 8), active: true },
+    { password: await bcrypt.hash(password, 8), active: true, name, avatarIcon },
+    { new: true },
   ).exec();
   if (!user) throw new Error('Cannot find user');
-  
-  const avatarIcon = `${name?.substring(0, 1) || 'A'}.png`;
-  const userProfileModel = UserProfile.getModel(req.dbConnection);
-  const userProfile = new userProfileModel({ userId: user._id, name, avatarIcon });
-  await userProfile.save();
-  user.name = name;
-  user.avatarIcon = userProfile.avatarIcon;
   return user;
 };
 
@@ -101,7 +114,6 @@ userSchema.methods.generateAuthToken = async function () {
   const token = jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
     expiresIn: '48h',
   });
-  user.tokens = user.tokens.concat({ token });
   if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
     const randomeString = randomStringGenerator(10);
     const refreshToken = jwt.sign({ id: user._id, refreshToken: randomeString }, process.env.ACCESS_SECRET, {
