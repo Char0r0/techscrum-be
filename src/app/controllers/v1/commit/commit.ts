@@ -21,11 +21,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
       senderId,
       content,
     });
-    if (newComment) {
-      res.send(replaceId(newComment));
-    } else {
+    if (!newComment) {
       res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      return;
     }
+    res.send(replaceId(newComment));
   } catch (e) {
     next(e);
   }
@@ -38,11 +38,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     const updatedComment = await commits
       .getModel(req.dbConnection)
       .findByIdAndUpdate({ _id: commitId }, { content, updatedAt });
-    if (updatedComment) {
-      res.send(replaceId(updatedComment));
-    } else {
+    if (!updatedComment) {
       res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      return;
     }
+    res.send(replaceId(updatedComment));
   } catch (e) {
     next(e);
   }
