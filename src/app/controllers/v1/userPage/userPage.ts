@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-const user = require('../../../model/user');
+const userProfile = require('../../../model/userProfile');
 const status = require('http-status');
 import { validationResult } from 'express-validator';
 
@@ -11,7 +11,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const userPageContentObject = req.body;
-    const updateUserPageFlag = await user.getModel(req.dbConnection).findOneAndUpdate(
+    const updateUserPageFlag = await userProfile.getModel(req.dbConnection).findOneAndUpdate(
       { userId: id },
       userPageContentObject,
     );
