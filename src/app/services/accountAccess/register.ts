@@ -9,7 +9,7 @@ const emailRegister = async (email: string, req: any) => {
     const user = await User.getModel(req.dbConnection).findOneAndUpdate(
       { email },
       { email, activeCode },
-      { upsert: true },
+      { new: true, upsert: true },
     );
 
     const validationToken = jwt.sign({ email, activeCode }, process.env.EMAIL_SECRET);
