@@ -9,8 +9,8 @@ const boardSchema = new mongoose.Schema(
       required: true,
     },
     taskStatus: {
-      type: [String],
-      default: ['To Do', 'In Progress ', 'Review', 'Done'],
+      type: [{ id: Types.ObjectId, name: String }],
+      default: [{ name: 'To Do' }, { name: 'In Progress ' }, { name: 'Review' }, { name: 'Done' }],
     },
   },
   { timestamps: true },
