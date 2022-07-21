@@ -1,8 +1,14 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
-const status = require('http-status');
 const User = require('../../../model/user');
+const status = require('http-status');
+<<<<<<< HEAD
+const User = require('../../../model/user');
+||||||| 4ce248e
+const User = require('../../../model/userAccount');
+=======
+>>>>>>> f88670dfeb6a6791dba69c43dbdbd68cfb6ac500
 
 exports.index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -14,7 +20,6 @@ exports.index = async (req: Request, res: Response) => {
   res.send(replaceId(users));
   //return res.send({});
 };
-
 
 // exports.show = (req: Request, res: Response) => {
 //   const id = parseInt(req.params.id);
