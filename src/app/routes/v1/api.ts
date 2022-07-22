@@ -3,7 +3,12 @@ const router = new express.Router();
 const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
-const { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware } = require('../../middleware/auth');
+const {
+  authenticationEmailTokenMiddleware,
+  authenticationTokenMiddleware,
+  authenticationTokenValidationMiddleware,
+  authenticationRefreshTokenMiddleware,
+} = require('../../middleware/auth');
 const loginController = require('../../controllers/v1/login/login');
 const registerController = require('../../controllers/v1/register/register');
 const boardController = require('../../controllers/v1/board/board');
@@ -12,7 +17,7 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
-const  labelController = require('../../controllers/v1/label/label');
+const labelController = require('../../controllers/v1/label/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
@@ -132,7 +137,6 @@ router.put('/register/:token', authenticationEmailTokenMiddleware, registerContr
  *                 $ref: '#/components/schemas/User'
  */
 
-
 router.get('/users', userControllers.index);
 // router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
@@ -140,8 +144,8 @@ router.put('/users/:id', userPageControllers.update);
 
 router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
-router.put('/commits', commitControllers.update);
-router.delete('/commits', commitControllers.destroy);
+router.put('/commits/:id', commitControllers.update);
+router.delete('/commits/:id', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
@@ -154,7 +158,12 @@ router.delete('/tasks/:id', taskController.delete);
 router.patch('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
-router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
+router.post(
+  '/auto-fetch-userInfo',
+  authenticationTokenValidationMiddleware,
+  authenticationRefreshTokenMiddleware,
+  loginController.autoFetchUserInfo,
+);
 
 router.get('/projects', projectsController.index);
 router.get('/projects/:id', projectsController.show);
@@ -166,7 +175,7 @@ router.post('/projects/:id/shortcuts', shortcutControllers.store);
 router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
 router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
 
-router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
+router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
 
