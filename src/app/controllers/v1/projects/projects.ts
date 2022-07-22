@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const Project = require('../../../model/project');
 const Board = require('../../../model/board');
+const User = require('../../../model/user');
 const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
@@ -13,7 +14,7 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projects = await Project.getModel(req.dbConnection).find({});
+    const projects = await Project.getModel(req.dbConnection).find().populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) });
     res.send(replaceId(projects));
   } catch (e) {
     next(e);
@@ -21,14 +22,14 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
 };
 
 //get one
-exports.show = async (req: any, res: Response, next: NextFunction) => {
+exports.show = async (req: any, res: Response) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const project = await Project.getModel(req.dbConnection).findById(req.params.id);
+  const project = await Project.getModel(req.dbConnection).findById(req.params.id).populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) });
   res.status(200).send(replaceId(project));
 };
 

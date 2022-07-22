@@ -3,12 +3,6 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
 const User = require('../../../model/user');
 const status = require('http-status');
-<<<<<<< HEAD
-const User = require('../../../model/user');
-||||||| 4ce248e
-const User = require('../../../model/userAccount');
-=======
->>>>>>> f88670dfeb6a6791dba69c43dbdbd68cfb6ac500
 
 exports.index = async (req: Request, res: Response) => {
   const errors = validationResult(req);

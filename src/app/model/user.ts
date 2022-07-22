@@ -35,17 +35,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-<<<<<<< HEAD
-    roleId: {
-      ref: 'roles',
-      type: Types.ObjectId,
-      // required: true,
-    },
     projectsRoles: [
       {
         projectId:{
           ref: 'projects',
           type: Types.ObjectId,
+          unique:true,
         }, 
         roleId:{
           ref: 'roles',
@@ -53,8 +48,6 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-||||||| 4ce248e
-=======
     name: {
       type: String,
       trim: true,
@@ -82,7 +75,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
->>>>>>> f88670dfeb6a6791dba69c43dbdbd68cfb6ac500
   },
   { timestamps: true },
 );

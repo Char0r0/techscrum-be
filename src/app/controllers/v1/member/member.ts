@@ -59,9 +59,12 @@ exports.delete = async (req: any, res: Response) => {
 
 
 exports.invite = async (req: any, res: Response) => {
+  //check all user id correct or not 
   const { projectId } = req.params;
   const { roleId, userId } = req.body;
   const projectsRolesId = new mongoose.Types.ObjectId();
+  const us = await User.getModel(req.dbConnection).find({'_id':userId, "projectsRoles.projectId":mongoose.Types.ObjectId(projectId) })
+  if(us.length === 0){
   const updateUser = await User.getModel(req.dbConnection).findByIdAndUpdate(userId, {
     $push: {
       projectsRoles: [{ _id: projectsRolesId, projectId: projectId, roleId: roleId }],
@@ -69,7 +72,10 @@ exports.invite = async (req: any, res: Response) => {
   }, 
   { new: true },
   );
-
-
+  
   res.send(replaceId(updateUser));
+  return;
+  }
+
+  res.send(replaceId(us[0]));
 };

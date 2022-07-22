@@ -28,8 +28,13 @@ const hasPermission = async (role, slug:string, req:Request) =>{
 const permission = (slug: string) =>{ 
   return async (req: Request, res: Response, next: NextFunction) => {
     const user:any = req.user;
-    const projectId = req.params.id;
+    const projectId = req.params.id || req.params.projectId;
     const projectRole = user.projectsRoles;
+    if (user.isAdmin) {
+      next();
+      return;
+    }
+
     const roleId = getProjectRoleId(projectId, projectRole);
     //console.log(projectId, projectRole, roleId);
     if (!roleId) {

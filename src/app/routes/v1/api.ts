@@ -23,6 +23,8 @@ const Role = require('../../model/role');
 const Permission = require('../../model/permission');
 const memberController = require('../../controllers/v1/member/member');
 const roleController = require('../../controllers/v1/role/role');
+const permissionController = require('../../controllers/v1/permission/permission');
+
 
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
@@ -158,7 +160,7 @@ router.delete('/tasks/:id', taskController.delete);
 
 //router.get('/me', authenticationToken, userInfoControllers.index);
 
-router.patch('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
+router.put('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
 router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
@@ -179,7 +181,8 @@ router.delete('/projects/:projectId/members/:userId', memberController.delete);
 router.post('/projects/:projectId/members/invite', memberController.invite);
 // router.get('/members', projects.index);
 router.get('/roles', roleController.index);
-
+router.put('/roles/:id/permission/:permissionId', roleController.update);
+router.get('/permissions', permissionController.index);
 router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
   res.status(200).json(req.files);
 });
