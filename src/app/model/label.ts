@@ -1,6 +1,5 @@
 export {};
 const mongoose = require('mongoose');
-const { Types } = require('mongoose');
 
 const labelSchema = new mongoose.Schema(
   {
@@ -11,12 +10,6 @@ const labelSchema = new mongoose.Schema(
     slug: {
       type: String,
       require:true,
-    },
-    projectId:{
-      ref: 'projects',
-      type: Types.ObjectId,
-      required: true,
-      trim: true,      
     },
   },
   { timestamps: true },

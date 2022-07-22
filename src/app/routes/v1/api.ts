@@ -174,6 +174,7 @@ router.get('/board/:id', boardController.show);
 
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
+router.post('/projects/:projectId/labels', labelController.store);
 router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);
