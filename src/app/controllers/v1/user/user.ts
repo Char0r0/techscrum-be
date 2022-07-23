@@ -12,7 +12,6 @@ exports.index = async (req: Request, res: Response) => {
  
   const users = await User.getModel(req.dbConnection).find({});
   res.send(replaceId(users));
-  //return res.send({});
 };
 
 // exports.show = (req: Request, res: Response) => {
