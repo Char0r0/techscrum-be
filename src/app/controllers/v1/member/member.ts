@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
+import {  emailSender2 } from '../../../utils/emailSender';
 const User = require('../../../model/user');
 const status = require('http-status');
 const mongoose = require('mongoose');
@@ -63,19 +64,19 @@ exports.invite = async (req: any, res: Response) => {
   const { projectId } = req.params;
   const { roleId, userId } = req.body;
   const projectsRolesId = new mongoose.Types.ObjectId();
-  const us = await User.getModel(req.dbConnection).find({'_id':userId, "projectsRoles.projectId":mongoose.Types.ObjectId(projectId) })
-  if(us.length === 0){
-  const updateUser = await User.getModel(req.dbConnection).findByIdAndUpdate(userId, {
-    $push: {
-      projectsRoles: [{ _id: projectsRolesId, projectId: projectId, roleId: roleId }],
-    },
-  }, 
-  { new: true },
-  );
-  
-  res.send(replaceId(updateUser));
-  return;
+  let updateUser = await User.getModel(req.dbConnection).find({ '_id':userId, 'projectsRoles.projectId':mongoose.Types.ObjectId(projectId) });
+  if (updateUser.length === 0) {
+    updateUser = await User.getModel(req.dbConnection).findByIdAndUpdate(userId, {
+      $push: {
+        projectsRoles: [{ _id: projectsRolesId, projectId: projectId, roleId: roleId }],
+      },
+    }, 
+    { new: true },
+    );
+    emailSender2(updateUser.email, (email_err:any, email_data:any)=>{return;});
+    res.send(replaceId(updateUser));
+    return;
   }
-
-  res.send(replaceId(us[0]));
+  emailSender2(updateUser.email, (email_err:any, email_data:any)=>{return;});
+  res.send(replaceId(updateUser[0]));
 };

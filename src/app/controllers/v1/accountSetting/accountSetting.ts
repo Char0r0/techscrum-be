@@ -38,7 +38,7 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
 
 
 exports.update = async (req: Request, res: Response) => {
-  const { name = '', avatarIcon = '', userName = '', abbreviation = '' } = req.body;
+  const { name = '', avatarIcon = '', userName = '', abbreviation = '', jobTitle = '', location = '' } = req.body;
 
   const user: any = req.user;
   if (!user) {
@@ -50,6 +50,8 @@ exports.update = async (req: Request, res: Response) => {
     avatarIcon,
     userName,
     abbreviation,
+    jobTitle,
+    location,
   }, { new: true });
   if (!updateUser) {
     res.sendStatus(status.NOT_ACCEPTABLE);
