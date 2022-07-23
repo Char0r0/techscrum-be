@@ -9,8 +9,31 @@ const boardSchema = new mongoose.Schema(
       required: true,
     },
     taskStatus: {
-      type: [String],
-      default: ['To Do', 'In Progress ', 'Review', 'Done'],
+      type: [
+        {
+          id: Types.ObjectId,
+          name: String,
+          slug: String,
+          items: [
+            {
+              taskId: {
+                type: Types.ObjectId,
+                ref: 'task',
+              },
+              order: {
+                type: Number,
+                required: true,
+              },
+            },
+          ],
+        },
+      ],
+      default: [
+        { name: 'To Do', slug: 'to-do', items: [] },
+        { name: 'In Progress', slug: 'in-progress', items: [] },
+        { name: 'Review', slug: 'review', items: [] },
+        { name: 'Done', slug: 'done', items: [] },
+      ],
     },
   },
   { timestamps: true },
@@ -26,80 +49,33 @@ boardSchema.statics.findBoardById = async function (id: string) {
       $match: { _id: objId },
     },
     {
+      $unwind: {
+        path: '$taskStatus',
+      },
+    },
+    {
       $lookup: {
         from: 'tasks',
-        localField: '_id',
-        foreignField: 'boardId',
+        localField: 'taskStatus.items.taskId',
+        foreignField: '_id',
         as: 'taskList',
       },
     },
+    {
+      $project: {
+        'taskStatus.items.detail.__v': 0,
+        __v: 0,
+      },
+    },
+    {
+      $group: {
+        _id: '$_id',
+        title: { $first: '$title' },
+        taskStatus: { $push: '$taskStatus' },
+        taskList: { $push: '$taskList' },
+      },
+    },
   ]);
-  if (boardInfo[0].taskList.length > 0) {
-    const boardInfoWithCard = await await this.aggregate([
-      {
-        $match: { _id: objId },
-      },
-      {
-        $lookup: {
-          from: 'tasks',
-          localField: '_id',
-          foreignField: 'boardId',
-          as: 'taskList',
-        },
-      },
-      {
-        $unwind: {
-          path: '$taskList',
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'taskList.assign',
-          foreignField: '_id',
-          as: 'taskList.assignInfo',
-        },
-      },
-      {
-        $project: {
-          'taskList.poster': 0,
-          'taskList.assign': 0,
-          'taskList.assignInfo.password': 0,
-          'taskList.assignInfo.__v': 0,
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          title: { $first: '$title' },
-          taskStatus: { $first: '$taskStatus' },
-          taskList: { $push: '$taskList' },
-        },
-      },
-      {
-        $project: {
-          _id: '$_id',
-          title: '$title',
-          taskStatus: '$taskStatus',
-          taskList: {
-            $map: {
-              input: '$taskList',
-              as: 'task',
-              in: {
-                _id: '$$task._id',
-                tag: '$$task.tag',
-                title: '$$task.title',
-                description: '$$task.description',
-                statusId: '$$task.statusId',
-                assignInfo: '$$task.assignInfo',
-              },
-            },
-          },
-        },
-      },
-    ]);
-    return boardInfoWithCard;
-  }
   return boardInfo;
 };
 

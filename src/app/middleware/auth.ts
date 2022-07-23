@@ -13,7 +13,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const authenticationEmailToken = async (req: Request, res: Response, next: NextFunction) => {
+const authenticationEmailTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.params.token;
   const { email, activeCode } = jwt.verify(token, process.env.EMAIL_SECRET);
   const user = await User.getModel(req.dbConnection).findOne({ email, activeCode }).exec();
@@ -24,7 +24,34 @@ const authenticationEmailToken = async (req: Request, res: Response, next: NextF
   res.status(status.FORBIDDEN).send();
 };
 
-const authenticationToken = (req: Request, res: Response, next: NextFunction) => {
+const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  const authType = authHeader && authHeader.split(' ')[0];
+  const authToken = authHeader && authHeader.split(' ')[1];
+
+  if (!authHeader || !authToken) return res.sendStatus(401);
+
+  if (authType === 'Bearer') {
+    jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
+      if (err) return res.status(status.FORBIDDEN).send();
+      const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
+      const user = await User.getModel(req.dbConnection).findOne({ _id: verifyUser.id });
+      if (!user) {
+        res.status(status.FORBIDDEN).send();
+        return;
+      }
+      req.user = user;
+      req.token = authToken;
+      req.userId = user.id;
+      return next();
+    });
+    return;
+  }
+  res.status(status.FORBIDDEN).send();
+};
+
+const authenticationTokenValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   const authType = authHeader && authHeader.split(' ')[0];
@@ -51,7 +78,7 @@ const authenticationToken = (req: Request, res: Response, next: NextFunction) =>
   res.status(status.FORBIDDEN).send();
 };
 
-const authenticationRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
+const authenticationRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (Object.keys(req.user ?? {}).length !== 0) return next();
   const authHeader = req.headers.authorization;
 
@@ -88,4 +115,4 @@ const authenticationRefreshToken = async (req: Request, res: Response, next: Nex
   res.status(status.FORBIDDEN).send();
 };
 
-module.exports = { authenticationEmailToken, authenticationToken, authenticationRefreshToken };
+module.exports = { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware };

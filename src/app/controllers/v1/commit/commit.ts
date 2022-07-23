@@ -11,6 +11,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
+  //res.send([]);
 };
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,10 +22,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
       senderId,
       content,
     });
-    if (newComment) {
-      res.send(replaceId(newComment));
+    if (!newComment) {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      return;
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    res.send(replaceId(newComment));
   } catch (e) {
     next(e);
   }
@@ -34,24 +36,24 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId, content } = req.body;
   const updatedAt = Date.now();
   try {
-    const updatedComment = await commits.getModel(req.dbConnection).findByIdAndUpdate(
-      { _id: commitId },
-      { content, updatedAt },
-    );
-    if (updatedComment) {
-      res.send(replaceId(updatedComment));
+    const updatedComment = await commits
+      .getModel(req.dbConnection)
+      .findByIdAndUpdate({ _id: commitId }, { content, updatedAt });
+    if (!updatedComment) {
+      res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      return;
     }
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    res.send(replaceId(updatedComment));
   } catch (e) {
     next(e);
   }
 };
 
-exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const { commitId } = req.body;
   try {
     await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
-    res.sendStatus(status.NOT_CONNECTED);
+    res.sendStatus(status.NO_CONTENT);
   } catch (e) {
     next(e);
   }

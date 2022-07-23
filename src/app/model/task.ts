@@ -7,26 +7,23 @@ const taskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      unique: true,
     },
-    tag: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    tags: [{
+      type: Types.ObjectId,
+      ref: 'labels',
+    }],
     statusId: {
-      type: Number,
-      default:0,
-    },
-    projectId:{
       type: Types.ObjectId,
-      ref: 'project',
     },
-    boardId:{
+    projectId: {
       type: Types.ObjectId,
-      ref: 'board',
+      ref: 'projects',
     },
-    typeId:{
+    boardId: {
+      type: Types.ObjectId,
+      ref: 'boards',
+    },
+    typeId: {
       type: String,
       default: 'Task',
     },
@@ -36,19 +33,19 @@ const taskSchema = new mongoose.Schema(
     },
     storyPoint: {
       type: Number,
-      default:0,
-    },  
-    dueAt:{
+      default: 0,
+    },
+    dueAt: {
       type: Date,
-      default:0,
+      default: 0,
     },
     assign: {
       type: Types.ObjectId,
-      ref: 'user',
+      ref: 'users',
     },
-    type:{
+    type: {
       type: String,
-      trim: true,  
+      trim: true,
     },
   },
   { timestamps: true },

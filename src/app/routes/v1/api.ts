@@ -1,14 +1,14 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = new express.Router();
-const projects = require('../../controllers/v1/projects/projects');
+const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
-const userInfoControllers = require('../../controllers/v1/userInfo/userInfo');
-const { authenticationEmailToken, authenticationRefreshToken, authenticationToken } = require('../../middleware/auth');
-const login = require('../../controllers/v1/login/login');
-const register = require('../../controllers/v1/register/register');
-const board = require('../../controllers/v1/board/board');
-const task = require('../../controllers/v1/task/task');
+const { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware } = require('../../middleware/auth');
+const loginController = require('../../controllers/v1/login/login');
+const registerController = require('../../controllers/v1/register/register');
+const boardController = require('../../controllers/v1/board/board');
+const taskController = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
@@ -17,6 +17,14 @@ const  labelController = require('../../controllers/v1/label/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
+const permissionMiddleware = require('../../middleware/permission');
+const User = require('../../model/user');
+const Role = require('../../model/role');
+const Permission = require('../../model/permission');
+const memberController = require('../../controllers/v1/member/member');
+const roleController = require('../../controllers/v1/role/role');
+const permissionController = require('../../controllers/v1/permission/permission');
+
 
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
@@ -87,11 +95,11 @@ router.all('*', saasMiddleware.saas);
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.post('/login', login.store);
+router.post('/login', loginController.login);
 
-router.get('/register/:token', authenticationEmailToken, register.get);
-router.post('/register/:email', register.emailRegister);
-router.put('/register/:token', authenticationEmailToken, register.store);
+router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
+router.post('/register/:email', registerController.emailRegister);
+router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
  * components:
@@ -142,39 +150,96 @@ router.put('/users/:id', userPageControllers.update);
 router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
 router.put('/commits', commitControllers.update);
-router.delete('/commits', commitControllers.delete);
+router.delete('/commits', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
-router.get('/tasks/:id', task.show);
-router.post('/tasks', task.store);
-router.put('/tasks/:id', task.update);
-router.delete('/tasks/:id', task.delete);
+router.get('/tasks/:id', taskController.show);
+router.post('/tasks', taskController.store);
+router.put('/tasks/:id', taskController.update);
+router.delete('/tasks/:id', taskController.delete);
 
 //router.get('/me', authenticationToken, userInfoControllers.index);
 
-router.patch('/account/me', authenticationToken, accountSettingControllers.update);
-router.delete('/account/me', authenticationToken, accountSettingControllers.destroy);
+router.put('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
+router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
-router.post('/auto-fetch-userInfo', authenticationToken, authenticationRefreshToken, userInfoControllers.post);
+router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
 
-router.get('/projects', projects.index);
-router.get('/projects/:id', projects.show);
-router.put('/projects/:id', projects.update);
-router.post('/projects', projects.store);
-router.delete('/projects/:id', projects.delete);
+router.get('/projects', projectsController.index);
+router.get('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('view:projects'), projectsController.show);
+router.put('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('edit:projects'), projectsController.update);
+router.post('/projects', authenticationTokenMiddleware, permissionMiddleware.permission('create:projects'), projectsController.store);
+router.delete('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('delete:projects'), projectsController.delete);
 
 router.post('/projects/:id/shortcuts', shortcutControllers.store);
 router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
 router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.destroy);
 
+router.get('/projects/:id/members', memberController.index);
+router.put('/projects/:projectId/members/:userId', memberController.update);
+router.delete('/projects/:projectId/members/:userId', memberController.delete);
+router.post('/projects/:projectId/members/invite', memberController.invite);
+// router.get('/members', projects.index);
+router.get('/roles', roleController.index);
+router.put('/roles/:id/permission/:permissionId', roleController.update);
+router.get('/permissions', permissionController.index);
 router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
   res.status(200).json(req.files);
 });
 
-router.get('/board/:id', board.show);
+router.get('/board/:id', boardController.show);
+
+router.get('/abc', async (req:any)=>{
+  // const Role = require('../../model/role');
+  // const Permission = require('../../model/permission');
+
+  const role = Role.getModel(req.dbConnection);
+  const permission = Permission.getModel(req.dbConnection);
+  
+
+  const viewRole = await role.findOne({ name:'view', slug:'view' });
+  const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
+  viewRole.permission.push(viewP._id);
+  viewRole.save();
+  // const adminRole = new role({ name:'admin', slug:'admin' });
+  // const developerRole = new role({ name:'developer', slug:'developer' });
+  // const projectManagerRole = new role({ name:'project-manager', slug:'project-manager' });
+  // const viewRole = new role({ name:'view', slug:'view' });
+  
+  // adminRole.save();
+  // developerRole.save();
+  // projectManagerRole.save();
+  // viewRole.save();
+
+  // const viewProjectPolicy = new permission({ slug: 'view:projects', description: 'view-project' });
+  // const editProjectPolicy = new permission({ slug: 'edit:projects', description: 'edit-project' });
+  // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
+  // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
+
+  // viewProjectPolicy.save();
+  // editProjectPolicy.save();
+  // deleteProjectPolicy.save();
+  // addProjectPolicy.save();
+
+  const users = await User.getModel(req.dbConnection).find({ _id:'62d3b849741c5a203c16bdc4' });
+
+  users[0].projectsRoles = [
+    {
+      projectId: mongoose.Types.ObjectId('62d66e42300c4840ea633801'),
+      roleId:mongoose.Types.ObjectId('62d7f009e4713aab33380392'),
+    },
+  ];
+  users[0].save();
+
+  console.log(users[0]);
+
+
+
+});
 
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
+router.post('/tasks/:taskId/labels', labelController.store);
 router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);

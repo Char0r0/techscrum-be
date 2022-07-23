@@ -4,7 +4,6 @@ const status = require('http-status');
 const { emailCheck } = require('../../../services/accountAccess/emailCheck');
 const { emailRegister } = require('../../../services/accountAccess/register');
 const User = require('../../../model/user');
-const UserProfile = require('../../../model/userProfile');
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -18,8 +17,9 @@ exports.emailRegister = async (req: Request, res: Response, next: NextFunction) 
   try {
     const existUser: boolean = await emailCheck(email, req);
     if (!existUser) {
-      await emailRegister(email, req);
-      return res.status(status.CREATED).send();
+      const user = await emailRegister(email, req);
+      if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
+      return res.status(status.CREATED).send(user);
     }
     res.status(status.FOUND).send();
   } catch (e) {
@@ -47,9 +47,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, name, password } = req.body;
     const user = await User.getModel(req.dbConnection).activeAccount(email, name, password, req);
-    const userProfile = await UserProfile.getModel(req.dbConnection).findOne({ userId: user.id });
     const token = await user.generateAuthToken();
-    res.send({ user, userProfile, ...token });
+    res.send({ user, ...token });
   } catch (e) {
     next(e);
   }

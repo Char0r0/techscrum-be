@@ -1,13 +1,46 @@
 import { Response, Request, NextFunction } from 'express';
 const User = require('../../../model/user');
-const UserProfile = require('../../../model/userProfile');
+import { validationResult } from 'express-validator';
+const status = require('http-status');
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+declare module 'express-serve-static-core' {
+  interface Request {
+    userId?: string;
+    user?: object;
+    verifyEmail?: string;
+    token?: string;
+    refreshToken?: string;
+  }
+}
+
+exports.login = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
   try {
-    const user = await User.getModel(req.dbConnection).findByCredentials(req.body.email, req.body.password);
-    const userProfile = await UserProfile.getModel(req.dbConnection).findNameAndIconById(user._id);
+    const user = await User.getModel(req.dbConnection).findByCredentials(
+      req.body.email,
+      req.body.password,
+    );
+    if (user == null || user == undefined) return res.status(status.UNAUTHORIZED).send();
     const token = await user.generateAuthToken();
-    res.send({ user, userProfile, ...token });
+    res.send({ user, ...token });
+  } catch (e) {
+    next(e);
+  }
+};
+
+exports.autoFetchUserInfo = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
+  try {
+    if (!req.userId) return res.status(status.FORBIDDEN).send();
+    res.send({ user: req.user, token: req.token, refreshToken: req.refreshToken });
   } catch (e) {
     next(e);
   }
