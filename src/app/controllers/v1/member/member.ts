@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
-import {  emailSender2 } from '../../../utils/emailSender';
+import {  invite } from '../../../utils/emailSender';
 const User = require('../../../model/user');
 const status = require('http-status');
 const mongoose = require('mongoose');
@@ -73,10 +73,10 @@ exports.invite = async (req: any, res: Response) => {
     }, 
     { new: true },
     );
-    emailSender2(updateUser.email, (email_err:any, email_data:any)=>{return;});
+    invite(updateUser.email, updateUser.name, 'Guest');
     res.send(replaceId(updateUser));
     return;
   }
-  emailSender2(updateUser.email, (email_err:any, email_data:any)=>{return;});
+  invite(updateUser.email, updateUser.name, 'Guest');
   res.send(replaceId(updateUser[0]));
 };
