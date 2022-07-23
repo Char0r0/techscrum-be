@@ -5,7 +5,7 @@ import { Response, Request, NextFunction } from 'express';
 const Role = require('../model/role');
 const Permission = require('../model/permission');
 
-const getProjectRoleId = (projectId:string, projectRole) =>{
+const getProjectRoleId = (projectId:string, projectRole:any) =>{
   let roleId = null;
   projectRole.forEach((element: { projectId: { toString: () => string; }; roleId: any; }) => {
     if (element.projectId.toString() === projectId.toString()) {
@@ -15,7 +15,7 @@ const getProjectRoleId = (projectId:string, projectRole) =>{
   return roleId;
 };
 
-const hasPermission = async (role, slug:string, req:Request) =>{
+const hasPermission = async (role:any, slug:string, req:Request) =>{
   const permissionPopulate = await role.populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
   permissionPopulate.permission.forEach((element: { slug: String; }) => {
     if (element.slug === slug) {
