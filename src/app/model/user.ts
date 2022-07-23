@@ -1,4 +1,5 @@
 import { NextFunction } from 'express';
+import { Types } from 'mongoose';
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -16,6 +17,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    isAdmin: {
+      type: Number,
+      default: 0,
+    },
     refreshToken: {
       type: String,
       trim: true,
@@ -30,6 +35,19 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    projectsRoles: [
+      {
+        projectId:{
+          ref: 'projects',
+          type: Types.ObjectId,
+          unique:true,
+        }, 
+        roleId:{
+          ref: 'roles',
+          type: Types.ObjectId,
+        },
+      },
+    ],
     name: {
       type: String,
       trim: true,
@@ -60,7 +78,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-
+//limitation for 16MB //AWS 16KB 
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {

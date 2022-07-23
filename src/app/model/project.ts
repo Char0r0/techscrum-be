@@ -1,5 +1,6 @@
 export {};
 const mongoose = require('mongoose');
+const { Types } = require('mongoose');
 //TODO: need to find out why crash and did application stop
 const projectSchema = mongoose.Schema(
   {
@@ -13,9 +14,10 @@ const projectSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    projectLeadId: {
-      type: String,
-      trim: true,
+    projectLeadId:  { 
+      ref: 'users',
+      type: Types.ObjectId,
+      required: true, 
     },
     assigneeId: {
       type: String,
