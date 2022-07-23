@@ -56,7 +56,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
-    await commits.getModel(req.dbConnection).deleteOne({ _id: id });
+    const deleteComment = await commits.getModel(req.dbConnection).findByIdAndDelete({ _id: id });
+    if (!deleteComment) {
+      res.sendStatus(status.NOT_FOUND);
+      return;
+    }
     res.sendStatus(status.NO_CONTENT);
   } catch (e) {
     next(e);
