@@ -7,23 +7,21 @@ const taskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      unique: true,
     },
-    tag: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    tags: [{
+      type: Types.ObjectId,
+      ref: 'labels',
+    }],
     statusId: {
       type: Types.ObjectId,
     },
     projectId: {
       type: Types.ObjectId,
-      ref: 'project',
+      ref: 'projects',
     },
     boardId: {
       type: Types.ObjectId,
-      ref: 'board',
+      ref: 'boards',
     },
     typeId: {
       type: String,
@@ -43,7 +41,7 @@ const taskSchema = new mongoose.Schema(
     },
     assign: {
       type: Types.ObjectId,
-      ref: 'user',
+      ref: 'users',
     },
     type: {
       type: String,

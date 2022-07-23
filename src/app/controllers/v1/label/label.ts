@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { replaceId } from '../../../services/replace/replace';
 const Label = require('../../../model/label');
+const Task = require('../../../model/task');
 const status = require('http-status');
 
 exports.index = async (req: Request, res: Response) => {
@@ -32,14 +33,14 @@ exports.store = async (req: Request, res: Response) => {
   }
   const labelModel = Label.getModel(req.dbConnection);
   
-  const result =  await labelModel.findOne({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
-  if (result) {
-    return res.send(replaceId(result));
-  } else {
-    const label = new labelModel({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
-    label.save();
-    return res.send(replaceId(label));
+  let result =  await labelModel.findOne({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
+  if (!result) {
+    result = new labelModel({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
+    result.save();
   }
+  const taskModel = Task.getModel(req.dbConnection);
+  taskModel.tags.push(result._id) ;
+  return res.send(result);
 };
 
 // put
