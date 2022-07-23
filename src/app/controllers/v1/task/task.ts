@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 const mongoose = require('mongoose');
 const Task = require('../../../model/task');
 const status = require('http-status');
-const { replaceId } = require('../../../services/replace/replace');
 const Board = require('../../../model/board');
+const { taskUpdate } = require('../../../services/tasks/taskUpdate');
 const { validationResult } = require('express-validator');
 
 // GET ONE
@@ -31,11 +31,17 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { boardId } = req.body;
     const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
+
     const statusId = board.taskStatus[0]._id;
     const taskModel = Task.getModel(req.dbConnection);
     const task = new taskModel({ ...req.body, statusId });
+
+    const length = board.taskStatus[0].items.length;
+    board.taskStatus[0].items.push({ taskId: task._id, order:length });
+    await board.save();
     await task.save();
-    res.status(status.CREATED).send(replaceId(task));
+
+    res.status(status.CREATED).send(task);
   } catch (e: any) {
     next(e);
   }
@@ -49,17 +55,9 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const updateTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      { new: true },
-    );
-    updateTask.save();
-    //console.log(updateTask, req.params.id);
-    if (!updateTask) {
-      res.status(status.ServerInternalError).send({ f: req.params.id });
-    }
-    res.send(updateTask);
+    const updatedTask = await taskUpdate(req);
+    if (Object.keys(updatedTask).length === 0) return res.status(status.NOT_FOUND).send();
+    res.send(updatedTask);
   } catch (e) {
     next(e);
   }
