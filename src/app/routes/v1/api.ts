@@ -3,12 +3,7 @@ const router = new express.Router();
 const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
-const {
-  authenticationEmailTokenMiddleware,
-  authenticationTokenMiddleware,
-  authenticationTokenValidationMiddleware,
-  authenticationRefreshTokenMiddleware,
-} = require('../../middleware/auth');
+const { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware } = require('../../middleware/auth');
 const loginController = require('../../controllers/v1/login/login');
 const registerController = require('../../controllers/v1/register/register');
 const boardController = require('../../controllers/v1/board/board');
@@ -158,12 +153,7 @@ router.delete('/tasks/:id', taskController.delete);
 router.patch('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
-router.post(
-  '/auto-fetch-userInfo',
-  authenticationTokenValidationMiddleware,
-  authenticationRefreshTokenMiddleware,
-  loginController.autoFetchUserInfo,
-);
+router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
 
 router.get('/projects', projectsController.index);
 router.get('/projects/:id', projectsController.show);
