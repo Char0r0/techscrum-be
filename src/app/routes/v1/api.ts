@@ -92,7 +92,7 @@ router.get('/register/:token', authenticationEmailTokenMiddleware, registerContr
 router.post('/register/:email', registerController.emailRegister);
 router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
- * @swaggery
+ * @swagger
  * components:
  *   schemas:
  *     Tenants:
