@@ -52,3 +52,10 @@ export const invite = (email: string, name: string, roleType:string) => {
   const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc', token : '', roleType: roleType };
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
+
+
+export const forgetPassword = (email: string, name: string, token:string) => {
+  // Create sendEmail params
+  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc', token : token, time : ' 4 hours' };
+  emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
+};
