@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const commits = require('../../../model/commit');
+const user = require('../../../model/user');
 const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
@@ -33,12 +34,13 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
-  const { commitId, content } = req.body;
+  const { id } = req.params;
+  const { content } = req.body;
   const updatedAt = Date.now();
   try {
     const updatedComment = await commits
       .getModel(req.dbConnection)
-      .findByIdAndUpdate({ _id: commitId }, { content, updatedAt });
+      .findByIdAndUpdate({ _id: id }, { content, updatedAt }, { new: true });
     if (!updatedComment) {
       res.sendStatus(status.UNPROCESSABLE_ENTITY);
       return;
@@ -50,9 +52,13 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
-  const { commitId } = req.body;
+  const { id } = req.params;
   try {
-    await commits.getModel(req.dbConnection).deleteOne({ _id: commitId });
+    const deleteComment = await commits.getModel(req.dbConnection).findByIdAndDelete({ _id: id });
+    if (!deleteComment) {
+      res.sendStatus(status.NOT_FOUND);
+      return;
+    }
     res.sendStatus(status.NO_CONTENT);
   } catch (e) {
     next(e);

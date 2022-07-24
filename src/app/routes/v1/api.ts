@@ -13,7 +13,7 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
-const  labelController = require('../../controllers/v1/label/label');
+const labelController = require('../../controllers/v1/label/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
@@ -141,7 +141,6 @@ router.put('/register/:token', authenticationEmailTokenMiddleware, registerContr
  *                 $ref: '#/components/schemas/User'
  */
 
-
 router.get('/users', userControllers.index);
 // router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
@@ -149,8 +148,8 @@ router.put('/users/:id', userPageControllers.update);
 
 router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
-router.put('/commits', commitControllers.update);
-router.delete('/commits', commitControllers.destroy);
+router.put('/commits/:id', commitControllers.update);
+router.delete('/commits/:id', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
