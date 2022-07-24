@@ -9,22 +9,9 @@ const status = require('http-status');
 const mongoose = require('mongoose');
 
 exports.index = async (req: Request, res: Response) => {
-  const tags = [
-    {
-      id: '1',
-      name: 'None',
-    },
-    {
-      id: '2',
-      name: 'Frontend',
-    },
-    {
-      id: '3',
-      name: 'Backend',
-    },
-  ];
-
-  res.send(tags);
+  const labelModel = Label.getModel(req.dbConnection);
+  const result = await labelModel.find();
+  res.send(replaceId(result));
 };
 
 exports.store = async (req: Request, res: Response) => {
@@ -51,7 +38,6 @@ exports.store = async (req: Request, res: Response) => {
   const task = await taskModel.findById(req.params.taskId);
   task.tags.push(mongoose.Types.ObjectId(result._id));
   task.save();
-  console.log(result);
   return res.send(replaceId(result));
 };
 
@@ -91,4 +77,18 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
       next(e);
     }
   }
+};
+
+
+exports.remove =  async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+  const { labelId, taskId } = req.params;
+  const taskModel = Task.getModel(req.dbConnection);
+  const task = await taskModel.findById(taskId);
+  task.tags = await task.tags.filter((item:any)=>{return item._id.toString() !== labelId;});
+  const result = await task.save();
+  return res.send(replaceId(result));
 };

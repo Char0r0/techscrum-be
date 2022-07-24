@@ -240,6 +240,7 @@ router.get('/abc', async (req:any)=>{
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelController.store);
+router.delete('/tasks/:taskId/labels/:labelId', labelController.remove);
 router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);

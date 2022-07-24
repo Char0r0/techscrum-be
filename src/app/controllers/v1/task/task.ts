@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { replaceId } from '../../../services/replace/replace';
 const mongoose = require('mongoose');
 const Task = require('../../../model/task');
 const Label = require('../../../model/label');
@@ -19,7 +20,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     const tagsId = task.tags;
     const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
     task.tags = tagsList;
-    res.status(200).send(task);
+    res.status(200).send(replaceId(task));
   } catch (e) {
     next(e);
   }
