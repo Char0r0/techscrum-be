@@ -8,7 +8,7 @@ const emailRegister = async (email: string, req: any) => {
   try {
     const user = await User.getModel(req.dbConnection).findOneAndUpdate(
       { email },
-      { email, activeCode },
+      { email, activeCode, isAdmin: 1 },
       { new: true, upsert: true },
     );
 
