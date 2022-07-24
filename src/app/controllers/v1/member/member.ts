@@ -80,7 +80,7 @@ exports.invite = async (req: any, res: Response) => {
   } else {
     updateUser = updateUser[0];
   }
-  console.log(updateUser);
+
   const userPermission = await userModel.find({ 'email':email, 'projectsRoles.projectId':mongoose.Types.ObjectId(projectId) });
   const hasPermission = userPermission.length !== 0;
   if (!hasPermission) {
@@ -91,13 +91,10 @@ exports.invite = async (req: any, res: Response) => {
     }, 
     { new: true },
     );
-    console.log('0', updateUser, role, project);
     invite(updateUser.email, updateUser.name, await role.name, await project.name);
-    console.log('1', updateUser);
     res.send(replaceId(updateUser));
     return;
   }
-  console.log('2', updateUser, role, project);
   invite(updateUser.email, updateUser.name, await role.name, await project.name);
   res.send(replaceId(updateUser));
 };
