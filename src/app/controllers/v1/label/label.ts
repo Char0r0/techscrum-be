@@ -6,6 +6,7 @@ import { replaceId } from '../../../services/replace/replace';
 const Label = require('../../../model/label');
 const Task = require('../../../model/task');
 const status = require('http-status');
+const mongoose = require('mongoose');
 
 exports.index = async (req: Request, res: Response) => {
   const tags = [
@@ -22,7 +23,7 @@ exports.index = async (req: Request, res: Response) => {
       name: 'Backend',
     },
   ];
-      
+
   res.send(tags);
 };
 
@@ -32,15 +33,26 @@ exports.store = async (req: Request, res: Response) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const labelModel = Label.getModel(req.dbConnection);
-  
-  let result =  await labelModel.findOne({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
+
+  let result = await labelModel.findOne({
+    name: req.body.name,
+    slug: req.body.slug,
+    projectId: req.body.projectId,
+  });
   if (!result) {
-    result = new labelModel({ name:req.body.name, slug:req.body.slug, projectId:req.body.projectId });
+    result = new labelModel({
+      name: req.body.name,
+      slug: req.body.slug,
+      projectId: req.body.projectId,
+    });
     result.save();
   }
   const taskModel = Task.getModel(req.dbConnection);
-  taskModel.tags.push(result._id) ;
-  return res.send(result);
+  const task = await taskModel.findById(req.params.taskId);
+  task.tags.push(mongoose.Types.ObjectId(result._id));
+  task.save();
+  console.log(result);
+  return res.send(replaceId(result));
 };
 
 // put
@@ -51,7 +63,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     try {
-      const project = await Label.getModel(req.dbConnection).findByIdAndUpdate(req.params.id, req.body, { new:true });
+      const project = await Label.getModel(req.dbConnection).findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true },
+      );
       if (project) return res.send(replaceId(project));
       return res.sendStatus(status.BAD_REQUEST);
     } catch (e) {

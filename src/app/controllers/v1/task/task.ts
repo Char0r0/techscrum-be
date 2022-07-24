@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 const mongoose = require('mongoose');
 const Task = require('../../../model/task');
+const Label = require('../../../model/label');
 const status = require('http-status');
 const Board = require('../../../model/board');
 const { taskUpdate } = require('../../../services/tasks/taskUpdate');
@@ -15,6 +16,9 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
+    const tagsId = task.tags;
+    const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
+    task.tags = tagsList;
     res.status(200).send(task);
   } catch (e) {
     next(e);
@@ -37,7 +41,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     const task = new taskModel({ ...req.body, statusId });
 
     const length = board.taskStatus[0].items.length;
-    board.taskStatus[0].items.push({ taskId: task._id, order:length });
+    board.taskStatus[0].items.push({ taskId: task._id, order: length });
     await board.save();
     await task.save();
 

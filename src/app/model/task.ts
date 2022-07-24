@@ -8,10 +8,12 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tags: [{
-      type: Types.ObjectId,
-      ref: 'labels',
-    }],
+    tags: [
+      {
+        type: Types.ObjectId,
+        ref: 'labels',
+      },
+    ],
     statusId: {
       type: Types.ObjectId,
     },
