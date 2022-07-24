@@ -142,7 +142,7 @@ router.put('/register/:token', authenticationEmailTokenMiddleware, registerContr
  */
 
 router.get('/users', userControllers.index);
-// router.get('/users/:id', userControllers.show);
+router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageControllers.update);
 
@@ -156,8 +156,6 @@ router.get('/tasks/:id', taskController.show);
 router.post('/tasks', taskController.store);
 router.put('/tasks/:id', taskController.update);
 router.delete('/tasks/:id', taskController.delete);
-
-//router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.put('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
@@ -229,11 +227,6 @@ router.get('/abc', async (req:any)=>{
     },
   ];
   users[0].save();
-
-  console.log(users[0]);
-
-
-
 });
 
 router.get('/labels/:projectId', labelController.index);
