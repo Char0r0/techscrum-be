@@ -3,6 +3,8 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
 import {  invite } from '../../../utils/emailSender';
 const User = require('../../../model/user');
+const Role = require('../../../model/role');
+const Project = require('../../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
 
@@ -62,21 +64,40 @@ exports.delete = async (req: any, res: Response) => {
 exports.invite = async (req: any, res: Response) => {
   //check all user id correct or not 
   const { projectId } = req.params;
-  const { roleId, userId } = req.body;
+  const { roleId, email = 'kitmanwork@gmail.com', name = 'kk', password = '1234568' } = req.body;
   const projectsRolesId = new mongoose.Types.ObjectId();
-  let updateUser = await User.getModel(req.dbConnection).find({ '_id':userId, 'projectsRoles.projectId':mongoose.Types.ObjectId(projectId) });
-  if (updateUser.length === 0) {
-    updateUser = await User.getModel(req.dbConnection).findByIdAndUpdate(userId, {
+  const userModel = User.getModel(req.dbConnection);
+  const roleModel = Role.getModel(req.dbConnection);
+  const projectModel = Project.getModel(req.dbConnection);
+  const project  = await projectModel.findById(projectId);
+  const role = await roleModel.findById(roleId);
+  let updateUser = await userModel.find({ email });
+  const createUser =  updateUser.length === 0;
+  if (createUser) {
+    updateUser = await new userModel({ email });
+    updateUser = await updateUser.save();
+    await userModel.activeAccount(email, name, password);
+  } else {
+    updateUser = updateUser[0];
+  }
+  console.log(updateUser);
+  const userPermission = await userModel.find({ 'email':email, 'projectsRoles.projectId':mongoose.Types.ObjectId(projectId) });
+  const hasPermission = userPermission.length !== 0;
+  if (!hasPermission) {
+    updateUser = await userModel.findByIdAndUpdate(updateUser._id, {
       $push: {
         projectsRoles: [{ _id: projectsRolesId, projectId: projectId, roleId: roleId }],
       },
     }, 
     { new: true },
     );
-    invite(updateUser.email, updateUser.name, 'Guest');
+    console.log('0', updateUser, role, project);
+    invite(updateUser.email, updateUser.name, await role.name, await project.name);
+    console.log('1', updateUser);
     res.send(replaceId(updateUser));
     return;
   }
-  invite(updateUser.email, updateUser.name, 'Guest');
-  res.send(replaceId(updateUser[0]));
+  console.log('2', updateUser, role, project);
+  invite(updateUser.email, updateUser.name, await role.name, await project.name);
+  res.send(replaceId(updateUser));
 };
