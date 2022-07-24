@@ -68,6 +68,29 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
     },
     {
+      $unwind: {
+        path: '$taskList',
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'taskList.assign',
+        foreignField: '_id',
+        as: 'taskList.assignInfo',
+      },
+    },
+    {
+      $project: {
+        'taskList.__v': 0,
+        'taskList.assignInfo.__v': 0,
+        'taskList.assignInfo.active': 0,
+        'taskList.assignInfo.tokens': 0,
+        'taskList.assignInfo.refreshToken': 0,
+        'taskList.assignInfo.password': 0,
+      },
+    },
+    {
       $group: {
         _id: '$_id',
         title: { $first: '$title' },
