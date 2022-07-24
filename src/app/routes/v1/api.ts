@@ -228,8 +228,6 @@ router.get('/abc', async (req:any)=>{
     },
   ];
   users[0].save();
-
-  console.log(users[0]);
 });
 
 router.get('/labels/:projectId', labelController.index);
