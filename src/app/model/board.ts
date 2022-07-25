@@ -43,6 +43,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
   if (!Types.ObjectId.isValid(id)) {
     return [];
   }
+
   const objId = new Types.ObjectId(id);
   const boardInfo = await this.aggregate([
     {
@@ -68,8 +69,15 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
     },
     {
-      $unwind: {
-        path: '$taskList',
+      $addFields: {
+        taskList: {
+          $map: {
+            input: '$taskList',
+            in: {
+              $mergeObjects: ['$$this', { assignInfo: {} }],
+            },
+          },
+        },
       },
     },
     {
@@ -77,7 +85,41 @@ boardSchema.statics.findBoardById = async function (id: string) {
         from: 'users',
         localField: 'taskList.assign',
         foreignField: '_id',
-        as: 'taskList.assignInfo',
+        as: 'assignCollection',
+      },
+    },
+    {
+      $project: {
+        id: '$_id',
+        title: '$title',
+        taskStatus: '$taskStatus',
+        taskList: {
+          $map: {
+            input: '$taskList',
+            as: 'task',
+            in: {
+              id: '$$task._id',
+              title: '$$task.title',
+              tags: '$$task.tags',
+              statusId: '$$task.statusId',
+              projectId: '$$task.projectId',
+              boardId: '$$task.boardId',
+              typeId: '$$task.typeId',
+              description: '$$task.description',
+              storyPoint: '$$task.storyPoint',
+              dueAt: '$$task.dueAt',
+              attachmentUrls: '$$task.attachmentUrls',
+              assignInfo: {
+                $first: {
+                  $filter: {
+                    input: '$assignCollection',
+                    cond: { $eq: ['$$this._id', '$$task.assign'] },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     {
@@ -88,6 +130,8 @@ boardSchema.statics.findBoardById = async function (id: string) {
         'taskList.assignInfo.tokens': 0,
         'taskList.assignInfo.refreshToken': 0,
         'taskList.assignInfo.password': 0,
+        'taskList.assignInfo.activeCode': 0,
+        'taskList.assignInfo.isAdmin': 0,
       },
     },
     {
