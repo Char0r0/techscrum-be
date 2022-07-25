@@ -76,9 +76,22 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    await Task.getModel(req.dbConnection).findOneAndDelete({
+    const task = await Task.getModel(req.dbConnection).findOneAndDelete({
       _id: mongoose.Types.ObjectId(req.params.id),
     });
+    const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
+    const taskStatus = board.taskStatus.map(
+      (statusDetail: { _id: String; items: { _id: String; taskId: String }[] }) => {
+        if (statusDetail._id.toString() !== task.statusId.toString()) return statusDetail;
+        statusDetail.items = statusDetail.items.filter((item) => {
+          if (item.taskId.toString() === task._id.toString()) return false;
+          return true;
+        });
+        return statusDetail;
+      },
+    );
+    board.taskStatus = taskStatus;
+    board.save();
     res.status(200).send();
   } catch (e) {
     next(e);
