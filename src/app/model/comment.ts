@@ -2,7 +2,7 @@ export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
 
-const commitSchema = new mongoose.Schema(
+const commentsSchema = new mongoose.Schema(
   {
     taskId: {
       ref: 'task',
@@ -29,5 +29,5 @@ module.exports.getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
-  return connection.model('commits', commitSchema);
+  return connection.model('comments', commentsSchema);
 };
