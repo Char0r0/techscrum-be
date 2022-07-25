@@ -136,7 +136,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
     },
     {
       $group: {
-        _id: { _id: '$_id' },
+        _id: '$_id',
         title: { $first: '$title' },
         taskStatus: { $push: '$taskStatus' },
         taskList: { $push: '$taskList' },
