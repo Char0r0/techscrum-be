@@ -42,6 +42,7 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
         return;
       }
       req.user = user;
+      req.token = authToken;
       req.userId = user.id;
       return next();
     });
