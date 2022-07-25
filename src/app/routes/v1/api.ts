@@ -98,7 +98,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 router.post('/login', loginController.login);
 
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.post('/register/:email', registerController.emailRegister);
+router.post('/register/:email', registerController.register);
 router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
