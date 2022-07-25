@@ -1,21 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 const commits = require('../../../model/commit');
-const user = require('../../../model/user');
 const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params;
-  try {
-    const result = await commits
-      .getModel(req.dbConnection)
-      .find({})
-      .populate({ path: 'senderId', user });
-    res.send(replaceId(result));
-  } catch (e) {
-    next(e);
-  }
-  //res.send([]);
+exports.show = async (req: Request, res: Response) => {
+  res.send([]);
 };
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
