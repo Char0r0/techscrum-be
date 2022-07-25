@@ -44,7 +44,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     const projectModel = Project.getModel(req.dbConnection);
 
     const board = new boardModel({ title: req.body.name });
-    board.save();
+    await board.save();
     const boardObj = { boardId: board._id };
     const project = new projectModel({ ...req.body, ...boardObj });
     await project.save();
