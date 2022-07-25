@@ -14,11 +14,11 @@ exports.index = async (req: Request, res: Response) => {
   res.send(replaceId(users));
 };
 
-// exports.show = (req: Request, res: Response) => {
-//   const id = parseInt(req.params.id);
-//   const index = userList.findIndex((user) => user.id === id);
-//   return res.status(200).send(userList[index]);
-// };
+exports.show = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const user = await User.getModel(req.dbConnection).findById(id);
+  return res.status(200).send(user);
+};
 
 // exports.update = (req: Request, res: Response) => {
 //   const id = parseInt(req.body.id);

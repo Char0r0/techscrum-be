@@ -47,9 +47,9 @@ export const emailSender = (email: string, validationCode: string) => {
 };
 
 
-export const invite = (email: string, name: string, roleType:string) => {
+export const invite = (email: string, name: string, roleType:string, projectName: string) => {
   // Create sendEmail params
-  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc', token : '', roleType: roleType };
+  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:projectName, token : '', roleType: roleType };
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
 
