@@ -93,10 +93,9 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
 };
 
 userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
-  const avatarIcon = `${name?.substring(0, 1) || 'avatar'}.png`;
   const user = await this.findOneAndUpdate(
     { email },
-    { password: await bcrypt.hash(password, 8), active: true, name, avatarIcon },
+    { password: await bcrypt.hash(password, 8), active: true, name },
     { new: true },
   ).exec();
   if (!user) throw new Error('Cannot find user');

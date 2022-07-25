@@ -3,10 +3,10 @@ const { emailSender } = require('../../utils/emailSender');
 const User = require('../../model/user');
 const jwt = require('jsonwebtoken');
 
-const emailRegister = async (email: string, req: any) => {
+const emailRegister = async (email: string, dbConnection: any) => {
   const activeCode = randomStringGenerator(16);
   try {
-    const user = await User.getModel(req.dbConnection).findOneAndUpdate(
+    const user = await User.getModel(dbConnection).findOneAndUpdate(
       { email },
       { email, activeCode, isAdmin: 1 },
       { new: true, upsert: true },
@@ -16,7 +16,7 @@ const emailRegister = async (email: string, req: any) => {
     await emailSender(email, validationToken);
     return user;
   } catch (e) {
-    await User.getModel(req.dbConnection).deleteOne({ email });
+    await User.getModel(dbConnection).deleteOne({ email });
     return null;
   }
 };
