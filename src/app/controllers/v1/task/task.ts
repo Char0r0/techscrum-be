@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
+import { replaceId } from '../../../services/replace/replace';
 const mongoose = require('mongoose');
 const Task = require('../../../model/task');
+const Label = require('../../../model/label');
 const status = require('http-status');
 const Board = require('../../../model/board');
+const User = require('../../../model/user');
 const { taskUpdate } = require('../../../services/tasks/taskUpdate');
 const { validationResult } = require('express-validator');
 
@@ -14,8 +17,11 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
-    res.status(200).send(task);
+    const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id }).populate({ path: 'assignId', Model: User.getModel(req.dbConnection) });
+    const tagsId = task.tags;
+    const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
+    task.tags = tagsList;
+    res.status(200).send(replaceId(task));
   } catch (e) {
     next(e);
   }
@@ -37,7 +43,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     const task = new taskModel({ ...req.body, statusId });
 
     const length = board.taskStatus[0].items.length;
-    board.taskStatus[0].items.push({ taskId: task._id, order:length });
+    board.taskStatus[0].items.push({ taskId: task._id, order: length });
     await board.save();
     await task.save();
 
@@ -71,9 +77,22 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    await Task.getModel(req.dbConnection).findOneAndDelete({
+    const task = await Task.getModel(req.dbConnection).findOneAndDelete({
       _id: mongoose.Types.ObjectId(req.params.id),
     });
+    const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
+    const taskStatus = board.taskStatus.map(
+      (statusDetail: { _id: String; items: { _id: String; taskId: String }[] }) => {
+        if (statusDetail._id.toString() !== task.statusId.toString()) return statusDetail;
+        statusDetail.items = statusDetail.items.filter((item) => {
+          if (item.taskId.toString() === task._id.toString()) return false;
+          return true;
+        });
+        return statusDetail;
+      },
+    );
+    board.taskStatus = taskStatus;
+    board.save();
     res.status(200).send();
   } catch (e) {
     next(e);
