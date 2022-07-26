@@ -42,7 +42,7 @@ const emailSenderTemplate = (email: string, data:any, templateName: string, call
 
 export const emailSender = (email: string, validationCode: string, domain: string = config.frontEndAddress) => {
   // Create sendEmail params
-  const templateData = { name:  email, appName: 'TECHSCRUMAPP', domain, url: 'register', token : validationCode, color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc' };
+  const templateData = { name:  email, appName: 'TECHSCRUMAPP', domain, url: 'verify', token : validationCode, color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc' };
   emailSenderTemplate(email, templateData, 'CustomEmailVerify', cb);
 };
 
