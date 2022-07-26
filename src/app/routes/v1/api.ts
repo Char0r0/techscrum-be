@@ -19,12 +19,12 @@ const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
 const permissionMiddleware = require('../../middleware/permission');
 const User = require('../../model/user');
-const Role = require('../../model/role');
-const Permission = require('../../model/permission');
 const memberController = require('../../controllers/v1/member/member');
 const roleController = require('../../controllers/v1/role/role');
 const permissionController = require('../../controllers/v1/permission/permission');
 
+
+router.post('/register/:email', registerController.register);
 
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
@@ -98,7 +98,6 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 router.post('/login', loginController.login);
 
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.post('/register/:email', registerController.register);
 router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
@@ -190,14 +189,14 @@ router.get('/abc', async (req:any)=>{
   // const Role = require('../../model/role');
   // const Permission = require('../../model/permission');
 
-  const role = Role.getModel(req.dbConnection);
-  const permission = Permission.getModel(req.dbConnection);
+  // const role = Role.getModel(req.dbConnection);
+  // const permission = Permission.getModel(req.dbConnection);
   
 
-  const viewRole = await role.findOne({ name:'view', slug:'view' });
-  const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
-  viewRole.permission.push(viewP._id);
-  viewRole.save();
+  // const viewRole = await role.findOne({ name:'view', slug:'view' });
+  // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
+  // viewRole.permission.push(viewP._id);
+  // viewRole.save();
   // const adminRole = new role({ name:'admin', slug:'admin' });
   // const developerRole = new role({ name:'developer', slug:'developer' });
   // const projectManagerRole = new role({ name:'project-manager', slug:'project-manager' });
@@ -212,11 +211,6 @@ router.get('/abc', async (req:any)=>{
   // const editProjectPolicy = new permission({ slug: 'edit:projects', description: 'edit-project' });
   // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
   // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
-
-  // viewProjectPolicy.save();
-  // editProjectPolicy.save();
-  // deleteProjectPolicy.save();
-  // addProjectPolicy.save();
 
   const users = await User.getModel(req.dbConnection).find({ _id:'62d3b849741c5a203c16bdc4' });
 
