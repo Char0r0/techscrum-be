@@ -98,7 +98,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 router.post('/login', loginController.login);
 
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.post('/register/:email', registerController.emailRegister);
+router.post('/register/:email', registerController.register);
 router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
@@ -232,6 +232,7 @@ router.get('/abc', async (req:any)=>{
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelController.store);
+router.delete('/tasks/:taskId/labels/:labelId', labelController.remove);
 router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);

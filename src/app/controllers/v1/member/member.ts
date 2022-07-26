@@ -8,7 +8,7 @@ const Project = require('../../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
 
-exports.index = async (req: any, res: Response, next: NextFunction) => {
+exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -33,7 +33,7 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-exports.update = async (req: any, res: Response) => {
+exports.update = async (req: Request, res: Response) => {
   const { userId, projectId } = req.params;
   const { roleId } = req.body;
   const user = await User.getModel(req.dbConnection).findById(userId);
@@ -48,7 +48,7 @@ exports.update = async (req: any, res: Response) => {
 };
 
 
-exports.delete = async (req: any, res: Response) => {
+exports.delete = async (req: Request, res: Response) => {
   const { userId, projectId } = req.params;
   const user = await User.getModel(req.dbConnection).findById(userId);
   const updatedProjectRoles = user.projectsRoles.filter((item :any)=>{
@@ -61,7 +61,7 @@ exports.delete = async (req: any, res: Response) => {
 
 
 
-exports.invite = async (req: any, res: Response) => {
+exports.invite = async (req: Request, res: Response) => {
   //check all user id correct or not 
   const { projectId } = req.params;
   const { roleId, email = 'kitmanwork@gmail.com', name = 'kk', password = '1234568' } = req.body;
@@ -91,10 +91,10 @@ exports.invite = async (req: any, res: Response) => {
     }, 
     { new: true },
     );
-    invite(updateUser.email, updateUser.name, await role.name, await project.name);
+    invite(updateUser.email, updateUser.name,  role.name,  project.name, req.headers.origin);
     res.send(replaceId(updateUser));
     return;
   }
-  invite(updateUser.email, updateUser.name, await role.name, await project.name);
+  invite(updateUser.email, updateUser.name,  role.name,  project.name, req.headers.origin);
   res.send(replaceId(updateUser));
 };
