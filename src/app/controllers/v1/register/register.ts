@@ -44,7 +44,6 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const secondDataConnectionMongoose = new Mongoose();
   const url = config.db.replace('techscrumapp', tenantId);
   const resdbConnection = await secondDataConnectionMongoose.connect(url);
-  console.log('dbinit');
   database.init(resdbConnection);
   try {
     const existUser: boolean = await emailCheck(email, resdbConnection);
