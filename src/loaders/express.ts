@@ -35,7 +35,7 @@ module.exports = () => {
   app.use(compression());
   app.use(cors());
   app.use(express.json());
-  app.use(limiter);
+  ///app.use(limiter);
   app.use(helmet());
   app.use(config.api.prefix, apiRouter);
 

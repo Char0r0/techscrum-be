@@ -83,7 +83,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
     {
       $lookup: {
         from: 'users',
-        localField: 'taskList.assign',
+        localField: 'taskList.assignId',
         foreignField: '_id',
         as: 'assignCollection',
       },
@@ -113,7 +113,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
                 $first: {
                   $filter: {
                     input: '$assignCollection',
-                    cond: { $eq: ['$$this._id', '$$task.assign'] },
+                    cond: { $eq: ['$$this._id', '$$task.assignId'] },
                   },
                 },
               },

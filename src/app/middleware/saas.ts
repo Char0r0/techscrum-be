@@ -9,7 +9,7 @@ const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const saas = async (req: Request, res: Response, next: NextFunction) => {
   let tenantId: string = '629173f74060424a41145125';
   let domain  = req.headers.origin;
-  if (domain !== 'http://localhost:3000') {
+  if (domain !== 'http://localhost:3000' && domain !== 'https://www.techscrumapp.com/' && domain !== 'https://www.techscrumapp.com') {
     if (Object.keys(tenantConnection).length === 0) {
       const tenantConnectionMongoose = new Mongoose();
       tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
