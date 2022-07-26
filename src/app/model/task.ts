@@ -8,10 +8,12 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tags: [{
-      type: Types.ObjectId,
-      ref: 'labels',
-    }],
+    tags: [
+      {
+        type: Types.ObjectId,
+        ref: 'labels',
+      },
+    ],
     statusId: {
       type: Types.ObjectId,
     },
@@ -39,7 +41,7 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: 0,
     },
-    assign: {
+    assignId: {
       type: Types.ObjectId,
       ref: 'users',
     },
@@ -47,6 +49,11 @@ const taskSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    attachmentUrls: [
+      {
+        type: String,
+      }, 
+    ],
   },
   { timestamps: true },
 );

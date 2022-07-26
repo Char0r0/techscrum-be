@@ -13,7 +13,7 @@ const userControllers = require('../../controllers/v1/user/user');
 const commitControllers = require('../../controllers/v1/commit/commit');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
-const  labelController = require('../../controllers/v1/label/label');
+const labelController = require('../../controllers/v1/label/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
@@ -98,7 +98,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 router.post('/login', loginController.login);
 
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.post('/register/:email', registerController.emailRegister);
+router.post('/register/:email', registerController.register);
 router.put('/register/:token', authenticationEmailTokenMiddleware, registerController.store);
 /**
  * @swagger
@@ -141,24 +141,21 @@ router.put('/register/:token', authenticationEmailTokenMiddleware, registerContr
  *                 $ref: '#/components/schemas/User'
  */
 
-
 router.get('/users', userControllers.index);
-// router.get('/users/:id', userControllers.show);
+router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageControllers.update);
 
 router.get('/commits/:id', commitControllers.show);
 router.post('/commits', commitControllers.store);
-router.put('/commits', commitControllers.update);
-router.delete('/commits', commitControllers.destroy);
+router.put('/commits/:id', commitControllers.update);
+router.delete('/commits/:id', commitControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
 router.post('/tasks', taskController.store);
 router.put('/tasks/:id', taskController.update);
 router.delete('/tasks/:id', taskController.delete);
-
-//router.get('/me', authenticationToken, userInfoControllers.index);
 
 router.put('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
@@ -230,16 +227,12 @@ router.get('/abc', async (req:any)=>{
     },
   ];
   users[0].save();
-
-  console.log(users[0]);
-
-
-
 });
 
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelController.store);
+router.delete('/tasks/:taskId/labels/:labelId', labelController.remove);
 router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);

@@ -1,12 +1,13 @@
 import { Request } from 'express';
 const Task = require('../../model/task');
 const Board = require('../../model/board');
+const User = require('../../model/user');
 
 export const taskUpdate = async (req: Request) => {
   const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
   if (!task) return {};
 
-  const { title, statusId, typeId, description, storyPoint, dueAt, assign, type, targetIndex } =
+  const { title, statusId, typeId, description, storyPoint, dueAt, assign, type, targetIndex, attachmentUrls, assignId } =
     req.body;
   const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
 
@@ -80,8 +81,8 @@ export const taskUpdate = async (req: Request) => {
   await board.save();
   const updateTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
     { _id: req.params.id },
-    { title, typeId, statusId, description, storyPoint, dueAt, assign, type },
+    { title, typeId, statusId, description, storyPoint, dueAt, type, attachmentUrls, assignId },
     { new: true },
-  );
+  ).populate({ path: 'assignId', Model: User.getModel(req.dbConnection) });
   return updateTask;
 };
