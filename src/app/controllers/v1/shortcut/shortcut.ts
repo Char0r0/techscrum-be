@@ -12,12 +12,12 @@ exports.store = async (req: Request, res: Response) => {
   }
   const shortcutId = new mongoose.Types.ObjectId();
   const { id } = req.params;
-  const { webAddress, shortcutName } = req.body;
+  const { shortcutLink, name } = req.body;
   const updatedProject = await project.getModel(req.dbConnection).findByIdAndUpdate(
     { _id: id },
     {
       $push: {
-        shortcut: [{ _id: shortcutId, shortcutLink: webAddress, name: shortcutName }],
+        shortcut: [{ _id: shortcutId, shortcutLink, name }],
       },
     }, 
     { new: true },
@@ -42,11 +42,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
     const { projectId, shortcutId } = req.params;
-    const { webAddress, shortcutName } = req.body;
+    const { shortcutLink, name } = req.body;
     const updateShortcutFlag = await project.getModel(req.dbConnection).updateOne(
       { _id: projectId, 'shortcut._id': shortcutId },
       {
-        $set: { 'shortcut.$.shortcutLink': webAddress, 'shortcut.$.name': shortcutName },
+        $set: { 'shortcut.$.shortcutLink': shortcutLink, 'shortcut.$.name': name },
       },
     );
     if (updateShortcutFlag) {
