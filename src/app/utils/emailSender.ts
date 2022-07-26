@@ -40,22 +40,22 @@ const emailSenderTemplate = (email: string, data:any, templateName: string, call
 };
 
 
-export const emailSender = (email: string, validationCode: string) => {
+export const emailSender = (email: string, validationCode: string, domain: string = config.frontEndAddress) => {
   // Create sendEmail params
-  const templateData = { name:  email, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', token : validationCode, color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc' };
+  const templateData = { name:  email, appName: 'TECHSCRUMAPP', domain, url: 'register', token : validationCode, color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc' };
   emailSenderTemplate(email, templateData, 'CustomEmailVerify', cb);
 };
 
 
-export const invite = (email: string, name: string, roleType:string, projectName: string) => {
+export const invite = (email: string, name: string, roleType:string, projectName: string, domain: string = config.frontEndAddress) => {
   // Create sendEmail params
-  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:projectName, token : '', roleType: roleType };
+  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:projectName, token : '', roleType: roleType };
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
 
 
-export const forgetPassword = (email: string, name: string, token:string) => {
+export const forgetPassword = (email: string, name: string, token:string, domain: string = config.frontEndAddress) => {
   // Create sendEmail params
-  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain: config.frontEndAddress, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc', token : token, time : ' 4 hours' };
+  const templateData = { name:  name, appName: 'TECHSCRUMAPP', domain, url: 'register', color: '#7291F7', border: '5px solid #7291F7', year: '2022', project:'abc', token : token, time : ' 4 hours' };
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
 };

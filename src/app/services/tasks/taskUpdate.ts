@@ -7,7 +7,7 @@ export const taskUpdate = async (req: Request) => {
   const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
   if (!task) return {};
 
-  const { title, statusId, typeId, description, storyPoint, dueAt, assign, type, targetIndex, attachmentUrls, assignId } =
+  const { title, statusId, typeId, description, storyPoint, dueAt, type, targetIndex, attachmentUrls, assignId } =
     req.body;
   const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
 

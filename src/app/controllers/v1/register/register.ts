@@ -17,23 +17,34 @@ declare module 'express-serve-static-core' {
 exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const email = req.params.email;
   const { appName } = req.body;
+  const origin  = req.headers.origin;
+  let tenantUrl = req.headers.origin;
+  let tenantId: string = '629173f74060424a41145125';
 
-  //check has the same appName if
-  const dataConnectionMongoose = new Mongoose();
-  const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
-  const tenantModel = Tenant.getModel(tenantConnection);
-  const tenant = new tenantModel({ origin: `https://${appName}.techscrumapp.com` } );
-  tenant.save();
+  if (origin !== 'http://localhost:3000' && origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com') {
+    const dataConnectionMongoose = new Mongoose();
+    const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
+    const tenantModel = Tenant.getModel(tenantConnection);
+    const tenantOrigin =  `https://${appName}.techscrumapp.com`;
+    const result = await tenantModel.find({ origin: tenantOrigin });
+    if (result) {
+      res.send(500).end();
+      return; 
+    }
+    const tenant = new tenantModel({ origin: tenantOrigin } );
+    tenant.save();
+    tenantId = tenant._id;
+    tenantUrl = tenantOrigin;
+  }
 
   const secondDataConnectionMongoose = new Mongoose();
-  const tenantId: string = tenant._id;
   const url = config.db.replace('techscrumapp', tenantId);
   const resdbConnection = await secondDataConnectionMongoose.connect(url);
 
   try {
     const existUser: boolean = await emailCheck(email, resdbConnection);
     if (!existUser) {
-      const user = await emailRegister(email, resdbConnection);
+      const user = await emailRegister(email, resdbConnection, tenantUrl);
       if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
       return res.status(status.CREATED).send(user);
     }
