@@ -41,7 +41,7 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: 0,
     },
-    assign: {
+    assignId: {
       type: Types.ObjectId,
       ref: 'users',
     },
