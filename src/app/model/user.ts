@@ -121,7 +121,6 @@ userSchema.methods.toJSON = function () {
   delete userObject.tokens;
   delete userObject.refreshToken;
   delete userObject.activeCode;
-  delete userObject.active;
   delete userObject.__v;
   return userObject;
 };

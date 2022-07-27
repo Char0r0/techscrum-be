@@ -4,13 +4,18 @@ const router = new express.Router();
 const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenant/tenant');
-const { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware } = require('../../middleware/auth');
+const {
+  authenticationEmailTokenMiddleware,
+  authenticationTokenMiddleware,
+  authenticationTokenValidationMiddleware,
+  authenticationRefreshTokenMiddleware,
+} = require('../../middleware/auth');
 const loginController = require('../../controllers/v1/login/login');
 const registerController = require('../../controllers/v1/register/register');
 const boardController = require('../../controllers/v1/board/board');
 const taskController = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
-const commitControllers = require('../../controllers/v1/commit/commit');
+const commitControllers = require('../../controllers/v1/comment/comment');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 const labelController = require('../../controllers/v1/label/label');
@@ -22,7 +27,6 @@ const User = require('../../model/user');
 const memberController = require('../../controllers/v1/member/member');
 const roleController = require('../../controllers/v1/role/role');
 const permissionController = require('../../controllers/v1/permission/permission');
-
 
 router.post('/register/:email', registerController.register);
 
@@ -159,13 +163,38 @@ router.delete('/tasks/:id', taskController.delete);
 router.put('/account/me', authenticationTokenMiddleware, accountSettingControllers.update);
 router.delete('/account/me', authenticationTokenMiddleware, accountSettingControllers.destroy);
 
-router.post('/auto-fetch-userInfo', authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware, loginController.autoFetchUserInfo);
+router.post(
+  '/auto-fetch-userInfo',
+  authenticationTokenValidationMiddleware,
+  authenticationRefreshTokenMiddleware,
+  loginController.autoFetchUserInfo,
+);
 
 router.get('/projects', projectsController.index);
-router.get('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('view:projects'), projectsController.show);
-router.put('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('edit:projects'), projectsController.update);
-router.post('/projects', authenticationTokenMiddleware, permissionMiddleware.permission('create:projects'), projectsController.store);
-router.delete('/projects/:id', authenticationTokenMiddleware, permissionMiddleware.permission('delete:projects'), projectsController.delete);
+router.get(
+  '/projects/:id',
+  authenticationTokenMiddleware,
+  permissionMiddleware.permission('view:projects'),
+  projectsController.show,
+);
+router.put(
+  '/projects/:id',
+  authenticationTokenMiddleware,
+  permissionMiddleware.permission('edit:projects'),
+  projectsController.update,
+);
+router.post(
+  '/projects',
+  authenticationTokenMiddleware,
+  permissionMiddleware.permission('create:projects'),
+  projectsController.store,
+);
+router.delete(
+  '/projects/:id',
+  authenticationTokenMiddleware,
+  permissionMiddleware.permission('delete:projects'),
+  projectsController.delete,
+);
 
 router.post('/projects/:id/shortcuts', shortcutControllers.store);
 router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutControllers.update);
@@ -179,19 +208,18 @@ router.post('/projects/:projectId/members/invite', memberController.invite);
 router.get('/roles', roleController.index);
 router.put('/roles/:id/permission/:permissionId', roleController.update);
 router.get('/permissions', permissionController.index);
-router.post('/uploads', multerMiddleware.array('photos'), (req:any, res:any) => {
+router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
 
 router.get('/board/:id', boardController.show);
 
-router.get('/abc', async (req:any)=>{
+router.get('/abc', async (req: any) => {
   // const Role = require('../../model/role');
   // const Permission = require('../../model/permission');
 
   // const role = Role.getModel(req.dbConnection);
   // const permission = Permission.getModel(req.dbConnection);
-  
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
   // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
@@ -201,7 +229,7 @@ router.get('/abc', async (req:any)=>{
   // const developerRole = new role({ name:'developer', slug:'developer' });
   // const projectManagerRole = new role({ name:'project-manager', slug:'project-manager' });
   // const viewRole = new role({ name:'view', slug:'view' });
-  
+
   // adminRole.save();
   // developerRole.save();
   // projectManagerRole.save();
@@ -212,12 +240,12 @@ router.get('/abc', async (req:any)=>{
   // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
   // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
 
-  const users = await User.getModel(req.dbConnection).find({ _id:'62d3b849741c5a203c16bdc4' });
+  const users = await User.getModel(req.dbConnection).find({ _id: '62d3b849741c5a203c16bdc4' });
 
   users[0].projectsRoles = [
     {
       projectId: mongoose.Types.ObjectId('62d66e42300c4840ea633801'),
-      roleId:mongoose.Types.ObjectId('62d7f009e4713aab33380392'),
+      roleId: mongoose.Types.ObjectId('62d7f009e4713aab33380392'),
     },
   ];
   users[0].save();
