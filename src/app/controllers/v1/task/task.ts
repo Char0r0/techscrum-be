@@ -6,6 +6,7 @@ const Label = require('../../../model/label');
 const status = require('http-status');
 const Board = require('../../../model/board');
 const User = require('../../../model/user');
+const Type = require('../../../model/type');
 const { taskUpdate } = require('../../../services/tasks/taskUpdate');
 const { validationResult } = require('express-validator');
 
@@ -17,7 +18,9 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id }).populate({ path: 'assignId', Model: User.getModel(req.dbConnection) });
+    const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id })
+      .populate({ path: 'assignId', Model: User.getModel(req.dbConnection) })
+      .populate({ path: 'typeId', Model: Type.getModel(req.dbConnection) });
     const tagsId = task.tags;
     const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
     task.tags = tagsList;

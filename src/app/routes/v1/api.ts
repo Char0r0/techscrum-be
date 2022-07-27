@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const router = new express.Router();
 const projectsController = require('../../controllers/v1/projects/projects');
 const tenantValidations = require('../../validations/tenant');
@@ -18,10 +17,11 @@ const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
 const userPageControllers = require('../../controllers/v1/userPage/userPage');
 const permissionMiddleware = require('../../middleware/permission');
-const User = require('../../model/user');
 const memberController = require('../../controllers/v1/member/member');
 const roleController = require('../../controllers/v1/role/role');
 const permissionController = require('../../controllers/v1/permission/permission');
+const typeController = require('../../controllers/v1/type/type');
+const database = require('../../database/init');
 
 router.post('/register/:email', registerController.register);
 
@@ -178,12 +178,15 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
   res.status(200).json(req.files);
 });
 
+router.get('/types', typeController.index);
+
 router.get('/board/:id', boardController.show);
 
 router.get('/abc', async (req: any) => {
   // const Role = require('../../model/role');
   // const Permission = require('../../model/permission');
 
+  database.init(req.dbConnection);
   // const role = Role.getModel(req.dbConnection);
   // const permission = Permission.getModel(req.dbConnection);
 
@@ -205,16 +208,6 @@ router.get('/abc', async (req: any) => {
   // const editProjectPolicy = new permission({ slug: 'edit:projects', description: 'edit-project' });
   // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
   // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
-
-  const users = await User.getModel(req.dbConnection).find({ _id: '62d3b849741c5a203c16bdc4' });
-
-  users[0].projectsRoles = [
-    {
-      projectId: mongoose.Types.ObjectId('62d66e42300c4840ea633801'),
-      roleId: mongoose.Types.ObjectId('62d7f009e4713aab33380392'),
-    },
-  ];
-  users[0].save();
 });
 
 router.get('/labels/:projectId', labelController.index);

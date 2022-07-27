@@ -31,10 +31,6 @@ const taskSchema = new mongoose.Schema(
       type: Types.ObjectId,
       ref: 'boards',
     },
-    typeId: {
-      type: String,
-      default: 'Task',
-    },
     description: {
       type: String,
       trim: true,
@@ -51,9 +47,9 @@ const taskSchema = new mongoose.Schema(
       type: Types.ObjectId,
       ref: 'users',
     },
-    type: {
-      type: String,
-      trim: true,
+    typeId: {
+      type: Types.ObjectId,
+      ref: 'types',
     },
     attachmentUrls: [
       {
