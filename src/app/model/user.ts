@@ -40,7 +40,6 @@ const userSchema = new mongoose.Schema(
         projectId:{
           ref: 'projects',
           type: Types.ObjectId,
-          unique:true,
         }, 
         roleId:{
           ref: 'roles',
