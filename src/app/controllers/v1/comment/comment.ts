@@ -1,16 +1,27 @@
 import { Request, Response, NextFunction } from 'express';
-const commits = require('../../../model/commit');
+const comment = require('../../../model/comment');
+const user = require('../../../model/user');
 const status = require('http-status');
 const { replaceId } = require('../../../services/replace/replace');
 
-exports.show = async (req: Request, res: Response) => {
-  res.send([]);
+exports.show = async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params;
+  try {
+    const result = await comment
+      .getModel(req.dbConnection)
+      .find({})
+      .populate({ path: 'senderId', user });
+    res.send(replaceId(result));
+  } catch (e) {
+    next(e);
+  }
+  //res.send([]);
 };
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const { taskId, senderId, content } = req.body;
   try {
-    const newComment = await commits.getModel(req.dbConnection).create({
+    const newComment = await comment.getModel(req.dbConnection).create({
       taskId,
       senderId,
       content,
@@ -30,7 +41,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const { content } = req.body;
   const updatedAt = Date.now();
   try {
-    const updatedComment = await commits
+    const updatedComment = await comment
       .getModel(req.dbConnection)
       .findByIdAndUpdate({ _id: id }, { content, updatedAt }, { new: true });
     if (!updatedComment) {
@@ -46,7 +57,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params;
   try {
-    const deleteComment = await commits.getModel(req.dbConnection).findByIdAndDelete({ _id: id });
+    const deleteComment = await comment.getModel(req.dbConnection).findByIdAndDelete({ _id: id });
     if (!deleteComment) {
       res.sendStatus(status.NOT_FOUND);
       return;
