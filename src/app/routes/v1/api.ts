@@ -183,11 +183,7 @@ router.put(
   permissionMiddleware.permission('edit:projects'),
   projectsController.update,
 );
-router.post(
-  '/projects',
-  authenticationTokenMiddleware,
-  projectsController.store,
-);
+router.post('/projects', authenticationTokenMiddleware, projectsController.store);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,
@@ -205,8 +201,9 @@ router.delete('/projects/:projectId/members/:userId', memberController.delete);
 router.post('/projects/:projectId/members/invite', memberController.invite);
 // router.get('/members', projects.index);
 router.get('/roles', roleController.index);
-router.put('/roles/:id/permission/:permissionId', roleController.update);
+router.put('/roles/:id/permissions/:permissionId', roleController.update);
 router.get('/permissions', permissionController.index);
+router.delete('/roles/:id/permissions/:permissionId', roleController.remove);
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
