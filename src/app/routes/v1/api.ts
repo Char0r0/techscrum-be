@@ -26,10 +26,11 @@ const memberController = require('../../controllers/v1/member/member');
 const roleController = require('../../controllers/v1/role/role');
 const permissionController = require('../../controllers/v1/permission/permission');
 const typeController = require('../../controllers/v1/type/type');
+const contactController = require('../../controllers/v1/contact/contact');
 const database = require('../../database/init');
 
 router.post('/register/:email', registerController.register);
-
+router.post('/contacts', contactController.store);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 
