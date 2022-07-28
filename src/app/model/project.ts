@@ -38,6 +38,10 @@ const projectSchema = mongoose.Schema(
     shortcut: [
       { name: { type: String }, shortcutLink: { type: String } },
     ],
+    isDelete: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
