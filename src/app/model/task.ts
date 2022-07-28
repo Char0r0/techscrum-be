@@ -14,6 +14,12 @@ const taskSchema = new mongoose.Schema(
         ref: 'labels',
       },
     ],
+    comments: [
+      {
+        type: Types.ObjectId,
+        ref: 'comments',
+      },
+    ],
     statusId: {
       type: Types.ObjectId,
     },
@@ -48,7 +54,7 @@ const taskSchema = new mongoose.Schema(
     attachmentUrls: [
       {
         type: String,
-      }, 
+      },
     ],
   },
   { timestamps: true },
