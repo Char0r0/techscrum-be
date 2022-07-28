@@ -10,7 +10,7 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
   let tenantId: string = '629173f74060424a41145125';
   const domain  = req.headers.origin;
   if (config.useDefaultDatabase.toString() === false.toString()) {
-    if (domain !== 'https://www.techscrumapp.com/' && domain !== 'https://www.techscrumapp.com') {
+    if (domain !== 'https://www.techscrumapp.com/' && domain !== 'https://www.techscrumapp.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com/' ) {
       if (Object.keys(tenantConnection).length === 0) {
         const tenantConnectionMongoose = new Mongoose();
         tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
