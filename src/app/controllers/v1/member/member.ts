@@ -103,6 +103,7 @@ exports.invite = async (req: Request, res: Response) => {
     invite(user.email, name, validationToken, role.name, project.name, req.headers.origin);
     res.send(user);
   } catch (e) {
+    console.log(e);
     res.status(status.SERVICE_UNAVAILABLE).send();
   }
 };
