@@ -14,7 +14,8 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projects = await Project.getModel(req.dbConnection).find()
+    const projects = await Project.getModel(req.dbConnection)
+      .find({ isDelete: false })
       .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
       .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
     res.send(replaceId(projects));
@@ -25,13 +26,13 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
 
 //get one
 exports.show = async (req: any, res: Response) => {
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const project = await Project.getModel(req.dbConnection).findById(req.params.id)
+  const project = await Project.getModel(req.dbConnection)
+    .findOne({ _id: req.params.id, isDelete: false })
     .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
     .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
   res.status(200).send(replaceId(project));
@@ -44,7 +45,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const boardModel = Board.getModel(req.dbConnection); 
+    const boardModel = Board.getModel(req.dbConnection);
     const projectModel = Project.getModel(req.dbConnection);
 
     const board = new boardModel({ title: req.body.name });
@@ -66,7 +67,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     try {
-      const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), req.body, { new:true });
+      const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
+        Types.ObjectId(req.params.id),
+        req.body,
+        { new: true },
+      );
       if (project) return res.send(replaceId(project));
       return res.sendStatus(status.BAD_REQUEST);
     } catch (e) {
@@ -84,7 +89,9 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     try {
-      await Project.getModel(req.dbConnection).findByIdAndRemove(Types.ObjectId(req.params.id));
+      await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), {
+        isDelete: true,
+      });
       res.status(status.NO_CONTENT).json({});
     } catch (e) {
       next(e);
