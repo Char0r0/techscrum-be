@@ -24,7 +24,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   let tenantId: string = '629173f74060424a41145125';
   
   if (config.useDefaultDatabase.toString() === false.toString()) {
-    if ( origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com') {
+    if ( origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com/') {
       const dataConnectionMongoose = new Mongoose();
       const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
       const tenantModel = Tenant.getModel(tenantConnection);
