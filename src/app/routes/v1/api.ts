@@ -155,7 +155,7 @@ router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
-router.post('/tasks', taskController.store);
+router.post('/tasks', authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskController.update);
 router.delete('/tasks/:id', taskController.delete);
 
