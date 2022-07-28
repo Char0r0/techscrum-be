@@ -4,6 +4,7 @@ import { Response, Request, NextFunction } from 'express';
 
 const Role = require('../model/role');
 const Permission = require('../model/permission');
+const Project = require('../model/project');
 
 const getProjectRoleId = (projectId:string, projectRole:any) =>{
   let roleId = null;
@@ -25,12 +26,18 @@ const hasPermission = async (role:any, slug:string, req:Request) =>{
   return false;
 };
 
+
+const checkIsOwner = async (projectId: string, userId: string, req:Request) => {
+  const project = await Project.getModel(req.dbConnection).findById(projectId);
+  return project.ownerId.toString() === userId;
+};
+
 const permission = (slug: string) =>{ 
   return async (req: Request, res: Response, next: NextFunction) => {
     const user:any = req.user;
     const projectId = req.params.id || req.params.projectId;
     const projectRole = user.projectsRoles;
-    if (user.isAdmin) {
+    if (user.isAdmin || await checkIsOwner(projectId, user.id, req)) {
       next();
       return;
     }

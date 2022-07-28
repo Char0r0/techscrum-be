@@ -186,7 +186,6 @@ router.put(
 router.post(
   '/projects',
   authenticationTokenMiddleware,
-  permissionMiddleware.permission('create:projects'),
   projectsController.store,
 );
 router.delete(
