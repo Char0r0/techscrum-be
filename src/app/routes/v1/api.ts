@@ -14,7 +14,7 @@ const registerController = require('../../controllers/v1/register/register');
 const boardController = require('../../controllers/v1/board/board');
 const taskController = require('../../controllers/v1/task/task');
 const userControllers = require('../../controllers/v1/user/user');
-const commitControllers = require('../../controllers/v1/comment/comment');
+const commentControllers = require('../../controllers/v1/comment/comment');
 const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
 const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
 const labelController = require('../../controllers/v1/label/label');
@@ -149,10 +149,10 @@ router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageControllers.update);
 
-router.get('/commits/:id', commitControllers.show);
-router.post('/commits', commitControllers.store);
-router.put('/commits/:id', commitControllers.update);
-router.delete('/commits/:id', commitControllers.destroy);
+router.get('/commits/:id', commentControllers.show);
+router.post('/commits', commentControllers.store);
+router.put('/commits/:id', commentControllers.update);
+router.delete('/commits/:id', commentControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
@@ -183,12 +183,7 @@ router.put(
   permissionMiddleware.permission('edit:projects'),
   projectsController.update,
 );
-router.post(
-  '/projects',
-  authenticationTokenMiddleware,
-  permissionMiddleware.permission('create:projects'),
-  projectsController.store,
-);
+router.post('/projects', authenticationTokenMiddleware, projectsController.store);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,

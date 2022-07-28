@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../../services/replace/replace';
-import {  invite } from '../../../utils/emailSender';
+const { randomStringGenerator } = require('../../../utils/randomStringGenerator');
+import { invite } from '../../../utils/emailSender';
 const User = require('../../../model/user');
 const Role = require('../../../model/role');
 const Project = require('../../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -15,15 +17,15 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const users = await User.getModel(req.dbConnection).find({});
+    const users = await User.getModel(req.dbConnection).find({ active: true });
     const projectMembersList = [];
     const projectId = req.params.id;
     for (let i = 0; i < users.length; i++) {
       const projectRoles = users[i].projectsRoles;
-      for (let j = 0; j < projectRoles.length ;j++) {
+      for (let j = 0; j < projectRoles.length; j++) {
         if (projectRoles[j]?.projectId?.toString() === projectId) {
           projectMembersList.push(users[i]);
-        } 
+        }
       }
     }
 
@@ -38,63 +40,69 @@ exports.update = async (req: Request, res: Response) => {
   const { roleId } = req.body;
   const user = await User.getModel(req.dbConnection).findById(userId);
 
-  for (let j = 0; j <  user.projectsRoles.length ;j++) {
+  for (let j = 0; j < user.projectsRoles.length; j++) {
     if (user.projectsRoles[j]?.projectId?.toString() === projectId) {
       user.projectsRoles[j].roleId = roleId;
-    } 
+    }
   }
   const updateUser = await user.save();
   res.send(replaceId(updateUser));
 };
-
 
 exports.delete = async (req: Request, res: Response) => {
   const { userId, projectId } = req.params;
   const user = await User.getModel(req.dbConnection).findById(userId);
-  const updatedProjectRoles = user.projectsRoles.filter((item :any)=>{
+  const updatedProjectRoles = user.projectsRoles.filter((item: any) => {
     return item.projectId?.toString() !== projectId;
   });
-  user.projectsRoles =  updatedProjectRoles;
+  user.projectsRoles = updatedProjectRoles;
   const updateUser = await user.save();
   res.send(replaceId(updateUser));
 };
 
-
-
 exports.invite = async (req: Request, res: Response) => {
-  //check all user id correct or not 
+  //check all user id correct or not
   const { projectId } = req.params;
-  const { roleId, email = 'kitmanwork@gmail.com', name = 'kk', password = '1234568' } = req.body;
-  const projectsRolesId = new mongoose.Types.ObjectId();
+  const { roleId, email } = req.body;
   const userModel = User.getModel(req.dbConnection);
   const roleModel = Role.getModel(req.dbConnection);
   const projectModel = Project.getModel(req.dbConnection);
-  const project  = await projectModel.findById(projectId);
-  const role = await roleModel.findById(roleId);
-  let updateUser = await userModel.find({ email });
-  const createUser =  updateUser.length === 0;
-  if (createUser) {
-    updateUser = await new userModel({ email });
-    updateUser = await updateUser.save();
-    await userModel.activeAccount(email, name, password);
-  } else {
-    updateUser = updateUser[0];
-  }
 
-  const userPermission = await userModel.find({ 'email':email, 'projectsRoles.projectId':mongoose.Types.ObjectId(projectId) });
-  const hasPermission = userPermission.length !== 0;
-  if (!hasPermission) {
-    updateUser = await userModel.findByIdAndUpdate(updateUser._id, {
-      $push: {
-        projectsRoles: [{ _id: projectsRolesId, projectId: projectId, roleId: roleId }],
-      },
-    }, 
-    { new: true },
-    );
-    invite(updateUser.email, updateUser.name,  role.name,  project.name, req.headers.origin);
-    res.send(replaceId(updateUser));
-    return;
+  try {
+    const project = await projectModel.findById(projectId);
+    const role = await roleModel.findById(roleId);
+
+    let validationToken = '';
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      const activeCode = randomStringGenerator(16);
+      user = await new userModel({ email, activeCode });
+      await user.save();
+    }
+
+    const permission = await userModel.findOne({
+      email: email,
+      'projectsRoles.projectId': mongoose.Types.ObjectId(projectId),
+    });
+    if (!permission) {
+      user = await userModel.findByIdAndUpdate(
+        user._id,
+        {
+          $push: {
+            projectsRoles: [{ projectId: projectId, roleId: roleId }],
+          },
+        },
+        { new: true },
+      );
+    }
+
+    if (!user.active)
+      validationToken = jwt.sign({ email, activeCode: user.activeCode }, process.env.EMAIL_SECRET);
+
+    const name = user.active ? user.name : '';
+    invite(user.email, name, validationToken, role.name, project.name, req.headers.origin);
+    res.send(user);
+  } catch (e) {
+    res.status(status.SERVICE_UNAVAILABLE).send();
   }
-  invite(updateUser.email, updateUser.name,  role.name,  project.name, req.headers.origin);
-  res.send(replaceId(updateUser));
 };
