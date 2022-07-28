@@ -32,7 +32,7 @@ exports.show = async (req: any, res: Response) => {
   }
 
   const project = await Project.getModel(req.dbConnection)
-    .findById(req.params.id)
+    .findOne({ _id: req.params.id, isDelete: false })
     .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
     .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
   res.status(200).send(replaceId(project));
