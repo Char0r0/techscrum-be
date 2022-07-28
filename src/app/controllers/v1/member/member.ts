@@ -9,6 +9,7 @@ const Project = require('../../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const logger = require('../../../../loaders/logger');
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -102,8 +103,8 @@ exports.invite = async (req: Request, res: Response) => {
     const name = user.active ? user.name : '';
     invite(user.email, name, validationToken, role.name, project.name, req.headers.origin);
     res.send(user);
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    logger.info('Cannot invite member', e.toString());
     res.status(status.SERVICE_UNAVAILABLE).send();
   }
 };

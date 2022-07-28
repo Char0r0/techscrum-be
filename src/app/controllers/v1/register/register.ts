@@ -21,24 +21,26 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const { appName } = req.body;
   const origin  = req.headers.origin;
   let tenantUrl = req.headers.origin;
-  let tenantId: string = '629173f74060424a41145125';
-  
+  let tenantId: string = config.defaultTenantConnection;
+
+  if (origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== config.whiteListDomain) {
+    return res.sendStatus(500);
+  }
+
   if (config.useDefaultDatabase.toString() === false.toString()) {
-    ///if ( origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com' && origin !== 'http://myapp-load-balancer-303557069.ap-southeast-2.elb.amazonaws.com/') {
     const dataConnectionMongoose = new Mongoose();
     const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
     const tenantModel = Tenant.getModel(tenantConnection);
     const tenantOrigin =  `https://${appName}.techscrumapp.com`;
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
-      res.sendStatus(500);
+      res.sendStatus(409);
       return; 
     }
     const tenant = new tenantModel({ origin: tenantOrigin } );
     tenant.save();
     tenantId = tenant._id;
     tenantUrl = tenantOrigin;
-    //}
   }
 
   const secondDataConnectionMongoose = new Mongoose();

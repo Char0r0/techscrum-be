@@ -15,4 +15,6 @@ module.exports = {
   tenantConnection: 'mongodb+srv://admin:12345678910@cluster0.c7jps.mongodb.net/tenant?retryWrites=true&w=majority',
   useDefaultDatabase: process.env.USE_DEFAULT_DATABASE || false,
   companyAddress: process.env.COMPANY_ADDRESS || 'su93031093@gmail.com',
+  defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION,
+  whiteListDomain: process.env.WHITE_LIST_DOMAIN,
 };
