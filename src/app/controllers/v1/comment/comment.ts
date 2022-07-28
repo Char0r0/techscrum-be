@@ -13,7 +13,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
       .populate({ path: 'senderId', user });
     res.send(replaceId(result));
   } catch (e) {
-    console.log('abc');
+    console.log('abcc');
     next(e);
   }
   //res.send([]);
