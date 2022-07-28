@@ -14,7 +14,9 @@ exports.index = async (req: any, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projects = await Project.getModel(req.dbConnection).find().populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) });
+    const projects = await Project.getModel(req.dbConnection).find()
+      .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
+      .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
     res.send(replaceId(projects));
   } catch (e) {
     next(e);
@@ -29,7 +31,9 @@ exports.show = async (req: any, res: Response) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const project = await Project.getModel(req.dbConnection).findById(req.params.id).populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) });
+  const project = await Project.getModel(req.dbConnection).findById(req.params.id)
+    .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
+    .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
   res.status(200).send(replaceId(project));
 };
 
@@ -46,7 +50,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     const board = new boardModel({ title: req.body.name });
     await board.save();
     const boardObj = { boardId: board._id };
-    const project = new projectModel({ ...req.body, ...boardObj });
+    const project = new projectModel({ ...req.body, ...boardObj, ownerId: req.userId });
     await project.save();
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {

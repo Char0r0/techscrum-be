@@ -2,18 +2,30 @@ export {};
 const Role = require('../model/role');
 const Permission = require('../model/permission');
 const Type = require('../model/type');
+
+
+const TASK_TYPES = [
+  { name:'Story', slug:'story' },
+  { name:'Task', slug:'task' },
+  { name:'Bug', slug:'bug' },
+];
+
 exports.init = async (dbConnection:any) =>{
   
   const role = Role.getModel(dbConnection);
   const permission = Permission.getModel(dbConnection);
   const type = Type.getModel(dbConnection);
     
-  const type1 = new type({ name:'Story', slug:'story' });
-  const type2 = new type({ name:'Task', slug:'task' });
-  const type3 = new type({ name:'Bug', slug:'bug' });
-  await type1.save();
-  await type2.save();
-  await type3.save();
+
+
+  for (const objType of TASK_TYPES) {
+    const hasType = await type.find({ slug: objType.slug });
+    if (hasType.length > 0) {
+      continue;
+    }
+    const newType =  new type(objType);
+    newType.save();
+  }
 
   const result = await role.find({ slug:'admin' });
   if (result.length > 0) {
