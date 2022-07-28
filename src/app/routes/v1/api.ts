@@ -149,10 +149,9 @@ router.get('/users/:id', userControllers.show);
 // router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageControllers.update);
 
-router.get('/commits/:id', commentControllers.show);
-router.post('/commits', commentControllers.store);
-router.put('/commits/:id', commentControllers.update);
-router.delete('/commits/:id', commentControllers.destroy);
+router.post('/tasks/:taskId/comments', commentControllers.store);
+router.put('/comments/:id', commentControllers.update);
+router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
@@ -183,11 +182,7 @@ router.put(
   permissionMiddleware.permission('edit:projects'),
   projectsController.update,
 );
-router.post(
-  '/projects',
-  authenticationTokenMiddleware,
-  projectsController.store,
-);
+router.post('/projects', authenticationTokenMiddleware, projectsController.store);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,
@@ -205,8 +200,9 @@ router.delete('/projects/:projectId/members/:userId', memberController.delete);
 router.post('/projects/:projectId/members/invite', memberController.invite);
 // router.get('/members', projects.index);
 router.get('/roles', roleController.index);
-router.put('/roles/:id/permission/:permissionId', roleController.update);
+router.put('/roles/:id/permissions/:permissionId', roleController.update);
 router.get('/permissions', permissionController.index);
+router.delete('/roles/:id/permissions/:permissionId', roleController.remove);
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
@@ -247,7 +243,6 @@ router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelController.store);
 router.delete('/tasks/:taskId/labels/:labelId', labelController.remove);
-router.post('/labels', labelController.store);
 router.put('/labels/:id', labelController.update);
 router.delete('/labels/:id', labelController.delete);
 module.exports = router;
