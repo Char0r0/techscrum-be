@@ -53,7 +53,7 @@ exports.remove = async (req: Request, res: Response) => {
   const { id, permissionId } = req.params;
   const roleModel = Role.getModel(req.dbConnection);
   const role = await roleModel.findById(id);
-  role.permissions = await role.permissions.filter((item: any) => {
+  role.permission = await role.permission.filter((item: any) => {
     return item._id.toString() !== permissionId;
   });
   const result = await role.save();
