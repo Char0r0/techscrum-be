@@ -19,6 +19,11 @@ const projectSchema = mongoose.Schema(
       type: Types.ObjectId,
       required: true, 
     },
+    ownerId:  { 
+      ref: 'users',
+      type: Types.ObjectId,
+      required: true, 
+    },
     assigneeId: {
       type: String,
       trim: true,
