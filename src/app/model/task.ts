@@ -43,6 +43,10 @@ const taskSchema = new mongoose.Schema(
       type: Date,
       default: 0,
     },
+    reporterId: {
+      type: Types.ObjectId,
+      ref: 'users',
+    },
     assignId: {
       type: Types.ObjectId,
       ref: 'users',
