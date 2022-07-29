@@ -97,6 +97,14 @@ exports.init = async (dbConnection:any) =>{
   await viewShortcutsPolicy.save();
   await editShortcutsPolicy.save();
   await deleteShortcutsPolicy.save();
+
+  await addCardsPolicy.save();
+  await viewCardsPolicy.save();
+  await editCardsPolicy.save();
+  await deleteCardsPolicy.save();
+
+  await viewSettingsPolicy.save();
+  await editSettingsPolicy.save();
   ////////////////////////////////
   const permissions = [
     viewProjectPolicy._id, 
@@ -138,6 +146,9 @@ exports.init = async (dbConnection:any) =>{
     viewShortcutsPolicy._id,
     editShortcutsPolicy._id,
     deleteShortcutsPolicy._id,
+    addCardsPolicy._id,
+    viewCardsPolicy._id,
+    editCardsPolicy._id,
   ];
 
 
