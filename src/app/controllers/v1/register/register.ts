@@ -23,9 +23,9 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   let tenantUrl = req.headers.origin;
   let tenantId: string = config.defaultTenantConnection;
 
-  if (origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== config.whiteListDomain) {
-    return res.sendStatus(500);
-  }
+  // if (origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== config.whiteListDomain) {
+  //   return res.sendStatus(500);
+  // }
 
   if (config.useDefaultDatabase.toString() === false.toString()) {
     const dataConnectionMongoose = new Mongoose();
