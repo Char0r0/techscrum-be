@@ -14,10 +14,10 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
       const tenantConnectionMongoose = new Mongoose();
       tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
     }
-      
+
     const tenantModel = Tenant.getModel(tenantConnection.connection);
     const result = await tenantModel.findOne({ origin: domain } );
-    
+
     if (!result) {
       logger.info('Cannot find domain name', domain);
       return res.sendStatus(403);
