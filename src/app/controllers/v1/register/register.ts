@@ -31,7 +31,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
     const dataConnectionMongoose = new Mongoose();
     const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
     const tenantModel = Tenant.getModel(tenantConnection);
-    const tenantOrigin =  `https://${appName}.${config.whiteListDomain}`;
+    const tenantOrigin =  `https://${appName.toLowerCase()}.${config.frontEndRegisterDomain}`;
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
       res.sendStatus(409);

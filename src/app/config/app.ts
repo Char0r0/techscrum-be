@@ -17,4 +17,5 @@ module.exports = {
   companyAddress: process.env.COMPANY_ADDRESS || 'su93031093@gmail.com',
   defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION,
   whiteListDomain: process.env.WHITE_LIST_DOMAIN,
+  frontEndRegisterDomain: process.env.FRONT_END_REGISTER_DOMAIN,
 };
