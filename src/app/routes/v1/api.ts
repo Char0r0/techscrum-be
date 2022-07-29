@@ -221,8 +221,6 @@ router.get('/types', typeController.index);
 router.get('/board/:id', boardController.show);
 
 router.get('/abc', async (req: any) => {
-  // const Role = require('../../model/role');
-  // const Permission = require('../../model/permission');
 
   database.init(req.dbConnection);
   // const role = Role.getModel(req.dbConnection);
