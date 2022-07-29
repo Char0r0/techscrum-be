@@ -223,8 +223,6 @@ router.get('/board/:id', boardController.show);
 router.get('/abc', async (req: any) => {
 
   database.init(req.dbConnection);
-  // const role = Role.getModel(req.dbConnection);
-  // const permission = Permission.getModel(req.dbConnection);
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
   // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
