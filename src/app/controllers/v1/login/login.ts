@@ -24,7 +24,8 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
       req.body.email,
       req.body.password,
     );
-    if (user == null || user == undefined) return res.status(status.UNAUTHORIZED).send();
+    if (user === null) return res.status(status.UNAUTHORIZED).send();
+    if (user === undefined) return res.status(403).send();
     const token = await user.generateAuthToken();
     res.send({ user, ...token });
   } catch (e) {

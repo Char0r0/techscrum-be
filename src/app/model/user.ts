@@ -1,9 +1,11 @@
 import { NextFunction } from 'express';
 import { Types } from 'mongoose';
+
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
+const logger = require('../../loaders/logger');
 
 const userSchema = new mongoose.Schema(
   {
@@ -84,6 +86,11 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   if (!user) {
     return null;
   }
+  if (user.active === false) {
+    logger.info('User has not active account:' + email);
+    return undefined;
+  }
+ 
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) {
     return null;
@@ -104,7 +111,6 @@ userSchema.statics.activeAccount = async function (email: string, name: string, 
 //TODO: https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters-in-callbacks
 userSchema.pre('save', async function (this: any, next: NextFunction) {
   const user = this;
-
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
   }
