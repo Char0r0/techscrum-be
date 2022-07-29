@@ -155,11 +155,11 @@ router.put('/users/:id', userPageControllers.update);
 // router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
 router.get('/comments/:id', commentControllers.show);
 
-router.post('/comment', commentControllers.store);
+router.post('/comments', commentControllers.store);
 
-router.put('/comment/:id', commentControllers.update);
+router.put('/comments/:id', commentControllers.update);
 
-router.delete('/comment/:id', commentControllers.destroy);
+router.delete('/comments/:id', commentControllers.destroy);
 
 
 // router.get('/tasks', task.index);
