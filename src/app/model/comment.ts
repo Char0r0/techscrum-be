@@ -4,6 +4,12 @@ const { Types } = require('mongoose');
 
 const commentsSchema = new mongoose.Schema(
   {
+    taskId: {
+      ref: 'task',
+      type: Types.ObjectId,
+      required: true,
+      trim: true,
+    },
     senderId: {
       ref: 'users',
       type: Types.ObjectId,
