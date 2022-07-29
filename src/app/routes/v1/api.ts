@@ -153,13 +153,13 @@ router.put('/users/:id', userPageControllers.update);
 // router.post('/tasks/:taskId/comments', commentControllers.store);
 // router.put('/comments/:id', commentControllers.update);
 // router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
-router.get('/commits/:id', commentControllers.show);
+router.get('/comments/:id', commentControllers.show);
 
-router.post('/commits', commentControllers.store);
+router.post('/comments', commentControllers.store);
 
-router.put('/commits/:id', commentControllers.update);
+router.put('/comments/:id', commentControllers.update);
 
-router.delete('/commits/:id', commentControllers.destroy);
+router.delete('/comments/:id', commentControllers.destroy);
 
 
 // router.get('/tasks', task.index);
@@ -221,12 +221,8 @@ router.get('/types', typeController.index);
 router.get('/board/:id', boardController.show);
 
 router.get('/abc', async (req: any) => {
-  // const Role = require('../../model/role');
-  // const Permission = require('../../model/permission');
 
   database.init(req.dbConnection);
-  // const role = Role.getModel(req.dbConnection);
-  // const permission = Permission.getModel(req.dbConnection);
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
   // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
