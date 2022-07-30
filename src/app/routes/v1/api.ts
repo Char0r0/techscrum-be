@@ -29,6 +29,9 @@ const typeController = require('../../controllers/v1/type/type');
 const contactController = require('../../controllers/v1/contact/contact');
 const database = require('../../database/init');
 
+router.get('/', (req: any, res: any) => {
+  res.sendStatus(201);
+});
 router.post('/register/:email', registerController.register);
 router.post('/contacts', contactController.store);
 router.all('*', saasMiddleware.saas);
@@ -161,6 +164,8 @@ router.put('/comments/:id', commentControllers.update);
 
 router.delete('/comments/:id', commentControllers.destroy);
 
+router.delete('/comments/:id', commentControllers.destroy);
+
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskController.show);
 router.post('/tasks', authenticationTokenMiddleware, taskController.store);
@@ -220,12 +225,7 @@ router.get('/types', typeController.index);
 router.get('/board/:id', boardController.show);
 
 router.get('/abc', async (req: any) => {
-  // const Role = require('../../model/role');
-  // const Permission = require('../../model/permission');
-
   database.init(req.dbConnection);
-  // const role = Role.getModel(req.dbConnection);
-  // const permission = Permission.getModel(req.dbConnection);
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
   // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
