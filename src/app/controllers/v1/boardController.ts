@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 const status = require('http-status');
-const Board = require('../../../model/board');
-const { replaceId } = require('../../../services/replace/replace');
+const Board = require('../../model/board');
+const { replaceId } = require('../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response) => {
   const boardId = req.params.id;

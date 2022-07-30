@@ -3,12 +3,12 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
 const status = require('http-status');
-const { emailCheck } = require('../../../services/accountAccess/emailCheck');
-const { emailRegister } = require('../../../services/accountAccess/register');
-const database = require('../../../database/init');
-const User = require('../../../model/user');
-const Tenant = require('../../../model/tenant');
-const config = require('../../../config/app');
+const { emailCheck } = require('../../services/accountAccess/emailCheck');
+const { emailRegister } = require('../../services/accountAccess/register');
+const database = require('../../database/init');
+const User = require('../../model/user');
+const Tenant = require('../../model/tenant');
+const config = require('../../config/app');
 declare module 'express-serve-static-core' {
   interface Request {
     verifyEmail?: string;
@@ -19,7 +19,6 @@ declare module 'express-serve-static-core' {
 exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const email = req.params.email;
   const { appName } = req.body;
-  const origin  = req.headers.origin;
   let tenantUrl = req.headers.origin;
   let tenantId: string = config.defaultTenantConnection;
 

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-const Role = require('../../../model/role');
-const Permission = require('../../../model/permission');
+const Role = require('../../model/role');
+const Permission = require('../../model/permission');
 const status = require('http-status');
 const { validationResult } = require('express-validator');
-const { replaceId } = require('../../../services/replace/replace');
+const { replaceId } = require('../../services/replace/replace');
 const mongoose = require('mongoose');
 //get
 exports.index = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-const project = require('../../../model/project');
+const project = require('../../model/project');
 const status = require('http-status');
 import { validationResult } from 'express-validator';
-import { replaceId } from '../../../services/replace/replace';
+import { replaceId } from '../../services/replace/replace';
 const mongoose = require('mongoose');
 
 exports.store = async (req: Request, res: Response) => {

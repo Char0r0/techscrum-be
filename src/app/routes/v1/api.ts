@@ -29,6 +29,10 @@ const typeController = require('../../controllers/v1/type/type');
 const contactController = require('../../controllers/v1/contact/contact');
 const database = require('../../database/init');
 
+
+router.get('/', (req:any, res:any) => {
+  res.sendStatus(201);
+});
 router.post('/register/:email', registerController.register);
 router.post('/contacts', contactController.store);
 router.all('*', saasMiddleware.saas);
