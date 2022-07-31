@@ -1,6 +1,5 @@
-export {};
 import { Request, Response } from 'express';
-import { replaceId } from '../../services/replace/replace';
+import { replaceId } from '../../services/replaceService';
 
 const Type = require('../../model/type');
 

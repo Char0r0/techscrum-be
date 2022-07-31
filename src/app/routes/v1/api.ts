@@ -1,32 +1,32 @@
 const express = require('express');
 const router = new express.Router();
-const projectsController = require('../../controllers/v1/projects/projects');
+const projectsController = require('../../controllers/v1/projectsController');
 const tenantValidations = require('../../validations/tenant');
-const tenantControllers = require('../../controllers/v1/tenant/tenant');
+const tenantControllers = require('../../controllers/v1/tenantController');
 const {
   authenticationEmailTokenMiddleware,
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-} = require('../../middleware/auth');
-const loginController = require('../../controllers/v1/login/login');
-const registerController = require('../../controllers/v1/register/register');
-const boardController = require('../../controllers/v1/board/board');
-const taskController = require('../../controllers/v1/task/task');
-const userControllers = require('../../controllers/v1/user/user');
-const commentControllers = require('../../controllers/v1/comment/comment');
-const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
-const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
-const labelController = require('../../controllers/v1/label/label');
-const multerMiddleware = require('../../middleware/multer');
-const saasMiddleware = require('../../middleware/saas');
-const userPageControllers = require('../../controllers/v1/userPage/userPage');
-const permissionMiddleware = require('../../middleware/permission');
-const memberController = require('../../controllers/v1/member/member');
-const roleController = require('../../controllers/v1/role/role');
-const permissionController = require('../../controllers/v1/permission/permission');
-const typeController = require('../../controllers/v1/type/type');
-const contactController = require('../../controllers/v1/contact/contact');
+} = require('../../middleware/authMiddleware');
+const loginController = require('../../controllers/v1/loginController');
+const registerController = require('../../controllers/v1/registerController');
+const boardController = require('../../controllers/v1/boardController');
+const taskController = require('../../controllers/v1/taskController');
+const userControllers = require('../../controllers/v1/userController');
+const commentControllers = require('../../controllers/v1/commentController');
+const accountSettingControllers = require('../../controllers/v1/accountSettingController');
+const shortcutControllers = require('../../controllers/v1/shortcutController');
+const labelController = require('../../controllers/v1/labelController');
+const multerMiddleware = require('../../middleware/multerMiddleware');
+const saasMiddleware = require('../../middleware/saasMiddleware');
+const userPageControllers = require('../../controllers/v1/userPageController');
+const permissionMiddleware = require('../../middleware/permissionMiddleware');
+const memberController = require('../../controllers/v1/memberController');
+const roleController = require('../../controllers/v1/roleController');
+const permissionController = require('../../controllers/v1/permissionController');
+const typeController = require('../../controllers/v1/typeController');
+const contactController = require('../../controllers/v1/contactController');
 const database = require('../../database/init');
 
 

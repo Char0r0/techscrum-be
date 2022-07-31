@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const Permission = require('../../model/permission');
 const status = require('http-status');
 const { validationResult } = require('express-validator');
-const { replaceId } = require('../../services/replace/replace');
+const { replaceId } = require('../../services/replaceService');
 
 //get
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
