@@ -30,9 +30,6 @@ const contactController = require('../../controllers/v1/contactController');
 const database = require('../../database/init');
 
 
-router.get('/', (req:any, res:any) => {
-  res.sendStatus(201);
-});
 router.post('/register/:email', registerController.register);
 router.post('/contacts', contactController.store);
 router.all('*', saasMiddleware.saas);
@@ -182,7 +179,7 @@ router.post(
   loginController.autoFetchUserInfo,
 );
 
-router.get('/projects', projectsController.index);
+router.get('/projects', authenticationTokenMiddleware, projectsController.index);
 router.get(
   '/projects/:id',
   authenticationTokenMiddleware,

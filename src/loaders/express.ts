@@ -14,23 +14,10 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-function startServer() {
-  const application = express();
-
-  application
-    .listen(config.port, () => {
-      // eslint-disable-next-line no-console
-      console.log(`⚡️[server]: Server is running at http://localhost:${config.port}`);
-    })
-    .on('error', (e) => {
-      // eslint-disable-next-line no-console
-      console.log('Error', e);
-    });
-  return application;
-}
 
 module.exports = () => {
-  const app = startServer();
+  const app = express();
+
   //global middleware
   app.use(compression());
   app.use(cors());
@@ -47,3 +34,4 @@ module.exports = () => {
 
   return app;
 };
+

@@ -7,7 +7,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --runInBand",
     "coverage": "nyc --reporter=text npm test",
     "build": "npx tsc",
     "start": "node dist/index.js",
