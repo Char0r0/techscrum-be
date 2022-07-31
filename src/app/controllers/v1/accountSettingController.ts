@@ -1,9 +1,9 @@
 import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const Users = require('../../../model/user');
+const Users = require('../../model/user');
 const status = require('http-status');
-const { encryption } = require('../../../services/encryption/encryption');
-const { passwordAuth } = require('../../../services/passwordAuth/passwordAuth');
+const { encryption } = require('../../services/encryption/encryption');
+const { passwordAuth } = require('../../services/passwordAuth/passwordAuth');
 
 interface User {
   _id?: Object;

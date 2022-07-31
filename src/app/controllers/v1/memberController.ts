@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { replaceId } from '../../../services/replace/replace';
-const { randomStringGenerator } = require('../../../utils/randomStringGenerator');
-import { invite } from '../../../utils/emailSender';
-const User = require('../../../model/user');
-const Role = require('../../../model/role');
-const Project = require('../../../model/project');
+import { replaceId } from '../../services/replace/replace';
+const { randomStringGenerator } = require('../../utils/randomStringGenerator');
+import { invite } from '../../utils/emailSender';
+const User = require('../../model/user');
+const Role = require('../../model/role');
+const Project = require('../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const logger = require('../../../../loaders/logger');
+const logger = require('../../../loaders/logger');
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);

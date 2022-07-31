@@ -1,48 +1,51 @@
 const express = require('express');
 const router = new express.Router();
-const projectsController = require('../../controllers/v1/projects/projects');
+const projectsController = require('../../controllers/v1/projectsController');
 const projectValidation = require('../../validations/project');
 const tenantValidations = require('../../validations/tenant');
-const tenantControllers = require('../../controllers/v1/tenant/tenant');
+const tenantControllers = require('../../controllers/v1/tenantController');
 const {
   authenticationEmailTokenMiddleware,
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/auth');
-const loginController = require('../../controllers/v1/login/login');
+const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
-const registerController = require('../../controllers/v1/register/register');
+const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
-const boardController = require('../../controllers/v1/board/board');
+const boardController = require('../../controllers/v1/boardController');
 const boardValidation = require('../../validations/board');
-const taskController = require('../../controllers/v1/task/task');
+const taskController = require('../../controllers/v1/taskController');
 const taskValidation = require('../../validations/task');
-const userControllers = require('../../controllers/v1/user/user');
+const userControllers = require('../../controllers/v1/userController');
 const userValidation = require('../../validations/user');
-const commentControllers = require('../../controllers/v1/comment/comment');
+const commentControllers = require('../../controllers/v1/commentController');
 const commentValidation = require('../../validations/comment');
-const accountSettingControllers = require('../../controllers/v1/accountSetting/accountSetting');
+const accountSettingControllers = require('../../controllers/v1/accountSettingController');
 const accountSettingValidation = require('../../validations/accountSetting');
-const shortcutControllers = require('../../controllers/v1/shortcut/shortcut');
+const shortcutControllers = require('../../controllers/v1/shortcutController');
 const shortcutValidation = require('../../validations/shortcut');
-const labelController = require('../../controllers/v1/label/label');
+const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
 const multerMiddleware = require('../../middleware/multer');
 const saasMiddleware = require('../../middleware/saas');
-const userPageControllers = require('../../controllers/v1/userPage/userPage');
+const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
 const permissionMiddleware = require('../../middleware/permission');
-const memberController = require('../../controllers/v1/member/member');
+const memberController = require('../../controllers/v1/memberController');
 const memberValidation = require('../../validations/member');
-const roleController = require('../../controllers/v1/role/role');
+const roleController = require('../../controllers/v1/roleController');
 const roleValidation = require('../../validations/role');
-const permissionController = require('../../controllers/v1/permission/permission');
-const typeController = require('../../controllers/v1/type/type');
-const contactController = require('../../controllers/v1/contact/contact');
+const permissionController = require('../../controllers/v1/permissionController');
+const typeController = require('../../controllers/v1/typeController');
+const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 
+router.get('/', (req:any, res:any) => {
+  res.sendStatus(201);
+});
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 router.all('*', saasMiddleware.saas);
@@ -237,12 +240,8 @@ router.get('/types', typeController.index);
 router.get('/board/:id', boardValidation.show, boardController.show);
 
 router.get('/abc', async (req: any) => {
-  // const Role = require('../../model/role');
-  // const Permission = require('../../model/permission');
 
   database.init(req.dbConnection);
-  // const role = Role.getModel(req.dbConnection);
-  // const permission = Permission.getModel(req.dbConnection);
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
   // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });

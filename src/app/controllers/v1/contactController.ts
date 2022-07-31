@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const config = require('../../../config/app');
+const config = require('../../config/app');
 const status = require('http-status');
 const aws = require('aws-sdk');
 exports.store = async (req: Request, res: Response, next: NextFunction) => {

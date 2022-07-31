@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const comment = require('../../../model/comment');
-const user = require('../../../model/user');
+const comment = require('../../model/comment');
+const user = require('../../model/user');
 const status = require('http-status');
-const { replaceId } = require('../../../services/replace/replace');
+const { replaceId } = require('../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);

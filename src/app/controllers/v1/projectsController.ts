@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-const Project = require('../../../model/project');
-const Board = require('../../../model/board');
-const User = require('../../../model/user');
+const Project = require('../../model/project');
+const Board = require('../../model/board');
+const User = require('../../model/user');
 const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
-const { replaceId } = require('../../../services/replace/replace');
+const { replaceId } = require('../../services/replace/replace');
 
 //get
 exports.index = async (req: any, res: Response, next: NextFunction) => {
