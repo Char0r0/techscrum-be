@@ -1,4 +1,5 @@
-const { check, body } = require('express-validator');
+export {};
+const { check } = require('express-validator');
 
 const store = [
   // username must be an email

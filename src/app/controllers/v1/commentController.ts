@@ -1,10 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
 const comment = require('../../model/comment');
 const user = require('../../model/user');
 const status = require('http-status');
 const { replaceId } = require('../../services/replace/replace');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
+  const { id } = req.params;
   try {
     const result = await comment
       .getModel(req.dbConnection)
@@ -18,6 +25,11 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
   const { taskId, senderId, content } = req.body;
   try {
     const newComment = await comment.getModel(req.dbConnection).create({
@@ -36,6 +48,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
   const { id } = req.params;
   const { content } = req.body;
   const updatedAt = Date.now();
@@ -54,6 +71,11 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
   const { id } = req.params;
   try {
     const deleteComment = await comment.getModel(req.dbConnection).findByIdAndDelete({ _id: id });
