@@ -17,6 +17,11 @@ declare module 'express-serve-static-core' {
 
 //Emil Register
 exports.register = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
   const email = req.params.email;
   const { appName } = req.body;
   let tenantUrl = req.headers.origin;
@@ -61,6 +66,11 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
 
 //Verify Email by token
 exports.get = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
   try {
     const email = req.verifyEmail ?? '';
     res.send({ email });

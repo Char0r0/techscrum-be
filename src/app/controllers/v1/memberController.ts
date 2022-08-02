@@ -37,6 +37,10 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 exports.update = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
   const { userId, projectId } = req.params;
   const { roleId } = req.body;
   const user = await User.getModel(req.dbConnection).findById(userId);
@@ -51,6 +55,10 @@ exports.update = async (req: Request, res: Response) => {
 };
 
 exports.delete = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
   const { userId, projectId } = req.params;
   const user = await User.getModel(req.dbConnection).findById(userId);
   const updatedProjectRoles = user.projectsRoles.filter((item: any) => {
@@ -62,6 +70,10 @@ exports.delete = async (req: Request, res: Response) => {
 };
 
 exports.invite = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
   //check all user id correct or not
   const { projectId } = req.params;
   const { roleId, email } = req.body;

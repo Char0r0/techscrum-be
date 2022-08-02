@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-
+import { validationResult } from 'express-validator';
 const Users = require('../../model/user');
 const status = require('http-status');
 const passwordAuth = require('../../services/passwordAuthService');
@@ -12,6 +12,10 @@ interface User {
 
 
 exports.updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
   const { newPassword, oldPassword } = req.body;
   if (typeof req.user === 'object') {
     const user: User = req.user;
@@ -39,6 +43,10 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
 
 
 exports.update = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
   const { name = '', avatarIcon = '', userName = '', abbreviation = '', jobTitle = '', location = '' } = req.body;
 
   const user: any = req.user;
@@ -62,6 +70,11 @@ exports.update = async (req: Request, res: Response) => {
 };
 
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
   const password = req.body.password;
   if (typeof req.user === 'object') {
     const user: User = req.user;
