@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { replaceId } from '../../services/replace/replace';
+import { replaceId } from '../../services/replaceService';
 const User = require('../../model/user');
 const status = require('http-status');
 

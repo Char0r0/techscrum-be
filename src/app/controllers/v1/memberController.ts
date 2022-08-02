@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { replaceId } from '../../services/replace/replace';
+import { replaceId } from '../../services/replaceService';
 const { randomStringGenerator } = require('../../utils/randomStringGenerator');
 import { invite } from '../../utils/emailSender';
 const User = require('../../model/user');

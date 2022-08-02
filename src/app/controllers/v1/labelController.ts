@@ -2,7 +2,7 @@ export {};
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
-import { replaceId } from '../../services/replace/replace';
+import { replaceId } from '../../services/replaceService';
 const Label = require('../../model/label');
 const Task = require('../../model/task');
 const status = require('http-status');

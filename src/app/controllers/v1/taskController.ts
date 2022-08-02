@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { replaceId } from '../../services/replace/replace';
+import { replaceId } from '../../services/replaceService';
 const mongoose = require('mongoose');
 const Task = require('../../model/task');
 const Label = require('../../model/label');
@@ -7,7 +7,7 @@ const status = require('http-status');
 const Board = require('../../model/board');
 const User = require('../../model/user');
 const Type = require('../../model/type');
-const { taskUpdate } = require('../../services/tasks/taskUpdate');
+const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
 
 declare module 'express-serve-static-core' {
