@@ -14,15 +14,15 @@ const projectSchema = mongoose.Schema(
       required: true,
       trim: true,
     },
-    projectLeadId:  { 
+    projectLeadId: {
       ref: 'users',
       type: Types.ObjectId,
-      required: true, 
+      required: true,
     },
-    ownerId:  { 
+    ownerId: {
       ref: 'users',
       type: Types.ObjectId,
-      required: true, 
+      required: true,
     },
     assigneeId: {
       type: String,
@@ -33,11 +33,9 @@ const projectSchema = mongoose.Schema(
       required: true,
     },
     iconUrl: { type: String, required: false },
-    star: { type: Boolean, required: false },
+    star: { type: Boolean, default: false },
     detail: { type: 'string', required: false },
-    shortcut: [
-      { name: { type: String }, shortcutLink: { type: String } },
-    ],
+    shortcut: [{ name: { type: String }, shortcutLink: { type: String } }],
     isDelete: {
       type: Boolean,
       default: false,
