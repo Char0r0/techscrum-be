@@ -170,10 +170,10 @@ router.put('/users/:id', userPageValidation.update, userPageControllers.update);
 // router.post('/tasks/:taskId/comments', commentControllers.store);
 // router.put('/comments/:id', commentControllers.update);
 // router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
-router.get('/commits/:id', commentControllers.show);
-router.post('/commits', commentValidation.store, commentControllers.store);
-router.put('/commits/:id', commentValidation.update, commentControllers.update);
-router.delete('/commits/:id', commentValidation.remove, commentControllers.destroy);
+router.get('/comments/:id', commentControllers.show);
+router.post('/comments', commentValidation.store, commentControllers.store);
+router.put('/comments/:id', commentValidation.update, commentControllers.update);
+router.delete('/comments/:id', commentValidation.remove, commentControllers.destroy);
 
 
 // router.get('/tasks', task.index);
