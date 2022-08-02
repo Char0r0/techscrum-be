@@ -43,7 +43,7 @@ const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 
-router.get('/', (req:any, res:any) => {
+router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 router.post('/register/:email', registerValidation.register, registerController.register);
@@ -120,7 +120,12 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 router.post('/login', loginValidation.login, loginController.login);
 
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.put('/register/:token', registerValidation.store, authenticationEmailTokenMiddleware, registerController.store);
+router.put(
+  '/register/:token',
+  registerValidation.store,
+  authenticationEmailTokenMiddleware,
+  registerController.store,
+);
 /**
  * @swagger
  * components:
@@ -175,6 +180,7 @@ router.post('/commits', commentValidation.store, commentControllers.store);
 router.put('/commits/:id', commentValidation.update, commentControllers.update);
 router.delete('/commits/:id', commentValidation.remove, commentControllers.destroy);
 
+router.delete('/comments/:id', commentControllers.destroy);
 
 // router.get('/tasks', task.index);
 router.get('/tasks/:id', taskValidation.show, taskController.show);
@@ -182,8 +188,18 @@ router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskC
 router.put('/tasks/:id', taskValidation.update, taskController.update);
 router.delete('/tasks/:id', taskValidation.remove, taskController.delete);
 
-router.put('/account/me', accountSettingValidation.update, authenticationTokenMiddleware, accountSettingControllers.update);
-router.delete('/account/me', accountSettingValidation.remove, authenticationTokenMiddleware, accountSettingControllers.destroy);
+router.put(
+  '/account/me',
+  accountSettingValidation.update,
+  authenticationTokenMiddleware,
+  accountSettingControllers.update,
+);
+router.delete(
+  '/account/me',
+  accountSettingValidation.remove,
+  authenticationTokenMiddleware,
+  accountSettingControllers.destroy,
+);
 
 router.post(
   '/auto-fetch-userInfo',
@@ -216,15 +232,34 @@ router.delete(
   projectsController.delete,
 );
 
-
 router.post('/projects/:id/shortcuts', shortcutValidation.store, shortcutControllers.store);
-router.put('/projects/:projectId/shortcuts/:shortcutId', shortcutValidation.update, shortcutControllers.update);
-router.delete('/projects/:projectId/shortcuts/:shortcutId', shortcutValidation.remove, shortcutControllers.destroy);
+router.put(
+  '/projects/:projectId/shortcuts/:shortcutId',
+  shortcutValidation.update,
+  shortcutControllers.update,
+);
+router.delete(
+  '/projects/:projectId/shortcuts/:shortcutId',
+  shortcutValidation.remove,
+  shortcutControllers.destroy,
+);
 
 router.get('/projects/:id/members', memberController.index);
-router.put('/projects/:projectId/members/:userId', memberValidation.update, memberController.update);
-router.delete('/projects/:projectId/members/:userId', memberValidation.remove, memberController.delete);
-router.post('/projects/:projectId/members/invite', memberValidation.invite, memberController.invite);
+router.put(
+  '/projects/:projectId/members/:userId',
+  memberValidation.update,
+  memberController.update,
+);
+router.delete(
+  '/projects/:projectId/members/:userId',
+  memberValidation.remove,
+  memberController.delete,
+);
+router.post(
+  '/projects/:projectId/members/invite',
+  memberValidation.invite,
+  memberController.invite,
+);
 // router.get('/members', projects.index);
 
 router.get('/roles', roleController.index);
@@ -240,7 +275,6 @@ router.get('/types', typeController.index);
 router.get('/board/:id', boardValidation.show, boardController.show);
 
 router.get('/abc', async (req: any) => {
-
   database.init(req.dbConnection);
 
   // const viewRole = await role.findOne({ name:'view', slug:'view' });
