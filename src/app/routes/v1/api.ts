@@ -9,7 +9,7 @@ const {
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-} = require('../../middleware/auth');
+} = require('../../middleware/authMiddleware');
 const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
@@ -28,11 +28,11 @@ const shortcutControllers = require('../../controllers/v1/shortcutController');
 const shortcutValidation = require('../../validations/shortcut');
 const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
-const multerMiddleware = require('../../middleware/multer');
-const saasMiddleware = require('../../middleware/saas');
+const multerMiddleware = require('../../middleware/multerMiddleware');
+const saasMiddleware = require('../../middleware/saasMiddleware');
 const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
-const permissionMiddleware = require('../../middleware/permission');
+const permissionMiddleware = require('../../middleware/permissionMiddleware');
 const memberController = require('../../controllers/v1/memberController');
 const memberValidation = require('../../validations/member');
 const roleController = require('../../controllers/v1/roleController');
