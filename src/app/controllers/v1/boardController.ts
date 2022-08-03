@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 const status = require('http-status');
 const Board = require('../../model/board');
-const { replaceId } = require('../../services/replace/replace');
+const { replaceId } = require('../../services/replaceService');
 import { validationResult } from 'express-validator';
 
 exports.show = async (req: Request, res: Response) => {
@@ -13,7 +13,7 @@ exports.show = async (req: Request, res: Response) => {
   const boardId = req.params.id;
   if (boardId === 'undefined' || boardId === 'null') {
     res.status(status.NOT_ACCEPTABLE).send({});
-    return; 
+    return;
   }
 
   const boardInfo = await Board.getModel(req.dbConnection).findBoardById(boardId);
