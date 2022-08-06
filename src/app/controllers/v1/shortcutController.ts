@@ -19,11 +19,11 @@ exports.store = async (req: Request, res: Response) => {
       $push: {
         shortcut: [{ _id: shortcutId, shortcutLink, name }],
       },
-    }, 
+    },
     { new: true },
   );
 
-  const shortCut = updatedProject.shortcut.filter((data:any)=>{
+  const shortCut = updatedProject.shortcut.filter((data: any) => {
     return data._id.toString() === shortcutId.toString();
   });
 
@@ -40,7 +40,6 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   try {
-
     const { projectId, shortcutId } = req.params;
     const { shortcutLink, name } = req.body;
     const updateShortcutFlag = await project.getModel(req.dbConnection).updateOne(
@@ -66,15 +65,22 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const { projectId, shortcutId } = req.params;
+    const checkShortcutExist = await project
+      .getModel(req.dbConnection)
+      .find({ 'shortcut._id': shortcutId });
+    if (checkShortcutExist.length === 0) {
+      return res.status(status.NOT_FOUND).send();
+    }
     const updatedProject = await project.getModel(req.dbConnection).updateOne(
       { _id: projectId },
 
       { $pull: { shortcut: { _id: shortcutId } } },
     );
-    if (updatedProject) {
-      res.status(status.OK).send();
-    } else {
+    if (!updatedProject) {
       res.status(status.NOT_ACCEPTABLE).send();
+      return;
+    } else {
+      res.status(status.OK).send();
     }
   } catch (e) {
     next(e);
