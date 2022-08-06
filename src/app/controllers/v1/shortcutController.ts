@@ -48,7 +48,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
         $set: { 'shortcut.$.shortcutLink': shortcutLink, 'shortcut.$.name': name },
       },
     );
-    if (updateShortcutFlag) {
+    if (updateShortcutFlag.modifiedCount === 1) {
       res.status(status.OK).send();
     } else {
       res.status(status.CONFLICT).send();

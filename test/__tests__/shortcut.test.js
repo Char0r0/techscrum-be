@@ -18,39 +18,39 @@ describe('Create Shortcut Test', () => {
     expect(res.statusCode).toEqual(422);
   });
 });
-// describe('Update Shortcut Test', () => {
-//   it('should update shortcut', async () => {
-//     const newShortcut = { shortcutLink: 'google.com', name: 'Google' };
-//     const shortcutId = '62eca03b0caa6400308af9a2';
-//     const projectId = '62e4b5606fb0da0a12dcfe6d';
-//     const res = await request(app())
-//       .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
-//       .send({ ...newShortcut });
-//     expect(res.statusCode).toEqual(200);
-//   });
-//   it('should Return Conflict', async () => {
-//     const newShortcut = { shortcutLink: undefined, name: undefined };
-//     const wrongId = '62eca03b0caa6400308af9b4';
-//     const projectId = '62e4b5606fb0da0a12dcfe6d';
-//     const res = await request(app())
-//       .put(`/api/v1/projects/${projectId}/shortcuts/${wrongId}`)
-//       .send({ ...newShortcut });
-//     expect(res.statusCode).toEqual(422);
-//   });
-//   it('should return 422', async () => {
-//     const shortcut = { shortcutLink: undefined, name: undefined };
-//     const projectId = '62e4b5606fb0da0a12dcfe6d';
-//     const shortcutId = '62eca03b0caa6400308af9a2';
-//     const res = await request(app())
-//       .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
-//       .send({ ...shortcut });
-//     expect(res.statusCode).toEqual(422);
-//   });
-// });
+describe('Update Shortcut Test', () => {
+  it('should update shortcut', async () => {
+    const newShortcut = { shortcutLink: 'facebook.com', name: 'Facebook' };
+    const shortcutId = '62ee2acf9ec184ff866da4e3';
+    const projectId = '62edd13ce3af744361a45fec';
+    const res = await request(app())
+      .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
+      .send({ ...newShortcut });
+    expect(res.statusCode).toEqual(200);
+  });
+  it('should Return Conflict', async () => {
+    const newShortcut = { shortcutLink: 'twitter.com', name: 'Twitter' };
+    const shortcutId = '62ee2acf9ec184ff866da4e3';
+    const WrongProjectId = '62edd13ce3af744361a45fed';
+    const res = await request(app())
+      .put(`/api/v1/projects/${WrongProjectId}/shortcuts/${shortcutId}`)
+      .send({ ...newShortcut });
+    expect(res.statusCode).toEqual(409);
+  });
+  it('should return 422', async () => {
+    const shortcut = { shortcutLink: undefined, name: undefined };
+    const projectId = '62edd13ce3af744361a45fec';
+    const shortcutId = '62ee2c4641dbc06481a70e03';
+    const res = await request(app())
+      .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
+      .send({ ...shortcut });
+    expect(res.statusCode).toEqual(422);
+  });
+});
 describe('Destroy Shortcut Test', () => {
   it('should delete shortcut', async () => {
     const projectId = '62edd13ce3af744361a45fec';
-    const shortcutId = '62ee28c1f1416250a34a771c';
+    const shortcutId = '62ee274026b3bae33e26cee5';
     const res = await request(app()).delete(
       `/api/v1/projects/${projectId}/shortcuts/${shortcutId}`,
     );
