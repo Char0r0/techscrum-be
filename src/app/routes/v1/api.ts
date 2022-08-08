@@ -5,15 +5,18 @@ const projectValidation = require('../../validations/project');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenantController');
 const {
-  authenticationEmailTokenMiddleware,
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
+const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
+const { authenticationForgetPasswordMiddleware } = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
+const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
+const forgetPasswordValidation = require('../../validations/forgetPassword');
 const boardController = require('../../controllers/v1/boardController');
 const boardValidation = require('../../validations/board');
 const taskController = require('../../controllers/v1/taskController');
@@ -28,11 +31,11 @@ const shortcutControllers = require('../../controllers/v1/shortcutController');
 const shortcutValidation = require('../../validations/shortcut');
 const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
-const multerMiddleware = require('../../middleware/multer');
-const saasMiddleware = require('../../middleware/saas');
+const multerMiddleware = require('../../middleware/multerMiddleware');
+const saasMiddleware = require('../../middleware/saasMiddleware');
 const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
-const permissionMiddleware = require('../../middleware/permission');
+const permissionMiddleware = require('../../middleware/permissionMiddleware');
 const memberController = require('../../controllers/v1/memberController');
 const memberValidation = require('../../validations/member');
 const roleController = require('../../controllers/v1/roleController');
@@ -47,8 +50,8 @@ router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 router.post('/register/:email', registerValidation.register, registerController.register);
-router.post('/contacts', contactValidation.store, contactController.store);
 
+router.post('/contacts', contactValidation.store, contactController.store);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
@@ -126,6 +129,11 @@ router.put(
   authenticationEmailTokenMiddleware,
   registerController.store,
 );
+
+router.post('/forget-password', forgetPasswordValidation.forgetPasswordApplication, forgetPasswordController.forgetPasswordApplication);
+router.get('/forget-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordController.get);
+router.put('/forget-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordValidation.put, forgetPasswordController.put);
+
 /**
  * @swagger
  * components:
@@ -175,10 +183,10 @@ router.put('/users/:id', userPageValidation.update, userPageControllers.update);
 // router.post('/tasks/:taskId/comments', commentControllers.store);
 // router.put('/comments/:id', commentControllers.update);
 // router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
-router.get('/comment/:id', commentControllers.show);
-router.post('/comment', commentValidation.store, commentControllers.store);
-router.put('/comment/:id', commentValidation.update, commentControllers.update);
-router.delete('/comment/:id', commentValidation.remove, commentControllers.destroy);
+router.get('/comments/:id', commentControllers.show);
+router.post('/comments', commentValidation.store, commentControllers.store);
+router.put('/comments/:id', commentValidation.update, commentControllers.update);
+router.delete('/comments/:id', commentValidation.remove, commentControllers.destroy);
 
 router.delete('/comments/:id', commentControllers.destroy);
 
@@ -213,7 +221,7 @@ router.get(
   '/projects/:id',
   authenticationTokenMiddleware,
   permissionMiddleware.permission('view:projects'),
-  projectValidation.store,
+  projectValidation.show,
   projectsController.show,
 );
 router.put(
@@ -223,7 +231,7 @@ router.put(
   projectValidation.update,
   projectsController.update,
 );
-router.post('/projects', authenticationTokenMiddleware, projectsController.store);
+router.post('/projects', authenticationTokenMiddleware, projectValidation.store, projectsController.store);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,
