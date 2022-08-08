@@ -99,7 +99,7 @@ export const forgetPassword = (
     name: name ?? email,
     appName: 'TECHSCRUMAPP',
     domain,
-    url: 'forget-password-verify',
+    url: 'login/change-password',
     color: '#7291F7',
     border: '5px solid #7291F7',
     year: '2022',

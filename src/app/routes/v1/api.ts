@@ -129,9 +129,9 @@ router.put(
   registerController.store,
 );
 
-router.post('/forget-password', forgetPasswordValidation.forgetPasswordApplication, forgetPasswordController.forgetPasswordApplication);
-router.get('/forget-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordController.getUserEmail);
-router.put('/forget-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordValidation.updateUserPassword, forgetPasswordController.updateUserPassword);
+router.post('/reset-password', forgetPasswordValidation.forgetPasswordApplication, forgetPasswordController.forgetPasswordApplication);
+router.get('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordController.getUserEmail);
+router.put('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordValidation.updateUserPassword, forgetPasswordController.updateUserPassword);
 
 /**
  * @swagger

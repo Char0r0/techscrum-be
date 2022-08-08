@@ -34,41 +34,41 @@ afterAll(async () => {
   await dbHandler.closeDatabase();
 });
 
-describe('Forget Password Post Test', () => {
+describe('Reset Password Post Test', () => {
   it('should get user', async () => {
     const email = 'test@gamil.com';
-    const res = await request(application).post('/api/v1/forget-password').send({ email });
+    const res = await request(application).post('/api/v1/reset-password').send({ email });
     expect(res.statusCode).toBe(200);
     const user = await User.getModel(dbConnection).findOne({ email });
     expect(res.text).toMatch(JSON.stringify(user));
   });
 });
 
-describe('Forget Password Post Test: return 404 if user not found', () => {
+describe('Reset Password Post Test: return 404 if user not found', () => {
   it('should not get user', async () => {
     const email = 'abcd@gamil.com';
-    const res = await request(application).post('/api/v1/forget-password').send({ email });
+    const res = await request(application).post('/api/v1/reset-password').send({ email });
     expect(res.statusCode).toBe(404);
   });
 });
 
-describe('Forget Password Get Test', () => {
+describe('Forget Password Get User by TOken Test', () => {
   it('should get user', async () => {
     const email = 'test@gmail.com';
     const token = jwt.sign({ email }, process.env.FORGET_SECRET);
-    const res = await request(application).get(`/api/v1/forget-password/${token}`).send();
+    const res = await request(application).get(`/api/v1/change-password/${token}`).send();
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.text)).toMatchObject({ email });
   });
 });
 
-describe('Forget Password Push Test', () => {
+describe('Reset Password Test', () => {
   it('should get user', async () => {
     const email = 'test@gamil.com';
     const password = 'EmilSu-1234';
     const token = jwt.sign({ email }, process.env.FORGET_SECRET);
     const res = await request(application)
-      .put(`/api/v1/forget-password/${token}`)
+      .put(`/api/v1/change-password/${token}`)
       .send({ password });
 
     expect(res.statusCode).toBe(200);
