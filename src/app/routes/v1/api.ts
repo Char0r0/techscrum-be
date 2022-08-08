@@ -50,7 +50,6 @@ router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 router.post('/register/:email', registerValidation.register, registerController.register);
-
 router.post('/contacts', contactValidation.store, contactController.store);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
