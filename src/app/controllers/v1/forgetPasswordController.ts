@@ -38,7 +38,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
   }
 };
 
-exports.get = async (req: Request, res: Response) => {
+exports.getUserEmail = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -47,7 +47,7 @@ exports.get = async (req: Request, res: Response) => {
   return res.status(status.OK).send({ email: req.email });
 };
 
-exports.put = async (req: Request, res: Response, next: NextFunction) => {
+exports.updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
