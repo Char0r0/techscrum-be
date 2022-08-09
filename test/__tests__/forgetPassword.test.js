@@ -1,6 +1,6 @@
 const request = require('supertest');
 const sinon = require('sinon');
-const dbHandler = require('../db-handler');
+const dbHandler = require('../dbHandler');
 const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 const User = require('../../src/app/model/user');
 const bcrypt = require('bcrypt');
