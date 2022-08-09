@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
 const status = require('http-status');
-const logger = require('../../loaders/logger');
 declare module 'express-serve-static-core' {
   interface Request {
     userId?: string;
@@ -12,19 +11,6 @@ declare module 'express-serve-static-core' {
     refreshToken?: string;
   }
 }
-
-const authenticationEmailTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-
-  const token = req.params.token;
-  const { email, activeCode } = jwt.verify(token, process.env.EMAIL_SECRET);
-  const user = await User.getModel(req.dbConnection).findOne({ email, activeCode }).exec();
-  if (user && !user.active) {
-    req.verifyEmail = email;  
-    return next();
-  }
-  logger.info(email + 'activation  code incorrect. User input ' + activeCode);
-  res.status(status.FORBIDDEN).send();
-};
 
 const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -117,4 +103,4 @@ const authenticationRefreshTokenMiddleware = async (req: Request, res: Response,
   res.status(status.FORBIDDEN).send();
 };
 
-module.exports = { authenticationEmailTokenMiddleware, authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware };
+module.exports = { authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware };
