@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
 const aws = require('aws-sdk');
 const config = require('../config/app');
+const logger = require('../../loaders/logger');
 
 aws.config.update({
   region: process.env.REGION,
@@ -10,9 +10,9 @@ aws.config.update({
 
 function cb(email_err: any, email_data: any): void {
   if (email_err) {
-    console.log('Failed to send to email:' + email_err);
+    logger.error('Failed to send to email:' + email_err);
   } else {
-    console.log(`Email Sent Success: ${JSON.stringify(email_data)}`);
+    logger.info(`Email Sent Success: ${JSON.stringify(email_data)}`);
   }
 }
 
