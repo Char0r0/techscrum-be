@@ -61,7 +61,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
       .getModel(req.dbConnection)
       .findByIdAndUpdate({ _id: id }, { content, updatedAt }, { new: true });
     if (!updatedComment) {
-      res.sendStatus(status.UNPROCESSABLE_ENTITY);
+      res.sendStatus(status.NOT_FOUND);
       return;
     }
     res.send(replaceId(updatedComment));
