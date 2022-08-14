@@ -47,13 +47,6 @@ const userSchema = new mongoose.Schema(
           ref: 'roles',
           type: Types.ObjectId,
         },
-        lastVisitedTime: {
-          type: Date,
-        },
-        active: {
-          type: Boolean,
-          default: false,
-        },
       },
     ],
     name: {
