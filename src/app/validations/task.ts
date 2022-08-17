@@ -5,7 +5,7 @@ const show = [param('id').notEmpty()];
 
 const store = [body('boardId').notEmpty()];
 
-const update = [body('title').notEmpty().isString()];
+const update = [param('id').notEmpty().isString()];
 
 const remove = [param('id').notEmpty().isString()];
 
