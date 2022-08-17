@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 export {};
 import { Response, Request, NextFunction } from 'express';
 const { Mongoose } = require('mongoose');

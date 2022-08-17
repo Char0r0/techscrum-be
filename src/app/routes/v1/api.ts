@@ -5,15 +5,18 @@ const projectValidation = require('../../validations/project');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenantController');
 const {
-  authenticationEmailTokenMiddleware,
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
+const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
+const { authenticationForgetPasswordMiddleware } = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
+const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
+const forgetPasswordValidation = require('../../validations/forgetPassword');
 const boardController = require('../../controllers/v1/boardController');
 const boardValidation = require('../../validations/board');
 const taskController = require('../../controllers/v1/taskController');
@@ -50,7 +53,6 @@ router.post('/register/:email', registerValidation.register, registerController.
 router.post('/contacts', contactValidation.store, contactController.store);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
-
 /**
  * @swagger
  * components:
@@ -126,6 +128,11 @@ router.put(
   authenticationEmailTokenMiddleware,
   registerController.store,
 );
+
+router.post('/reset-password', forgetPasswordValidation.forgetPasswordApplication, forgetPasswordController.forgetPasswordApplication);
+router.get('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordController.getUserEmail);
+router.put('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordValidation.updateUserPassword, forgetPasswordController.updateUserPassword);
+
 /**
  * @swagger
  * components:
@@ -213,7 +220,7 @@ router.get(
   '/projects/:id',
   authenticationTokenMiddleware,
   permissionMiddleware.permission('view:projects'),
-  projectValidation.store,
+  projectValidation.show,
   projectsController.show,
 );
 router.put(
@@ -223,7 +230,7 @@ router.put(
   projectValidation.update,
   projectsController.update,
 );
-router.post('/projects', authenticationTokenMiddleware, projectsController.store);
+router.post('/projects', authenticationTokenMiddleware, projectValidation.store, projectsController.store);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,

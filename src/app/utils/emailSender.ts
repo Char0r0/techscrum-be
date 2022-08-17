@@ -1,5 +1,6 @@
 const aws = require('aws-sdk');
 const config = require('../config/app');
+const logger = require('../../loaders/logger');
 
 aws.config.update({
   region: process.env.REGION,
@@ -9,9 +10,9 @@ aws.config.update({
 
 function cb(email_err: any, email_data: any): void {
   if (email_err) {
-    console.log('Failed to send to email:' + email_err);
+    logger.error('Failed to send to email:' + email_err);
   } else {
-    console.log(`Email Sent Success: ${email_data}`);
+    logger.info(`Email Sent Success: ${JSON.stringify(email_data)}`);
   }
 }
 
@@ -94,18 +95,18 @@ export const forgetPassword = (
   token: string,
   domain: string = config.frontEndAddress,
 ) => {
-  // Create sendEmail params
   const templateData = {
-    name: name,
+    name: name ?? email,
     appName: 'TECHSCRUMAPP',
     domain,
-    url: 'register',
+    url: 'login/change-password',
     color: '#7291F7',
     border: '5px solid #7291F7',
     year: '2022',
     project: 'abc',
-    token: token,
-    time: ' 4 hours',
+    token: `token=${token}`,
+    time: ' 30 minutes',
   };
+
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
 };
