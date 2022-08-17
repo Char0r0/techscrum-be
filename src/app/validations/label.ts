@@ -4,6 +4,7 @@ const { param, body } = require('express-validator');
 const store = [
   body('name').notEmpty().isString(),
   body('slug').notEmpty().isString(),
+  body('projectId').notEmpty().isString(),
 ];
 
 const update = [param('id').notEmpty().isString()];
