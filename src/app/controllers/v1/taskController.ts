@@ -91,6 +91,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
     const task = await Task.getModel(req.dbConnection).findOneAndDelete({
       _id: mongoose.Types.ObjectId(req.params.id),
     });
+    if (!task) return res.status(404).send();
     const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
     const taskStatus = board.taskStatus.map(
       (statusDetail: { _id: String; items: { _id: String; taskId: String }[] }) => {

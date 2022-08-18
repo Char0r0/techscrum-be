@@ -145,4 +145,9 @@ describe('Delete task test', () => {
     const res = await request(application).delete(`/api/v1/tasks/${id}`);
     expect(res.statusCode).toEqual(200);
   });
+  it('should return 404 not found', async () => {
+    const wrongId = '62e4bc9692266e6c8fcddddd';
+    const res = await request(application).delete(`/api/v1/tasks/${wrongId}`);
+    expect(res.statusCode).toEqual(404);
+  });
 });
