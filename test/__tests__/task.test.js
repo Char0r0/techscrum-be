@@ -9,6 +9,7 @@ const Task = require('../../src/app/model/task');
 const Board = require('../../src/app/model/board');
 const fixture = require('../fixtures/task');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 let application = null;
 let dbConnection = '';
 let token = '';
@@ -120,6 +121,8 @@ describe('Update Task Test', () => {
       .put(`/api/v1/tasks/${id}`)
       .send({ ...newTask });
     expect(res.body).toMatchObject({ ...newTask });
+    const checkUpdateTask = await Task.getModel(dbConnection).findOne({ _id: id });
+    expect(checkUpdateTask.title).toEqual(newTask.title);
   });
   it('should return 404 not found', async () => {
     const wrongId = '62e4bc9692266e6c8fcd0bb1';
@@ -144,6 +147,8 @@ describe('Delete task test', () => {
     const id = '62e4bc9692266e6c8fcd0bbe';
     const res = await request(application).delete(`/api/v1/tasks/${id}`);
     expect(res.statusCode).toEqual(200);
+    const checkDeleteTask = await Task.getModel(dbConnection).findOne({ _id: id });
+    expect(checkDeleteTask).toBeFalsy();
   });
   it('should return 404 not found', async () => {
     const wrongId = '62e4bc9692266e6c8fcddddd';
