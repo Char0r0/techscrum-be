@@ -30,7 +30,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
       expiresIn: '30m',
     });
 
-    await forgetPassword(email, user.name, token);
+    await forgetPassword(email, user?.name, token);
 
     return res.send(user);
   } catch (e) {
@@ -58,6 +58,7 @@ exports.updateUserPassword = async (req: Request, res: Response, next: NextFunct
   try {
     const user = await User.getModel(req.dbConnection).findOne({ email });
     user.password = password;
+    user.active = true;
     await user.save();
     if (user) return res.send(user);
     res.status(status.NOT_FOUND).send();
