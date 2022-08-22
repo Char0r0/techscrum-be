@@ -15,8 +15,8 @@ const authenticationEmailTokenMiddleware = async (
   next: NextFunction,
 ) => {
   const token = req.params.token;
-  jwt.verify(token, process.env.ACCESS_SECRET, async (err: Error) => {
-    if (err) res.status(status.FORBIDDEN).send();
+  jwt.verify(token, process.env.EMAIL_SECRET, async (err: Error) => {
+    if (err) return res.status(status.FORBIDDEN).send();
 
     const { email, activeCode } = jwt.verify(token, process.env.EMAIL_SECRET);
     const user = await User.getModel(req.dbConnection).findOne({ email, activeCode }).exec();
