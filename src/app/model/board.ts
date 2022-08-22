@@ -69,6 +69,22 @@ boardSchema.statics.findBoardById = async function (id: string) {
       },
     },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'taskList.assignId',
+        foreignField: '_id',
+        as: 'assignCollection',
+      },
+    },
+    {
+      $lookup: {
+        from: 'labels',
+        localField: 'taskList.tags',
+        foreignField: '_id',
+        as: 'tagsCollection',
+      },
+    },
+    {
       $addFields: {
         taskList: {
           $map: {
@@ -78,14 +94,6 @@ boardSchema.statics.findBoardById = async function (id: string) {
             },
           },
         },
-      },
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'taskList.assignId',
-        foreignField: '_id',
-        as: 'assignCollection',
       },
     },
     {
@@ -100,7 +108,6 @@ boardSchema.statics.findBoardById = async function (id: string) {
             in: {
               id: '$$task._id',
               title: '$$task.title',
-              tags: '$$task.tags',
               statusId: '$$task.statusId',
               projectId: '$$task.projectId',
               boardId: '$$task.boardId',
@@ -114,6 +121,20 @@ boardSchema.statics.findBoardById = async function (id: string) {
                   $filter: {
                     input: '$assignCollection',
                     cond: { $eq: ['$$this._id', '$$task.assignId'] },
+                  },
+                },
+              },
+              tags: {
+                $first: {
+                  $map: {
+                    input: '$$task.tags',
+                    as: 'tag',
+                    in: {
+                      $filter: {
+                        input: '$tagsCollection',
+                        cond: { $in: ['$$this._id', '$$task.tags'] },
+                      },
+                    },
                   },
                 },
               },
@@ -132,6 +153,36 @@ boardSchema.statics.findBoardById = async function (id: string) {
         'taskList.assignInfo.password': 0,
         'taskList.assignInfo.activeCode': 0,
         'taskList.assignInfo.isAdmin': 0,
+        'taskList.tags.__v': 0,
+      },
+    },
+    {
+      $project: {
+        id: '$_id',
+        title: '$title',
+        taskStatus: {
+          id: '$taskStatus._id',
+          name: '$taskStatus.name',
+          slug: '$taskStatus.slug',
+          taskList: {
+            $map: {
+              input: '$taskStatus.items',
+              as: 'items',
+              in: {
+                id: '$$items._id',
+                order: '$$items.order',
+                detail: {
+                  $first: {
+                    $filter: {
+                      input: '$taskList',
+                      cond: { $eq: ['$$this.id', '$$items.taskId'] },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     {
@@ -139,7 +190,6 @@ boardSchema.statics.findBoardById = async function (id: string) {
         _id: '$_id',
         title: { $first: '$title' },
         taskStatus: { $push: '$taskStatus' },
-        taskList: { $push: '$taskList' },
       },
     },
   ]);
