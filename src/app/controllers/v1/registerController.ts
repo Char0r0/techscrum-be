@@ -26,7 +26,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const { appName } = req.body;
   let tenantUrl = req.headers.origin;
   let tenantId: string = config.defaultTenantConnection;
-
+  //console
   // if (origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== config.whiteListDomain) {
   //   return res.sendStatus(500);
   // }
