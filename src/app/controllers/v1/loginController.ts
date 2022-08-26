@@ -18,7 +18,7 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  
+
   try {
     const user = await User.getModel(req.dbConnection).findByCredentials(
       req.body.email,
