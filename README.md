@@ -49,6 +49,9 @@ See the [open issues](https://010001.atlassian.net/jira/software/projects/TEC/bo
 - npm run test
 
 ## Contributing
+Emil (Junqian Su)
+Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
+Jest testing: forgetPassword
 
 ## License
 
