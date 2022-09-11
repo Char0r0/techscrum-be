@@ -16,15 +16,13 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
 
     const tenantModel = Tenant.getModel(tenantConnection.connection);
     const result = await tenantModel.findOne({ origin: domain } );
-
-    if (!result) {
-      logger.info('Cannot find domain name', domain);
-      return res.sendStatus(403);
+    if (!config || !config.emailSecret) {
+      logger.error('Missing email secret in env');
+      return null;
     }
     tenantId = result._id?.toString();
 
   }
-
   const url = config.db.replace('techscrumapp', tenantId);
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
     const dataConnectionMongoose = new Mongoose();
