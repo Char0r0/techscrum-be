@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 const status = require('http-status');
-const { emailCheck } = require('../../services/emailCheckService');
+const { isUserActived } = require('../../services/emailCheckService');
 const User = require('../../model/user');
 const { forgetPassword } = require('../../utils/emailSender');
 const jwt = require('jsonwebtoken');
@@ -22,7 +22,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
   const { email } = req.body;
 
   try {
-    const existUser: boolean = await emailCheck(email, req.dbConnection);
+    const existUser: boolean = await isUserActived(email, req.dbConnection);
     if (!existUser) return res.status(status.NOT_FOUND).send();
     const user = await User.getModel(req.dbConnection).findOne({ email, active:true });
 

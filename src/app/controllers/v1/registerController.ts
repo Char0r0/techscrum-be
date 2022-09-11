@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
 const status = require('http-status');
-const { emailCheck } = require('../../services/emailCheckService');
+const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
 const database = require('../../database/init');
 const User = require('../../model/user');
@@ -51,7 +51,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const url = config.db.replace('techscrumapp', tenantId);
   const resdbConnection = await secondDataConnectionMongoose.connect(url);
   database.init(resdbConnection);
-  const existUser: boolean = await emailCheck(email, resdbConnection);
+  const existUser: boolean = await isUserActived(email, resdbConnection);
   if (!existUser) {
     const user = await emailRegister(email, resdbConnection, tenantUrl);
     if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
@@ -85,9 +85,9 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const { email, name, password } = req.body;
-    const user = await User.getModel(req.dbConnection).activeAccount(email, name, password, req);
+    const user = await User.getModel(req.dbConnection).saveInfo(email, name, password, req);
     const token = await user.generateAuthToken();
-
+    user.activeAccount();
     res.send({ user, ...token });
   } catch (e) {
     next(e);

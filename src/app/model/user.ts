@@ -98,10 +98,10 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
-userSchema.statics.activeAccount = async function (email: string, name: string, password: string) {
+userSchema.statics.saveInfo = async function (email: string, name: string, password: string) {
   const user = await this.findOneAndUpdate(
     { email },
-    { password: await bcrypt.hash(password, 8), active: true, name },
+    { password: await bcrypt.hash(password, 8), name, activeCode:'' },
     { new: true },
   ).exec();
   if (!user) throw new Error('Cannot find user');
@@ -151,6 +151,13 @@ userSchema.methods.generateAuthToken = async function () {
   });
   return { token, refreshToken };
 };
+
+userSchema.methods.activeAccount = function () {
+  const user = this;
+  user.active = true;
+  user.save();
+};
+
 
 module.exports.getModel = (connection: any) => {
   if (!connection) {
