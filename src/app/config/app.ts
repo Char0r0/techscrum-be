@@ -18,4 +18,5 @@ module.exports = {
   defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION || 'devtechscrumapp',
   whiteListDomain: process.env.WHITE_LIST_DOMAIN,
   frontEndRegisterDomain: process.env.FRONT_END_REGISTER_DOMAIN,
+  emailSecret: process.env.EMAIL_SECRET,
 };

@@ -2,7 +2,6 @@ export {};
 const { param, body } = require('express-validator');
 
 const register = [
-  body('appName').notEmpty(),
   param('email').isEmail(),
 ];
 
