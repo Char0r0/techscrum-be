@@ -6,7 +6,7 @@ const config = require('../../app/config/app');
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 const saas = async (req: Request, res: Response, next: NextFunction) => {
-  let tenantId: string = config.defaultTenantConnection;
+  let tenantId: string = config.defaultTenantConnection || 'devtechscrumapp';
   const domain  = req.headers.origin;
   if (config.useDefaultDatabase.toString() === false.toString()) {
     if (Object.keys(tenantConnection).length === 0) {
@@ -24,7 +24,6 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
     tenantId = result._id?.toString();
 
   }
-
 
   const url = config.db.replace('techscrumapp', tenantId);
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {

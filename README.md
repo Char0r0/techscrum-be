@@ -1,11 +1,10 @@
-<!-- ABOUT THE PROJECT -->
-
 ## About The Project
 
 [TechScrum](https://techscrumapp.com)
 
 ### Tech Stack
 
+- Express (Back end web application framework)
 - Agenda (Job scheduling)
 - Winston (Logging framework)
 - Nodemon (Automatically restarts application when code files are updated)
@@ -17,20 +16,16 @@ This is an example of how to list things you need to use the software and how to
 
 Node
 
-### Installation
+### Installation and start application
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services.
 
 - npm install
 - cp .env.example .env
 
-## Usage
+After that
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<!-- ROADMAP -->
+- npm run dev
 
 ## Roadmap
 
@@ -42,13 +37,12 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 See the [open issues](https://010001.atlassian.net/jira/software/projects/TEC/boards/2/backlog) for a full list of proposed features (and known issues).
 
-<!-- CONTRIBUTING -->
-
 ## Tests
 
 - npm run test
 
 ## Contributing
+
 Emil (Junqian Su)
 Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
 Jest testing: forgetPassword

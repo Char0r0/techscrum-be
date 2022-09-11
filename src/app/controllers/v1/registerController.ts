@@ -51,17 +51,14 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const url = config.db.replace('techscrumapp', tenantId);
   const resdbConnection = await secondDataConnectionMongoose.connect(url);
   database.init(resdbConnection);
-  try {
-    const existUser: boolean = await emailCheck(email, resdbConnection);
-    if (!existUser) {
-      const user = await emailRegister(email, resdbConnection, tenantUrl);
-      if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
-      return res.status(status.CREATED).send(user);
-    }
-    res.status(status.FOUND).send();
-  } catch (e) {
-    next(e);
+  const existUser: boolean = await emailCheck(email, resdbConnection);
+  if (!existUser) {
+    const user = await emailRegister(email, resdbConnection, tenantUrl);
+    if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
+    return res.status(status.CREATED).send(user);
   }
+  res.status(status.FOUND).send();
+  
 };
 
 //Verify Email by token
