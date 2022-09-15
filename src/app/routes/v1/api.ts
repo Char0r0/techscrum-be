@@ -49,6 +49,9 @@ const database = require('../../database/init');
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
+
+router.post('/admin-register/:email', registerValidation.register, registerController.adminRegister);
+
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 router.all('*', saasMiddleware.saas);
