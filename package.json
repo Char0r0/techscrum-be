@@ -14,7 +14,7 @@
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "lint": "eslint src/"
   },
-  "reposito ry": {
+  "repository": {
     "type": "git",
     "url": "git+ssh://git@bitbucket.org/010001/be.techscrum.git"
   },
