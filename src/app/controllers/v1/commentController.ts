@@ -11,7 +11,6 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const { id } = req.params;
   try {
     const result = await comment
       .getModel(req.dbConnection)
