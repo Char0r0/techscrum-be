@@ -15,8 +15,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-//Emil Register
-exports.register = async (req: Request, res: Response, next: NextFunction) => {
+exports.register = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -26,10 +25,6 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
   const { appName } = req.body;
   let tenantUrl = req.headers.origin;
   let tenantId: string = config.defaultTenantConnection;
-  //console
-  // if (origin !== 'https://www.techscrumapp.com/' && origin !== 'https://www.techscrumapp.com' && origin !== config.whiteListDomain) {
-  //   return res.sendStatus(500);
-  // }
 
   if (config.useDefaultDatabase.toString() === false.toString()) {
     const dataConnectionMongoose = new Mongoose();
@@ -58,7 +53,30 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(status.CREATED).send(user);
   }
   res.status(status.FOUND).send();
-  
+};
+
+
+exports.adminRegister = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
+  const email = req.params.email;
+  let tenantUrl = req.headers.origin;
+  let tenantId: string = config.defaultTenantConnection;
+
+  const secondDataConnectionMongoose = new Mongoose();
+  const url = config.db.replace('techscrumapp', tenantId);
+  const resdbConnection = await secondDataConnectionMongoose.connect(url);
+  database.init(resdbConnection);
+  const existUser: boolean = await isUserActived(email, resdbConnection);
+  if (!existUser) {
+    const user = await emailRegister(email, resdbConnection, tenantUrl);
+    if (user == null || user === undefined) return res.status(status.SERVICE_UNAVAILABLE).send();
+    return res.status(status.CREATED).send(user);
+  }
+  res.status(status.FOUND).send();
 };
 
 //Verify Email by token
