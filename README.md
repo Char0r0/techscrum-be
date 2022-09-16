@@ -2,6 +2,10 @@
 
 [TechScrum](https://techscrumapp.com)
 
+For more info please refer to
+
+- https://lilac-dancer-737.notion.site/Backend-8d15124cec444344bbd41935ed697b1e
+
 ### Tech Stack
 
 - Express (Back end web application framework)
@@ -41,17 +45,14 @@ See the [open issues](https://010001.atlassian.net/jira/software/projects/TEC/bo
 
 - npm run test
 
-## Contributing
-
-Emil (Junqian Su)
-Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
-Jest testing: forgetPassword
-
 ## License
 
 ## Contact
 
 Kitman Yiu - [Kitman Yiu](www.kitmanyiu.com)
+Emil (Junqian Su)
+Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
+Jest testing: forgetPassword
 
 ## Acknowledgments
 
@@ -59,6 +60,4 @@ Use this space to list resources you find helpful and would like to give credit 
 
 ## Coding Standard
 
-- https://docs.google.com/document/d/1mmmdfmJqeM81y5cajolUOLGxRJtr_DONof82MQP9HZs/edit?usp=sharing
-
-## TTT
+- https://lilac-dancer-737.notion.site/Coding-Guidelines-bfa77d75476a4b19a195ddb20b02bb33
