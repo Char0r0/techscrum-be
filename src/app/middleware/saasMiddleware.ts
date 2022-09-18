@@ -25,6 +25,7 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
       }
       if (!result) {
         logger.error('Cannot find tanant result');   
+        return null;
       }
       tenantId = result._id?.toString();
     }
