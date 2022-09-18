@@ -8,20 +8,26 @@ const logger = require('../../loaders/logger');
 const saas = async (req: Request, res: Response, next: NextFunction) => {
   let tenantId: string = config.defaultTenantConnection || 'devtechscrumapp';
   const domain  = req.headers.origin;
+  const excludeDomain = domain === 'https://www.techscrumapp.com';
+
   if (config.useDefaultDatabase.toString() === false.toString()) {
-    if (Object.keys(tenantConnection).length === 0) {
-      const tenantConnectionMongoose = new Mongoose();
-      tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
-    }
+    if (!excludeDomain) {
+      if (Object.keys(tenantConnection).length === 0) {
+        const tenantConnectionMongoose = new Mongoose();
+        tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
+      }
 
-    const tenantModel = Tenant.getModel(tenantConnection.connection);
-    const result = await tenantModel.findOne({ origin: domain } );
-    if (!config || !config.emailSecret) {
-      logger.error('Missing email secret in env');
-      return null;
+      const tenantModel = Tenant.getModel(tenantConnection.connection);
+      const result = await tenantModel.findOne({ origin: domain } );
+      if (!config || !config.emailSecret) {
+        logger.error('Missing email secret in env');
+        return null;
+      }
+      if (!result) {
+        logger.error('Cannot find tanant result');   
+      }
+      tenantId = result._id?.toString();
     }
-    tenantId = result._id?.toString();
-
   }
   const url = config.db.replace('techscrumapp', tenantId);
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
