@@ -8,7 +8,7 @@ const logger = require('../../loaders/logger');
 const saas = async (req: Request, res: Response, next: NextFunction) => {
   let tenantId: string = config.defaultTenantConnection || 'devtechscrumapp';
   const domain  = req.headers.origin;
-  const excludeDomain = domain === 'https://www.techscrumapp.com';
+  const excludeDomain = domain === 'https://www.techscrumapp.com' || domain === 'http://localhost:3000';
 
   if (config.useDefaultDatabase.toString() === false.toString()) {
     if (!excludeDomain) {
