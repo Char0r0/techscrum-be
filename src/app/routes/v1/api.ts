@@ -179,12 +179,8 @@ router.put('/change-password/:token', authenticationForgetPasswordMiddleware, fo
 
 router.get('/users', userControllers.index);
 router.get('/users/:id', userValidation.show, userControllers.show);
-// router.post('/users/:id', userControllers.update);
 router.put('/users/:id', userPageValidation.update, userPageControllers.update);
 
-// router.post('/tasks/:taskId/comments', commentControllers.store);
-// router.put('/comments/:id', commentControllers.update);
-// router.delete('/task/:taskId/comments/:commentId', commentControllers.destroy);
 router.get('/comments/:id', commentControllers.show);
 router.post('/comments', commentValidation.store, commentControllers.store);
 router.put('/comments/:id', commentValidation.update, commentControllers.update);
@@ -192,7 +188,7 @@ router.delete('/comments/:id', commentValidation.remove, commentControllers.dest
 
 router.delete('/comments/:id', commentControllers.destroy);
 
-// router.get('/tasks', task.index);
+
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
@@ -270,7 +266,7 @@ router.post(
   memberValidation.invite,
   memberController.invite,
 );
-// router.get('/members', projects.index);
+
 
 router.get('/roles', roleController.index);
 router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);

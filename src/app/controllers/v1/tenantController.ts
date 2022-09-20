@@ -28,12 +28,3 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     next(e);
   }
 };
-
-// PUT
-// exports.update = (req: Request, res: Response) => {};
-
-// GET ONE
-// exports.show = (req: Request, res: Response) => {};
-
-// DELETE
-// exports.delete = (req: Request, res: Response) => {};
