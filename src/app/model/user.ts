@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 const logger = require('../../loaders/logger');
-
+const DEFAULT_IMG_URL = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -67,7 +67,7 @@ const userSchema = new mongoose.Schema(
     },
     avatarIcon: {
       type: String,
-      default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png',
+      default: DEFAULT_IMG_URL,
     },
     abbreviation: {
       type: String,
