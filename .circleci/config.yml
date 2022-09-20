@@ -5,6 +5,7 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
   snyk: snyk/snyk@1.2.3
+  sonarcloud: sonarsource/sonarcloud@1.0.3
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -57,6 +58,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: npm run lint
+      - sonarcloud/scan
   e2e_test:
     docker:
       - image: cimg/node:16.17.0-browsers
