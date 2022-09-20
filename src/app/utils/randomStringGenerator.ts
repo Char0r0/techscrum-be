@@ -1,10 +1,10 @@
 const RANDOM_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const randomStringGenerator = (stringLength: number) => {
-  var result = '';
-  var characters = RANDOM_CHAR;
-  var charactersLength = characters.length;
+  let result = '';
+  const characters = RANDOM_CHAR;
+  const charactersLength = characters.length;
 
-  for (var i = 0; i < stringLength; i++) {
+  for (let i = 0; i < stringLength; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
 

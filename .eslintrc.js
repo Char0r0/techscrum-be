@@ -6,6 +6,7 @@ module.exports = {
     project: './tsconfig.eslint.json',
   },
   rules: {
+    'no-var': 'error',
     'no-console': 'error',
     'no-secrets/no-secrets':['error', { 
       'ignoreIdentifiers':[
