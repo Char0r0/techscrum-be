@@ -2,7 +2,7 @@ export {};
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var typeSchema = new Schema({
+const typeSchema = new Schema({
   slug: {
     type: String,
     required: true,

@@ -2,7 +2,7 @@ export {};
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-var tenantSchema = new Schema({
+const tenantSchema = new Schema({
   origin: {
     type: String,
     required: true,
