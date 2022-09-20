@@ -1,6 +1,7 @@
+const RANDOM_CHAR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const randomStringGenerator = (stringLength: number) => {
   var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var characters = RANDOM_CHAR;
   var charactersLength = characters.length;
 
   for (var i = 0; i < stringLength; i++) {

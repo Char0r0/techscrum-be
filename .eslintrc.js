@@ -1,12 +1,20 @@
 module.exports = {
   root: true,
   extends: 'airbnb-typescript/base',
-  plugins: ['prettier'],
+  plugins: ['prettier', 'no-secrets'],
   parserOptions: {
     project: './tsconfig.eslint.json',
   },
   rules: {
     'no-console': 'error',
+    'no-secrets/no-secrets':['error', { 
+      'ignoreIdentifiers':[
+        'RANDOM_CHAR', 
+        'DEFAULT_IMG_URL',
+        'DEFAULT_MONGODB_URL', 
+        'DEFAULT_FE_URL', 
+        'DEFAULT_TANANT_CONNECTION',
+      ] }],
     'import/extensions': [
       'off',
       'ignorePackages',
