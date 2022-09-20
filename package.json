@@ -13,7 +13,9 @@
     "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "lint": "eslint src/",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "load-test": "artillery run artilleryio-load-test.yml --output .artilleryio/test.json",
+    "load-test-report": "artillery report --output .artilleryio/report.html .artilleryio/test.json"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,7 @@
   "homepage": "https://bitbucket.org/010001/be.techscrum#readme",
   "dependencies": {
     "agenda": "^4.3.0",
+    "artillery": "^2.0.0-23",
     "aws-sdk": "^2.1176.0",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",

@@ -9,7 +9,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    var params = {
+    const params = {
       Destination: {
         ToAddresses: [config.companyAddress],
       },
