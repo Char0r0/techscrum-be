@@ -19,13 +19,3 @@ exports.show = async (req: Request, res: Response) => {
   const user = await User.getModel(req.dbConnection).findById(id);
   return res.status(200).send(user);
 };
-
-// exports.update = (req: Request, res: Response) => {
-//   const id = parseInt(req.body.id);
-//   const index = userList.findIndex((user) => user.id === id);
-//   if (index >= 0) {
-//     userList[index] = { ...req.body };
-//     res.status(200).send({ result: true });
-//   }
-//   return res.status(400).send({ result: false });
-// };

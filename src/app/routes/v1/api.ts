@@ -286,25 +286,6 @@ router.get('/board/:id', boardValidation.show, boardController.show);
 
 router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
-
-  // const viewRole = await role.findOne({ name:'view', slug:'view' });
-  // const viewP = await permission.findOne({ slug: 'view:projects', description: 'view-project' });
-  // viewRole.permission.push(viewP._id);
-  // viewRole.save();
-  // const adminRole = new role({ name:'admin', slug:'admin' });
-  // const developerRole = new role({ name:'developer', slug:'developer' });
-  // const projectManagerRole = new role({ name:'project-manager', slug:'project-manager' });
-  // const viewRole = new role({ name:'view', slug:'view' });
-
-  // adminRole.save();
-  // developerRole.save();
-  // projectManagerRole.save();
-  // viewRole.save();
-
-  // const viewProjectPolicy = new permission({ slug: 'view:projects', description: 'view-project' });
-  // const editProjectPolicy = new permission({ slug: 'edit:projects', description: 'edit-project' });
-  // const deleteProjectPolicy = new permission({ slug: 'delete:projects', description: 'delete-project' });
-  // const addProjectPolicy = new permission({ slug: 'add:projects', description: 'add-project' });
 });
 
 router.get('/labels/:projectId', labelController.index);
