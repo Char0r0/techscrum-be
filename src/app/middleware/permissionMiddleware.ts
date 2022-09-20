@@ -17,7 +17,7 @@ const getProjectRoleId = (projectId:string, projectRole:any) =>{
 
 const hasPermission = async (role:any, slug:string, req:Request) =>{
   const permissionPopulate = await role.populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-  permissionPopulate.permission.forEach((element: { slug: String; }) => {
+  permissionPopulate.permission.forEach((element: { slug: string; }) => {
     if (element.slug === slug) {
       return true;
     }
@@ -42,7 +42,7 @@ const permission = (slug: string) =>{
     }
 
     const roleId = getProjectRoleId(projectId, projectRole);
-    //console.log(projectId, projectRole, roleId);
+
     if (!roleId) {
       res.status(403).send('no role id');
       return;

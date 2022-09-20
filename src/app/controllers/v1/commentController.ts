@@ -20,7 +20,6 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
-  //res.send([]);
 };
 
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
