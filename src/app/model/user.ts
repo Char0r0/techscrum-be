@@ -108,7 +108,6 @@ userSchema.statics.saveInfo = async function (email: string, name: string, passw
   return user;
 };
 
-//TODO: https://www.typescriptlang.org/docs/handbook/functions.html#this-parameters-in-callbacks
 userSchema.pre('save', async function (this: any, next: NextFunction) {
   const user = this;
   if (user.isModified('password')) {
