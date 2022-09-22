@@ -94,7 +94,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
     if (!task) return res.status(404).send();
     const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
     const taskStatus = board.taskStatus.map(
-      (statusDetail: { _id: String; items: { _id: String; taskId: String }[] }) => {
+      (statusDetail: { _id: string; items: { _id: string; taskId: string }[] }) => {
         if (statusDetail._id.toString() !== task.statusId.toString()) return statusDetail;
         statusDetail.items = statusDetail.items.filter((item) => {
           if (item.taskId.toString() === task._id.toString()) return false;

@@ -21,15 +21,14 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
     const users = await User.getModel(req.dbConnection).find({ active: true });
     const projectMembersList = [];
     const projectId = req.params.id;
-    for (let i = 0; i < users.length; i++) {
-      const projectRoles = users[i].projectsRoles;
-      for (let j = 0; j < projectRoles.length; j++) {
-        if (projectRoles[j]?.projectId?.toString() === projectId) {
-          projectMembersList.push(users[i]);
+    for (const user of users) {
+      const projectRoles:any = user.projectsRoles;
+      for (const role of projectRoles) {
+        if (role?.projectId?.toString() === projectId) {
+          projectMembersList.push(user);
         }
       }
     }
-
     res.send(replaceId(projectMembersList));
   } catch (e) {
     next(e);
@@ -45,9 +44,9 @@ exports.update = async (req: Request, res: Response) => {
   const { roleId } = req.body;
   const user = await User.getModel(req.dbConnection).findById(userId);
 
-  for (let j = 0; j < user.projectsRoles.length; j++) {
-    if (user.projectsRoles[j]?.projectId?.toString() === projectId) {
-      user.projectsRoles[j].roleId = roleId;
+  for (const element of user.projectsRoles) {
+    if (element?.projectId?.toString() === projectId) {
+      element.roleId = roleId;
     }
   }
   const updateUser = await user.save();
