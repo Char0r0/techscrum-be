@@ -15,11 +15,11 @@ export const taskUpdate = async (req: Request) => {
     //if we need to move, find target columns, reorder column items
     //if the insert item is the last item, task will be added in the last if operator
     if (targetIndex !== null && targetIndex !== undefined) {
-      for (let i = 0; i < board.taskStatus.length; i++) {
-        if (board.taskStatus[i]._id.toString() === statusId) {
-          const { items } = board.taskStatus[i];
+      for (const element of board.taskStatus) {
+        if (element._id.toString() === statusId) {
+          const { items } = element;
           let orderIndex = 0;
-          board.taskStatus[i].items = items.reduce(
+          element.items = items.reduce(
             (result: [{}], item: { taskId: string; order: number }, index: number) => {
               if (item.taskId.toString() !== task._id.toString()) {
                 if (index === targetIndex && index !== items.length - 1) result.push({ taskId: task._id, order: orderIndex++ });
@@ -31,17 +31,17 @@ export const taskUpdate = async (req: Request) => {
             [],
           );
 
-          if (targetIndex >= board.taskStatus[i].items.length) {
-            board.taskStatus[i].items.push({ taskId: task._id, order: orderIndex++ });
+          if (targetIndex >= element.items.length) {
+            element.items.push({ taskId: task._id, order: orderIndex++ });
           }
         }
       }
     }
   } else {
     //delete target task and set task to destination location
-    for (let i = 0; i < board.taskStatus.length; i++) {
-      if (board.taskStatus[i]._id.toString() === task.statusId.toString()) {
-        const { items } = board.taskStatus[i];
+    for (const element of board.taskStatus) {
+      if (element._id.toString() === task.statusId.toString()) {
+        const { items } = element;
         let orderIndex = 0;
         const temp = items.reduce((result: [{}], item: { taskId: string; order: number }) => {
           if (item.taskId.toString() !== task._id.toString()) {
@@ -50,22 +50,22 @@ export const taskUpdate = async (req: Request) => {
           }
           return result;
         }, []);
-        board.taskStatus[i].items = temp;
+        element.items = temp;
         continue;
       }
 
-      if (board.taskStatus[i]._id.toString() === statusId) {
+      if (element._id.toString() === statusId) {
         if (
           targetIndex === null ||
           targetIndex === undefined ||
-          board.taskStatus[i].items.length === targetIndex
+          element.items.length === targetIndex
         ) {
-          const length = board.taskStatus[i].items.length;
-          board.taskStatus[i].items.push({ taskId: task._id, order: length });
+          const length = element.items.length;
+          element.items.push({ taskId: task._id, order: length });
         } else {
-          const { items } = board.taskStatus[i];
+          const { items } = element;
           let orderIndex = 0;
-          board.taskStatus[i].items = items.reduce(
+          element.items = items.reduce(
             (result: [{}], item: { taskId: string; order: number }, index: number) => {
               if (index === targetIndex) result.push({ taskId: task._id, order: orderIndex++ });
               result.push({ ...item, order: orderIndex++ });
