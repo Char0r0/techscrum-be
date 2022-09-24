@@ -1,4 +1,10 @@
-import backlogRouter from './backlog.route';
+import {
+  createBacklog,
+  deleteBacklog,
+  getBacklog,
+  getBacklogs,
+  updateBacklog,
+} from '../../controllers/v1/backlogController';
 
 const express = require('express');
 const router = new express.Router();
@@ -315,6 +321,11 @@ router.delete('/tasks/:taskId/labels/:labelId', labelValidation.eliminate, label
 router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
-router.use('/backlog', backlogRouter);
+// backlog
+router.get('/backlog', getBacklogs);
+router.get('/backlog/:id', getBacklog);
+router.post('/backlog', createBacklog);
+router.put('/backlog', updateBacklog);
+router.delete('/backlog', deleteBacklog);
 
 module.exports = router;
