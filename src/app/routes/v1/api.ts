@@ -1,11 +1,3 @@
-import {
-  createBacklog,
-  deleteBacklog,
-  getBacklog,
-  getBacklogs,
-  updateBacklog,
-} from '../../controllers/v1/backlogController';
-
 const express = require('express');
 const router = new express.Router();
 const projectsController = require('../../controllers/v1/projectsController');
@@ -55,6 +47,13 @@ const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
+import {
+  createBacklog,
+  deleteBacklog,
+  getBacklog,
+  getBacklogs,
+  updateBacklog,
+} from '../../controllers/v1/backlogController';
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
