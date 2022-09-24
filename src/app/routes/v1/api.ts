@@ -47,13 +47,7 @@ const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
-import {
-  createBacklog,
-  deleteBacklog,
-  getBacklog,
-  getBacklogs,
-  updateBacklog,
-} from '../../controllers/v1/backlogController';
+const backlogController = require('../../controllers/v1/backlogController');
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
@@ -321,10 +315,10 @@ router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
 // backlog
-router.get('/backlog', getBacklogs);
-router.get('/backlog/:id', getBacklog);
-router.post('/backlog', createBacklog);
-router.put('/backlog', updateBacklog);
-router.delete('/backlog', deleteBacklog);
+router.get('/backlog', backlogController.index);
+router.get('/backlog/:id', backlogController.show);
+router.post('/backlog', backlogController.store);
+router.put('/backlog', backlogController.update);
+router.delete('/backlog', backlogController.destroy);
 
 module.exports = router;

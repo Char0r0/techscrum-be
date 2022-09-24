@@ -5,7 +5,7 @@ const testMessage = {
 };
 
 // get all
-export const getBacklog = async (req: Request, res: Response, next: NextFunction) => {
+export const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(testMessage);
   } catch (error: any) {
@@ -14,7 +14,7 @@ export const getBacklog = async (req: Request, res: Response, next: NextFunction
 };
 
 // get one
-export const getBacklogs = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(testMessage);
   } catch (error: any) {
@@ -23,7 +23,7 @@ export const getBacklogs = async (req: Request, res: Response, next: NextFunctio
 };
 
 // create
-export const createBacklog = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(testMessage);
   } catch (error: any) {
@@ -32,7 +32,7 @@ export const createBacklog = async (req: Request, res: Response, next: NextFunct
 };
 
 // update
-export const updateBacklog = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(testMessage);
   } catch (error: any) {
@@ -41,7 +41,7 @@ export const updateBacklog = async (req: Request, res: Response, next: NextFunct
 };
 
 // delete
-export const deleteBacklog = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.status(200).json(testMessage);
   } catch (error: any) {
