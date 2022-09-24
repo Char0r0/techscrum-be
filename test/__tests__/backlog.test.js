@@ -16,7 +16,7 @@ describe('Backlog Test', () => {
   });
 
   // get one
-  it('should get backlogs', async () => {
+  it('should get one backlog', async () => {
     const res = await request(app()).get(`${backlogUrl}/1`);
 
     expect(res.statusCode).toEqual(200);
@@ -24,7 +24,7 @@ describe('Backlog Test', () => {
   });
 
   // create one
-  it('should get backlogs', async () => {
+  it('should create a backlog', async () => {
     const res = await request(app()).get(`${backlogUrl}`);
 
     expect(res.statusCode).toEqual(200);
@@ -32,7 +32,7 @@ describe('Backlog Test', () => {
   });
 
   // update one
-  it('should update backlogs', async () => {
+  it('should update a backlog', async () => {
     const res = await request(app()).get(`${backlogUrl}/1`);
 
     expect(res.statusCode).toEqual(200);
@@ -40,7 +40,7 @@ describe('Backlog Test', () => {
   });
 
   // delete one
-  it('should get backlogs', async () => {
+  it('should get a backlog', async () => {
     const res = await request(app()).get(`${backlogUrl}/1`);
 
     expect(res.statusCode).toEqual(200);
