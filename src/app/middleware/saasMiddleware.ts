@@ -1,14 +1,16 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
+import { asyncHandler } from '../utils/helper';
 const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenant');
 const config = require('../../app/config/app');
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 
+
 const getTenantId = async (domain:string | undefined) => {
   const defaultConnection = config.defaultTenantConnection || 'devtechscrumapp';
-  const excludeDomain = domain === 'https://www.techscrumapp.com' || domain === 'http://localhost:3000';
+  const excludeDomain = domain === 'https://www.techscrumapp.com' || domain === 'http://localhost:3000' || domain === 'http://devtechscrum.s3-website-ap-southeast-2.amazonaws.com';
   const useDefaultConnection  = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(tenantConnection).length !== 0;
 
@@ -34,11 +36,10 @@ const getTenantId = async (domain:string | undefined) => {
   return result._id?.toString();
 };
 
-const saas = async (req: Request, res: Response, next: NextFunction) => {
+const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const domain  = req.headers.origin;
   const tenantId: string = await getTenantId(domain);
   const url = config.db.replace('techscrumapp', tenantId);
-
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
     const dataConnectionMongoose = new Mongoose();
     dataConnectionMongoose.connect(url).then(() => {
@@ -54,6 +55,6 @@ const saas = async (req: Request, res: Response, next: NextFunction) => {
     req.tenantId = tenantId;
     return next();
   }
-};
+});
 
 module.exports = { saas };
