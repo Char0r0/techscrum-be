@@ -15,6 +15,7 @@ module.exports = {
         'DEFAULT_MONGODB_URL', 
         'DEFAULT_FE_URL', 
         'DEFAULT_TANANT_CONNECTION',
+        'DEFAULT_DOMAIN_CONNECTION',
       ] }],
     'import/extensions': [
       'off',

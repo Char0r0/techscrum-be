@@ -1,6 +1,6 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
-import { asyncHandler } from '../utils/helper';
+import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
 const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenant');
 const config = require('../../app/config/app');
@@ -8,13 +8,13 @@ const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 
 
-const getTenantId = async (domain:string | undefined) => {
+const getTenantId = async (host:string | undefined) => {
   const defaultConnection = config.defaultTenantConnection || 'devtechscrumapp';
-  const excludeDomain = domain === 'https://www.techscrumapp.com' || domain === 'http://localhost:3000' || domain === 'http://devtechscrum.s3-website-ap-southeast-2.amazonaws.com';
+  const excludeDomain = await shouldExcludeDomainList(host);
   const useDefaultConnection  = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(tenantConnection).length !== 0;
 
-  if (!domain || excludeDomain || useDefaultConnection) {
+  if (!host || excludeDomain || useDefaultConnection) {
     return defaultConnection;
   }
 
@@ -24,7 +24,7 @@ const getTenantId = async (domain:string | undefined) => {
   }
 
   const tenantModel = Tenant.getModel(tenantConnection.connection);
-  const result = await tenantModel.findOne({ origin: domain } );
+  const result = await tenantModel.findOne({ origin: host } );
   if (!config || !config.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');

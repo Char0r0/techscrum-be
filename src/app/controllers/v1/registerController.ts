@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
+import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
@@ -15,7 +16,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-exports.register = async (req: Request, res: Response) => {
+exports.register = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -53,10 +54,10 @@ exports.register = async (req: Request, res: Response) => {
     return res.status(status.CREATED).send(user);
   }
   res.status(status.FOUND).send();
-};
+});
 
 
-exports.adminRegister = async (req: Request, res: Response) => {
+exports.adminRegister = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -77,10 +78,10 @@ exports.adminRegister = async (req: Request, res: Response) => {
     return res.status(status.CREATED).send(user);
   }
   res.status(status.FOUND).send();
-};
+});
 
 //Verify Email by token
-exports.get = async (req: Request, res: Response, next: NextFunction) => {
+exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -92,10 +93,10 @@ exports.get = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
-};
+});
 
 //Active account
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+exports.store = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -110,4 +111,4 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
-};
+});

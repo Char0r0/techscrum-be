@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 const User = require('../../model/user');
 import { validationResult } from 'express-validator';
+import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 
 declare module 'express-serve-static-core' {
@@ -13,7 +14,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-exports.login = async (req: Request, res: Response, next: NextFunction) => {
+exports.login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -31,9 +32,9 @@ exports.login = async (req: Request, res: Response, next: NextFunction) => {
   } catch (e) {
     next(e);
   }
-};
+});
 
-exports.autoFetchUserInfo = async (req: Request, res: Response, next: NextFunction) => {
+exports.autoFetchUserInfo = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -45,4 +46,4 @@ exports.autoFetchUserInfo = async (req: Request, res: Response, next: NextFuncti
   } catch (e) {
     next(e);
   }
-};
+});
