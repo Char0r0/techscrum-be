@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { backlogFakeData } from '../../mock/backlog';
 
+const testMessage = {
+  message: 'OK',
+};
+
 // get all
 export const index = async (req: Request, res: Response, next: NextFunction) => {
   try {
