@@ -11,7 +11,8 @@ export const backlogFakeData = {
           type: {
             id: '10100',
             name: 'Story',
-            iconUrl: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
+            iconUrl:
+              'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
           },
           status: {
             id: '10100',
@@ -21,8 +22,7 @@ export const backlogFakeData = {
           assignee: {
             accountId: '5d3e7db727c72d0daf92a365',
             displayName: 'Xiaoxin Wang',
-            avatarUrl:
-              'https://secure.gravatar.com/avatar/c26a47f518d71035adadc3046d272213?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FXW-0.png',
+            avatarUrl: 'https://picsum.photos/200',
           },
         },
         flagged: false,
@@ -42,7 +42,8 @@ export const backlogFakeData = {
           type: {
             id: '10101',
             name: 'Task',
-            iconUrl: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
+            iconUrl:
+              'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium',
           },
           status: {
             id: '10101',
@@ -52,8 +53,7 @@ export const backlogFakeData = {
           assignee: {
             accountId: '5d3e7db727c72d0daf92a365',
             displayName: 'Joe Zhou',
-            avatarUrl:
-              'https://secure.gravatar.com/avatar/c26a47f518d71035adadc3046d272213?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FXW-0.png',
+            avatarUrl: 'https://picsum.photos/200',
           },
         },
         flagged: false,
