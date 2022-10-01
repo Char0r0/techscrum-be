@@ -10,7 +10,9 @@ const {
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
 const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
-const { authenticationForgetPasswordMiddleware } = require('../../middleware/forgetPasswordMiddleware');
+const {
+  authenticationForgetPasswordMiddleware,
+} = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
@@ -45,12 +47,21 @@ const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
+const backlogController = require('../../controllers/v1/backlogController');
+const domainController = require('../../controllers/v1/domainsController');
+const sprintController = require('../../controllers/v1/sprintController');
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 
-router.post('/admin-register/:email', registerValidation.register, registerController.adminRegister);
+router.get('/domains', domainController.index);
+
+router.post(
+  '/admin-register/:email',
+  registerValidation.register,
+  registerController.adminRegister,
+);
 
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
@@ -132,9 +143,22 @@ router.put(
   registerController.store,
 );
 
-router.post('/reset-password', forgetPasswordValidation.forgetPasswordApplication, forgetPasswordController.forgetPasswordApplication);
-router.get('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordController.getUserEmail);
-router.put('/change-password/:token', authenticationForgetPasswordMiddleware, forgetPasswordValidation.updateUserPassword, forgetPasswordController.updateUserPassword);
+router.post(
+  '/reset-password',
+  forgetPasswordValidation.forgetPasswordApplication,
+  forgetPasswordController.forgetPasswordApplication,
+);
+router.get(
+  '/change-password/:token',
+  authenticationForgetPasswordMiddleware,
+  forgetPasswordController.getUserEmail,
+);
+router.put(
+  '/change-password/:token',
+  authenticationForgetPasswordMiddleware,
+  forgetPasswordValidation.updateUserPassword,
+  forgetPasswordController.updateUserPassword,
+);
 
 /**
  * @swagger
@@ -188,7 +212,6 @@ router.delete('/comments/:id', commentValidation.remove, commentControllers.dest
 
 router.delete('/comments/:id', commentControllers.destroy);
 
-
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
@@ -229,7 +252,12 @@ router.put(
   projectValidation.update,
   projectsController.update,
 );
-router.post('/projects', authenticationTokenMiddleware, projectValidation.store, projectsController.store);
+router.post(
+  '/projects',
+  authenticationTokenMiddleware,
+  projectValidation.store,
+  projectsController.store,
+);
 router.delete(
   '/projects/:id',
   authenticationTokenMiddleware,
@@ -267,7 +295,6 @@ router.post(
   memberController.invite,
 );
 
-
 router.get('/roles', roleController.index);
 router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
 router.get('/permissions', permissionController.index);
@@ -290,4 +317,15 @@ router.post('/tasks/:taskId/labels', labelValidation.store, labelController.stor
 router.delete('/tasks/:taskId/labels/:labelId', labelValidation.eliminate, labelController.remove);
 router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
+
+// backlog
+router.get('/backlog', backlogController.index);
+router.get('/backlog/:id', backlogController.show);
+router.post('/backlog', backlogController.store);
+router.put('/backlog', backlogController.update);
+router.delete('/backlog', backlogController.destroy);
+
+
+router.post('/sprints', sprintController.store);
+
 module.exports = router;
