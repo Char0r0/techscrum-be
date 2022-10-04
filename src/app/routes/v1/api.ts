@@ -49,7 +49,7 @@ const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 const backlogController = require('../../controllers/v1/backlogController');
 const domainController = require('../../controllers/v1/domainsController');
-const sprintController = require('../../controllers/v1/sprintController');
+import * as sprintController from '../../controllers/v1/sprintController';
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
@@ -325,7 +325,11 @@ router.post('/backlog', backlogController.store);
 router.put('/backlog', backlogController.update);
 router.delete('/backlog', backlogController.destroy);
 
-
+// sprints
+router.get('/sprints', sprintController.index);
+router.get('/sprints/:id', sprintController.show);
 router.post('/sprints', sprintController.store);
+router.put('/sprints/:id', sprintController.update);
+router.delete('/sprints/:id', sprintController.destroy);
 
 module.exports = router;
