@@ -31,6 +31,10 @@ const taskSchema = new mongoose.Schema(
       type: Types.ObjectId,
       ref: 'boards',
     },
+    sprintId: {
+      type: Types.ObjectId,
+      ref: 'sprints',
+    },
     description: {
       type: String,
       trim: true,
