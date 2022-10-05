@@ -18,6 +18,6 @@ module.exports = {
   useDefaultDatabase: process.env.USE_DEFAULT_DATABASE || true,
   companyAddress: process.env.COMPANY_ADDRESS || 'su93031093@gmail.com',
   defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION || 'devtechscrumapp',
-  emailSecret: process.env.EMAIL_SECRET,
-  forgotSecret: process.env.FORGET_SECRET,
+  emailSecret: process.env.EMAIL_SECRET || '123456',
+  forgotSecret: process.env.FORGET_SECRET || '321654',
 };

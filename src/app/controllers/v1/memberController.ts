@@ -112,7 +112,7 @@ exports.invite = async (req: Request, res: Response) => {
       validationToken = jwt.sign({ email, activeCode: user.activeCode }, process.env.EMAIL_SECRET);
 
     const name = user.active ? user.name : '';
-    invite(user.email, name, validationToken, role.name, project.name, req.headers.origin);
+    invite(user.email, name, validationToken, role.name, project.name, req.headers.origin || '');
     res.send(user);
   } catch (e: any) {
     logger.info('Cannot invite member', e.toString());

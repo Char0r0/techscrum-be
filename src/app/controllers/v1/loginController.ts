@@ -14,7 +14,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-exports.login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+exports.login = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
