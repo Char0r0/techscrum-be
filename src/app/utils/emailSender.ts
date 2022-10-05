@@ -1,11 +1,12 @@
 const aws = require('aws-sdk');
 const config = require('../config/app');
 const logger = require('../../loaders/logger');
+const awsConfig = require('../config/aws');
 
 aws.config.update({
-  region: process.env.REGION,
-  accessKeyId: process.env.ACCESS_KEY_ID,
-  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: awsConfig.awsRegion,
+  accessKeyId: awsConfig.awsAccessKey,
+  secretAccessKey: awsConfig.awsSecretKey,
 });
 
 function cb(email_err: any, email_data: any): void {
@@ -70,7 +71,7 @@ export const invite = (
   validationCode: string,
   roleType: string,
   projectName: string,
-  domain: string = config.frontEndAddress,
+  domain: string,
 ) => {
   // Create sendEmail params
   const url = validationCode === '' ? 'projects' : 'verify';
@@ -93,7 +94,7 @@ export const forgetPassword = (
   email: string,
   name: string,
   token: string,
-  domain: string = config.frontEndAddress,
+  domain: string,
 ) => {
   const templateData = {
     name: name ?? email,

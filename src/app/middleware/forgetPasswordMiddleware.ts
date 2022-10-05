@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const status = require('http-status');
-
+const token = require('../config/app');
 declare module 'express-serve-static-core' {
   interface Request {
     email?: string;
@@ -14,9 +14,9 @@ const authenticationForgetPasswordMiddleware = async (
   next: NextFunction,
 ) => {
   const token = req.params.token;
-  jwt.verify(token, process.env.FORGET_SECRET, async (err: Error) => {
+  jwt.verify(token, config.forgotSecret, async (err: Error) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const { email } = jwt.verify(token, process.env.FORGET_SECRET);
+    const { email } = jwt.verify(token, config.forgotSecret);
     req.email = email;
     next();
   });

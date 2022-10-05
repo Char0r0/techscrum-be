@@ -5,7 +5,7 @@ const { isUserActived } = require('../../services/emailCheckService');
 const User = require('../../model/user');
 const { forgetPassword } = require('../../utils/emailSender');
 const jwt = require('jsonwebtoken');
-
+const config = require('../../config/app')
 declare module 'express-serve-static-core' {
   interface Request {
     email?: string;
@@ -26,7 +26,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
     if (!existUser) return res.status(status.NOT_FOUND).send();
     const user = await User.getModel(req.dbConnection).findOne({ email, active:true });
 
-    const token = jwt.sign({ email }, process.env.FORGET_SECRET, {
+    const token = jwt.sign({ email }, config.forgotSecret, {
       expiresIn: '30m',
     });
 

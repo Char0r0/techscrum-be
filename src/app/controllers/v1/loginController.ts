@@ -20,18 +20,14 @@ exports.login = asyncHandler(async (req: Request, res: Response, next: NextFunct
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
 
-  try {
-    const user = await User.getModel(req.dbConnection).findByCredentials(
-      req.body.email,
-      req.body.password,
-    );
-    if (user === null) return res.status(status.UNAUTHORIZED).send();
-    if (user === undefined) return res.status(403).send();
-    const token = await user.generateAuthToken();
-    res.send({ user, ...token });
-  } catch (e) {
-    next(e);
-  }
+  const user = await User.getModel(req.dbConnection).findByCredentials(
+    req.body.email,
+    req.body.password,
+  );
+  if (user === null) return res.status(status.UNAUTHORIZED).send();
+  if (user === undefined) return res.status(403).send();
+  const token = await user.generateAuthToken();
+  res.send({ user, ...token });
 });
 
 exports.autoFetchUserInfo = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {

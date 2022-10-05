@@ -5,6 +5,7 @@ const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 const User = require('../../src/app/model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('JsonWebToken');
+const config = require('../../src/app/config/app')
 let application = null;
 let dbConnection = '';
 
@@ -55,7 +56,7 @@ describe('Reset Password Post Test: return 404 if user not found', () => {
 describe('Forget Password Get User by TOken Test', () => {
   it('should get user', async () => {
     const email = 'test@gmail.com';
-    const token = jwt.sign({ email }, process.env.FORGET_SECRET);
+    const token = jwt.sign({ email }, config.forgotSecret);
     const res = await request(application).get(`/api/v1/change-password/${token}`).send();
     expect(res.statusCode).toBe(200);
     expect(JSON.parse(res.text)).toMatchObject({ email });
@@ -66,7 +67,7 @@ describe('Reset Password Test', () => {
   it('should get user', async () => {
     const email = 'test@gamil.com';
     const password = 'EmilSu-1234';
-    const token = jwt.sign({ email }, process.env.FORGET_SECRET);
+    const token = jwt.sign({ email }, config.forgotSecret);
     const res = await request(application)
       .put(`/api/v1/change-password/${token}`)
       .send({ password });

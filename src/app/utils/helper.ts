@@ -29,3 +29,11 @@ export const shouldExcludeDomainList = async (host: string | undefined) => {
   }
   return false;
 };
+
+
+export function removeHttp(url:string | undefined) {
+  if (!url) {
+    return '';
+  }
+  return url.replace(/^https?:\/\//, '');
+}
