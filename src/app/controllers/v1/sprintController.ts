@@ -1,26 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-  deleteSprint,
-  findAllSprint,
-  findOneSprint,
-  updateSprint,
-} from '../../services/sprintService';
+import { deleteSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 const Sprint = require('../../model/sprint');
-
-// get all
-export const index = asyncHandler(async (req: Request, res: Response) => {
-  const sprints = await findAllSprint(req.dbConnection);
-  res.status(status.OK).json(sprints);
-});
-
-// get one
-export const show = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const sprint = await findOneSprint(req.dbConnection, id);
-  res.status(status.OK).json(sprint);
-});
 
 // create
 export const store = async (req: Request, res: Response, next: NextFunction) => {

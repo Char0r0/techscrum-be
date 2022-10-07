@@ -326,8 +326,6 @@ router.put('/backlog', backlogController.update);
 router.delete('/backlog', backlogController.destroy);
 
 // sprints
-router.get('/sprints', sprintController.index);
-router.get('/sprints/:id', sprintController.show);
 router.post('/sprints', sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
