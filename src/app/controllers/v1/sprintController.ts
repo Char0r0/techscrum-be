@@ -1,20 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { deleteSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 const Sprint = require('../../model/sprint');
 
 // create
-export const store = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const sprintModel = Sprint.getModel(req.dbConnection);
-    const sprint = new sprintModel(req.body);
-    await sprint.save();
-    res.status(status.CREATED).send(sprint);
-  } catch (e) {
-    next(e);
-  }
-};
+export const store = asyncHandler(async (req: Request, res: Response) => {
+  const sprintModel = Sprint.getModel(req.dbConnection);
+  const sprint = new sprintModel(req.body);
+  await sprint.save();
+  res.status(status.CREATED).send(sprint);
+});
 
 // update
 export const update = asyncHandler(async (req: Request, res: Response) => {
