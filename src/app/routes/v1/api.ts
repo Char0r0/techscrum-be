@@ -318,10 +318,10 @@ router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
 // backlog
-router.get('/backlog', backlogController.index);
-router.get('/backlog/:id', backlogController.show);
-router.post('/backlog', backlogController.store);
-router.put('/backlog', backlogController.update);
-router.delete('/backlog', backlogController.destroy);
+router.get('/backlogs', backlogController.index);
+router.get('/backlogs/:id', backlogController.show);
+router.post('/backlogs', backlogController.store);
+router.put('/backlogs/:id', backlogController.update);
+router.delete('/backlogs/:id', backlogController.destroy);
 
 module.exports = router;
