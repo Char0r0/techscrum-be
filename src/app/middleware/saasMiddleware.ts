@@ -9,7 +9,7 @@ const logger = require('../../loaders/logger');
 
 
 const getTenantId = async (host:string | undefined) => {
-  const defaultConnection = config.defaultTenantConnection || 'devtechscrumapp';
+  const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
   const excludeDomain = await shouldExcludeDomainList(host);
   const useDefaultConnection  = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(tenantConnection).length !== 0;
