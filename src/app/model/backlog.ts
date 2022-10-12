@@ -1,17 +1,15 @@
 import { Mongoose, Schema } from 'mongoose';
 
 interface IBacklog {
-  taskId: Schema.Types.ObjectId[];
+  taskId: Schema.Types.ObjectId;
 }
 
 const backlogSchema = new Schema<IBacklog>(
   {
-    taskId: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'tasks',
-      },
-    ],
+    taskId: {
+      type: Schema.Types.ObjectId,
+      ref: 'tasks',
+    },
   },
   {
     timestamps: true,
