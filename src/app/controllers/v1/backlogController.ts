@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/helper';
-import { findAllSprintTasks } from '../../services/sprintService';
+import { findSprintTasks } from '../../services/sprintService';
 import { findBacklogTasks } from '../../services/backlogService';
 import httpStatus from 'http-status';
 
 // get all
 export const index = asyncHandler(async (req: Request, res: Response) => {
   const backlogTasks = await findBacklogTasks(req.dbConnection);
-  const sprintTasks = await findAllSprintTasks(req.dbConnection);
+  const sprintTasks = await findSprintTasks(req.dbConnection);
   const result = {
     backlog: {
       cards: backlogTasks,

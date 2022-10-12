@@ -8,7 +8,7 @@ const Task = require('../model/task');
 /* find all tasks
  *  where their sprintId not equals null
  */
-export const findAllSprintTasks = async (dbConnection: Mongoose) => {
+export const findSprintTasks = async (dbConnection: Mongoose) => {
   const taskModel = Task.getModel(dbConnection);
   try {
     const tasks = await taskModel
