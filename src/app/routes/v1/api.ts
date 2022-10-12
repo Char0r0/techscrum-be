@@ -320,6 +320,7 @@ router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
 // backlog
 router.get('/backlogs', backlogController.index);
+router.get('/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
 router.post('/sprints', sprintController.store);
