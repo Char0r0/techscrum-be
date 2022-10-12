@@ -5,16 +5,18 @@ const Project = require('../model/project');
 const Board = require('../model/board');
 const Task = require('../model/task');
 
-export const findAllSprint = async (dbConnection: Mongoose) => {
-  const sprintModel = Sprint.getModel(dbConnection);
+/* find all tasks
+ *  where their sprintId not equals null
+ */
+export const findAllSprintTasks = async (dbConnection: Mongoose) => {
+  const taskModel = Task.getModel(dbConnection);
   try {
-    const sprints = await sprintModel
+    const tasks = await taskModel
       .find({})
-      .populate({ path: 'projectId', model: Project.getModel(dbConnection) })
-      .populate({ path: 'boardId', model: Board.getModel(dbConnection) })
-      .populate({ path: 'taskId', model: Task.getModel(dbConnection) });
+      .where('sprintId', { $ne: null })
+      .populate({ path: 'statusId', model: Board.getModel(dbConnection) });
 
-    return sprints;
+    return tasks;
   } catch (error) {
     return error;
   }
