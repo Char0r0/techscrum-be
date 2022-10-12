@@ -9,15 +9,19 @@ const sprintSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    date: {
+    startDate: {
+      type: Date,
+      default: Date.now,
+    },
+    endDate: {
       type: Date,
     },
     description: {
       type: String,
     },
-    isComplete: { 
+    isComplete: {
       type: Boolean,
-      default:false,
+      default: false,
     },
     projectId: {
       ref: 'projects',
@@ -27,6 +31,12 @@ const sprintSchema = new mongoose.Schema(
       ref: 'boards',
       type: Types.ObjectId,
     },
+    taskId: [
+      {
+        ref: 'tasks',
+        type: Types.ObjectId,
+      },
+    ],
   },
   { timestamps: true },
 );

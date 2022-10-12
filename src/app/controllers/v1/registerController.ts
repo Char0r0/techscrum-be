@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
-import { asyncHandler } from '../../utils/helper';
+import { asyncHandler, removeHttp } from '../../utils/helper';
 const status = require('http-status');
 const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
@@ -15,6 +15,7 @@ declare module 'express-serve-static-core' {
     verifyEmail?: string;
   }
 }
+
 
 exports.register = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -31,7 +32,7 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
     const dataConnectionMongoose = new Mongoose();
     const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
     const tenantModel = Tenant.getModel(tenantConnection);
-    const tenantOrigin =  `https://${appName.toLowerCase()}.${config.frontEndRegisterDomain}`;
+    const tenantOrigin =  `https://${appName.toLowerCase()}.${removeHttp(tenantUrl).replace('www.', '')}}`;
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
       res.sendStatus(409);
