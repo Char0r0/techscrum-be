@@ -1,16 +1,20 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/helper';
-import { findSprintTasks } from '../../services/sprintService';
-import { findBacklogTasks } from '../../services/backlogService';
+import { findTasks } from '../../services/taskService';
 import httpStatus from 'http-status';
-const Task = require('../../model/task');
-const User = require('../../model/user');
 
 // GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
   const { projectId } = req.params;
-  const backlogTasks = await findBacklogTasks(req.dbConnection, projectId.toString());
-  const sprintTasks = await findSprintTasks(req.dbConnection, projectId.toString());
+
+  // Backlog tasks are task whose sprintId is null
+  // Sprint tasks are task whose sprintId is not null
+  const backlogTasksFilter = { sprintId: null, projectId };
+  const sprintTasksFilter = { sprintId: { $ne: null }, projectId };
+
+  const backlogTasks = await findTasks(backlogTasksFilter, req.dbConnection);
+  const sprintTasks = await findTasks(sprintTasksFilter, req.dbConnection);
+
   const result = {
     backlog: {
       cards: backlogTasks,
@@ -36,19 +40,8 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
   };
 
   const regex = new RegExp(escapeRegex(query.toString()), 'gi');
-
-  const tasks = await Task.getModel(req.dbConnection)
-    .find({ title: regex, projectId })
-    .populate({
-      path: 'reporterId',
-      model: User.getModel(req.dbConnection),
-      select: '_id name avatarIcon', // only return _id, name, avatarIcon fields
-    })
-    .populate({
-      path: 'assignId',
-      model: User.getModel(req.dbConnection),
-      select: '_id name avatarIcon', // only return _id, name, avatarIcon fields
-    });
+  const fuzzySearchFilter = { title: regex, projectId };
+  const tasks = await findTasks(fuzzySearchFilter, req.dbConnection);
 
   return res.status(httpStatus.OK).json(tasks);
 });
