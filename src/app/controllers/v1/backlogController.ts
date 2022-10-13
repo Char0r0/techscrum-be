@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { asyncHandler } from '../../utils/helper';
+import { asyncHandler, escapeStringRegexp } from '../../utils/helper';
 import { findTasks } from '../../services/taskService';
 import httpStatus from 'http-status';
 
@@ -35,11 +35,9 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
   if (!query) return res.json([]);
 
   // escape unsafe regex
-  const escapeRegex = (text: string) => {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  };
+  const escapeRegex = escapeStringRegexp(query.toString());
 
-  const regex = new RegExp(escapeRegex(query.toString()), 'gi');
+  const regex = new RegExp(escapeRegex);
   const fuzzySearchFilter = { title: regex, projectId };
   const tasks = await findTasks(fuzzySearchFilter, req.dbConnection);
 
