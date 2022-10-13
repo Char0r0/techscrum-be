@@ -4,6 +4,7 @@ import { findSprintTasks } from '../../services/sprintService';
 import { findBacklogTasks } from '../../services/backlogService';
 import httpStatus from 'http-status';
 const Task = require('../../model/task');
+const User = require('../../model/user');
 
 // GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
@@ -36,7 +37,18 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 
   const regex = new RegExp(escapeRegex(query.toString()), 'gi');
 
-  const tasks = await Task.getModel(req.dbConnection).find({ title: regex, projectId });
+  const tasks = await Task.getModel(req.dbConnection)
+    .find({ title: regex, projectId })
+    .populate({
+      path: 'reporterId',
+      model: User.getModel(req.dbConnection),
+      select: '_id name avatarIcon', // only return _id, name, avatarIcon fields
+    })
+    .populate({
+      path: 'assignId',
+      model: User.getModel(req.dbConnection),
+      select: '_id name avatarIcon', // only return _id, name, avatarIcon fields
+    });
 
   return res.status(httpStatus.OK).json(tasks);
 });
