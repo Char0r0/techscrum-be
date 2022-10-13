@@ -7,8 +7,9 @@ const Task = require('../../model/task');
 
 // get all
 export const index = asyncHandler(async (req: Request, res: Response) => {
-  const backlogTasks = await findBacklogTasks(req.dbConnection);
-  const sprintTasks = await findSprintTasks(req.dbConnection);
+  const { projectId } = req.params;
+  const backlogTasks = await findBacklogTasks(req.dbConnection, projectId.toString());
+  const sprintTasks = await findSprintTasks(req.dbConnection, projectId.toString());
   const result = {
     backlog: {
       cards: backlogTasks,

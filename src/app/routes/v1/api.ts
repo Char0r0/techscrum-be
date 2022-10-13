@@ -319,7 +319,7 @@ router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
 // backlog
-router.get('/backlogs', backlogController.index);
+router.get('/backlogs/:projectId', backlogController.index);
 router.get('/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints

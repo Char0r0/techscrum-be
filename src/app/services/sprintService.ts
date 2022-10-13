@@ -8,12 +8,11 @@ const Task = require('../model/task');
 /* find all tasks
  *  where their sprintId not equals null
  */
-export const findSprintTasks = async (dbConnection: Mongoose) => {
+export const findSprintTasks = async (dbConnection: Mongoose, projectId: string) => {
   const taskModel = Task.getModel(dbConnection);
   try {
     const tasks = await taskModel
-      .find({})
-      .where('sprintId', { $ne: null })
+      .find({ sprintId: { $ne: null }, projectId: projectId })
       .populate({ path: 'statusId', model: Board.getModel(dbConnection) });
 
     return tasks;
