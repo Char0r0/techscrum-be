@@ -318,9 +318,9 @@ router.delete('/tasks/:taskId/labels/:labelId', labelValidation.eliminate, label
 router.put('/labels/:id', labelValidation.update, labelController.update);
 router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 
-// backlog
-router.get('/backlogs/:projectId', backlogController.index);
-router.get('/backlogs/search', backlogController.searchBacklogTasks);
+// backlogs
+router.get('/projects/:projectId/backlogs', backlogController.index);
+router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
 router.post('/sprints', sprintController.store);
