@@ -3,8 +3,8 @@ const Task = require('../model/task');
 const Type = require('../model/type');
 const User = require('../model/user');
 
-/** Find tasks from project with given filter
- * @param filter FilterQuery
+/** Find tasks with given filter
+ * @param filter FilterQuery, e.g. {taskId, projectId}
  * @param dbConnection Mongoose
  * @returns Document result
  */
