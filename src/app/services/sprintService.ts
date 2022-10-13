@@ -5,16 +5,13 @@ const Project = require('../model/project');
 const Board = require('../model/board');
 const Task = require('../model/task');
 
-/* find all tasks
- *  where their sprintId not equals null
+/** Get tasks with given projectId
+ *  whose sprintId is not null
  */
-export const findSprintTasks = async (dbConnection: Mongoose, projectId: string) => {
+export const findSprintTasks = async (dbConnection: Mongoose, projectId: string | ObjectId) => {
   const taskModel = Task.getModel(dbConnection);
   try {
-    const tasks = await taskModel
-      .find({ sprintId: { $ne: null }, projectId: projectId })
-      .populate({ path: 'statusId', model: Board.getModel(dbConnection) });
-
+    const tasks = await taskModel.find({ sprintId: { $ne: null }, projectId });
     return tasks;
   } catch (error) {
     return error;

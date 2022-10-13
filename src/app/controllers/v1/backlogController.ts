@@ -5,7 +5,7 @@ import { findBacklogTasks } from '../../services/backlogService';
 import httpStatus from 'http-status';
 const Task = require('../../model/task');
 
-// get all
+// GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
   const { projectId } = req.params;
   const backlogTasks = await findBacklogTasks(req.dbConnection, projectId.toString());
@@ -21,13 +21,13 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   return res.status(httpStatus.OK).json(result);
 });
 
-// POST fuzzy search
+// GET - fuzzy search
 export const searchBacklogTasks = asyncHandler(async (req: Request, res: Response) => {
-  const { query, projectId } = req.query;
-
-  if (!query) return res.json({});
+  const { projectId } = req.params;
+  const { query } = req.query;
 
   if (!projectId) throw new Error('no projectId provided');
+  if (!query) return res.json([]);
 
   // escape unsafe regex
   const escapeRegex = (text: string) => {
@@ -36,10 +36,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 
   const regex = new RegExp(escapeRegex(query.toString()), 'gi');
 
-  const tasks = await Task.getModel(req.dbConnection)
-    .find({ title: regex })
-    .where('projectId')
-    .equals(projectId);
+  const tasks = await Task.getModel(req.dbConnection).find({ title: regex, projectId });
 
   return res.status(httpStatus.OK).json(tasks);
 });
