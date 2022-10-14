@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { replaceId } from '../../services/replaceService';
+import * as Board from '../../model/board';
+import { generateDefaultStatus } from '../../services/statusService';
 const Project = require('../../model/project');
-const Board = require('../../model/board');
 const User = require('../../model/user');
 const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
-
 
 //get
 exports.index = async (req: any, res: Response, next: NextFunction) => {
@@ -49,10 +49,9 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     const boardModel = Board.getModel(req.dbConnection);
     const projectModel = Project.getModel(req.dbConnection);
 
-    const board = new boardModel({ title: req.body.name });
-    await board.save();
-    const boardObj = { boardId: board._id };
-    const project = new projectModel({ ...req.body, ...boardObj, ownerId: req.userId });
+    const defaultStatuses = await generateDefaultStatus(req.dbConnection);
+    const board = await boardModel.create({ title: req.body.name, taskStatus: defaultStatuses });
+    const project = new projectModel({ ...req.body, boardId: board._id, ownerId: req.userId });
     await project.save();
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
