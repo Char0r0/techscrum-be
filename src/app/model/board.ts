@@ -1,40 +1,22 @@
-export {};
-const mongoose = require('mongoose');
-const { Types } = require('mongoose');
+import mongoose, { Mongoose, Types } from 'mongoose';
 
-const boardSchema = new mongoose.Schema(
+export interface IBoard {
+  title: string;
+  taskStatus: Types.ObjectId[];
+}
+
+const boardSchema = new mongoose.Schema<IBoard>(
   {
     title: {
       type: String,
       required: true,
     },
-    taskStatus: {
-      type: [
-        {
-          id: Types.ObjectId,
-          name: String,
-          slug: String,
-          items: [
-            {
-              taskId: {
-                type: Types.ObjectId,
-                ref: 'task',
-              },
-              order: {
-                type: Number,
-                required: true,
-              },
-            },
-          ],
-        },
-      ],
-      default: [
-        { name: 'To Do', slug: 'to-do', items: [] },
-        { name: 'In Progress', slug: 'in-progress', items: [] },
-        { name: 'Review', slug: 'review', items: [] },
-        { name: 'Done', slug: 'done', items: [] },
-      ],
-    },
+    taskStatus: [
+      {
+        type: Types.ObjectId,
+        ref: 'statuses',
+      },
+    ],
   },
   { timestamps: true },
 );
@@ -196,7 +178,7 @@ boardSchema.statics.findBoardById = async function (id: string) {
   return boardInfo;
 };
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: Mongoose) => {
   if (!connection) {
     throw new Error('No connection');
   }
