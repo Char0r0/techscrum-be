@@ -7,6 +7,7 @@ const taskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      index: true,
     },
     tags: [
       {
@@ -30,6 +31,11 @@ const taskSchema = new mongoose.Schema(
     boardId: {
       type: Types.ObjectId,
       ref: 'boards',
+    },
+    sprintId: {
+      type: Types.ObjectId,
+      ref: 'sprints',
+      default: null,
     },
     description: {
       type: String,

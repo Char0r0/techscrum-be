@@ -25,7 +25,7 @@ Node
 Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services.
 
 - npm install
-- cp .env.example .env
+- cp .env.example .env (ASK DEVS FOR THE VALUES)
 
 After that
 
