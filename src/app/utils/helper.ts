@@ -36,7 +36,3 @@ export function removeHttp(url: string | undefined) {
   }
   return url.replace(/^https?:\/\//, '');
 }
-
-export const escapeStringRegexp = (string: string) => {
-  return string.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
-};

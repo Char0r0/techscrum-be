@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { asyncHandler, escapeStringRegexp } from '../../utils/helper';
+import { asyncHandler } from '../../utils/helper';
 import { findTasks } from '../../services/taskService';
 import httpStatus from 'http-status';
+import escapeStringRegexp from 'escape-string-regexp';
 
 // GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
