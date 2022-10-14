@@ -34,7 +34,6 @@ exports.store = async (req: Request, res: Response) => {
     const shortCut = updatedProject.shortcut.filter((data: any) => {
       return data._id.toString() === shortcutId.toString();
     });
-
     if (shortCut) {
       res.status(status.OK).send(replaceId(shortCut[0]));
     } else {
