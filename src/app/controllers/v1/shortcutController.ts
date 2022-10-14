@@ -5,7 +5,6 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 const mongoose = require('mongoose');
 const URL = require('url').URL;
-
 exports.store = async (req: Request, res: Response) => {
   const validateUrl = (url: string) => {
     try {
@@ -32,7 +31,6 @@ exports.store = async (req: Request, res: Response) => {
       },
       { new: true },
     );
-
     const shortCut = updatedProject.shortcut.filter((data: any) => {
       return data._id.toString() === shortcutId.toString();
     });
@@ -46,7 +44,6 @@ exports.store = async (req: Request, res: Response) => {
     res.sendStatus(status.FORBIDDEN);
   }
 };
-
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -70,7 +67,6 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     next(e);
   }
 };
-
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
