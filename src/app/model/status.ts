@@ -17,15 +17,6 @@ const statusSchema = new Schema<IStatus>(
       type: Schema.Types.Number,
       default: 0,
     },
-    boardId: {
-      type: Schema.Types.ObjectId,
-    },
-    taskIds: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'tasks',
-      },
-    ],
   },
   {
     timestamps: true,
