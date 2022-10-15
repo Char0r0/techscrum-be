@@ -21,7 +21,7 @@ const taskSchema = new mongoose.Schema(
         ref: 'comments',
       },
     ],
-    statusIds: {
+    statusId: {
       type: Types.ObjectId,
       ref: 'statuses',
     },

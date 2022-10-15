@@ -3,6 +3,7 @@ import { Mongoose, Schema } from 'mongoose';
 export interface IStatus {
   name: string;
   order: number;
+  boardId: Schema.Types.ObjectId;
   taskIds: Schema.Types.ObjectId[];
 }
 
@@ -15,6 +16,9 @@ const statusSchema = new Schema<IStatus>(
     order: {
       type: Schema.Types.Number,
       default: 0,
+    },
+    boardId: {
+      type: Schema.Types.ObjectId,
     },
     taskIds: [
       {
