@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
+import { findTasks } from '../../services/taskService';
+import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
 const Task = require('../../model/task');
 const Label = require('../../model/label');
 const status = require('http-status');
 const Board = require('../../model/board');
-const User = require('../../model/user');
-const Type = require('../../model/type');
 const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
 
@@ -17,26 +17,15 @@ declare module 'express-serve-static-core' {
 }
 
 // GET ONE
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const task = await Task.getModel(req.dbConnection)
-      .findOne({ _id: req.params.id })
-      .populate({ path: 'reporterId', Model: User.getModel(req.dbConnection) })
-      .populate({ path: 'assignId', Model: User.getModel(req.dbConnection) })
-      .populate({ path: 'typeId', Model: Type.getModel(req.dbConnection) });
-    const tagsId = task.tags;
-    const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
-    task.tags = tagsList;
-    res.status(200).send(replaceId(task));
-  } catch (e) {
-    next(e);
-  }
-};
+  const tasks = await findTasks({ _id: req.params.id }, req.dbConnection);
+  res.status(200).send(replaceId(tasks[0]));
+});
 
 // //POST
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
