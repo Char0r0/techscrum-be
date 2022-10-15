@@ -1,51 +1,46 @@
-import { NextFunction, Request, Response } from 'express';
-import { backlogFakeData } from '../../mock/backlog';
+import { Request, Response } from 'express';
+import { asyncHandler } from '../../utils/helper';
+import { findTasks } from '../../services/taskService';
+import httpStatus from 'http-status';
+import escapeStringRegexp from 'escape-string-regexp';
 
-const testMessage = {
-  message: 'OK',
-};
+// GET all
+export const index = asyncHandler(async (req: Request, res: Response) => {
+  const { projectId } = req.params;
 
-// get all
-export const index = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.status(200).json(backlogFakeData);
-  } catch (error: any) {
-    next(error);
-  }
-};
+  // Backlog tasks are task whose sprintId is null
+  // Sprint tasks are task whose sprintId is not null
+  const backlogTasksFilter = { sprintId: null, projectId };
+  const sprintTasksFilter = { sprintId: { $ne: null }, projectId };
 
-// get one
-export const show = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.status(200).json(testMessage);
-  } catch (error: any) {
-    next(error);
-  }
-};
+  const backlogTasks = await findTasks(backlogTasksFilter, req.dbConnection);
+  const sprintTasks = await findTasks(sprintTasksFilter, req.dbConnection);
 
-// create
-export const store = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.status(200).json(testMessage);
-  } catch (error: any) {
-    next(error);
-  }
-};
+  const result = {
+    backlog: {
+      cards: backlogTasks,
+    },
+    sprints: {
+      cards: sprintTasks,
+    },
+  };
+  return res.status(httpStatus.OK).json(result);
+});
 
-// update
-export const update = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.status(200).json(testMessage);
-  } catch (error: any) {
-    next(error);
-  }
-};
+// GET - fuzzy search
+export const searchBacklogTasks = asyncHandler(async (req: Request, res: Response) => {
+  const { projectId } = req.params;
+  const { query } = req.query;
 
-// delete
-export const destroy = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.status(200).json(testMessage);
-  } catch (error: any) {
-    next(error);
-  }
-};
+  if (!projectId) throw new Error('no projectId provided');
+  if (!query) return res.json([]);
+
+  // escape unsafe regex
+  const escapeRegex = escapeStringRegexp(query.toString());
+
+  const regex = new RegExp(escapeRegex);
+  const fuzzySearchFilter = { title: regex, projectId };
+  const tasks = await findTasks(fuzzySearchFilter, req.dbConnection);
+
+  return res.status(httpStatus.OK).json(tasks);
+});

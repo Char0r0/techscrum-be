@@ -5,21 +5,6 @@ const Project = require('../model/project');
 const Board = require('../model/board');
 const Task = require('../model/task');
 
-export const findAllSprint = async (dbConnection: Mongoose) => {
-  const sprintModel = Sprint.getModel(dbConnection);
-  try {
-    const sprints = await sprintModel
-      .find({})
-      .populate({ path: 'projectId', model: Project.getModel(dbConnection) })
-      .populate({ path: 'boardId', model: Board.getModel(dbConnection) })
-      .populate({ path: 'taskId', model: Task.getModel(dbConnection) });
-
-    return sprints;
-  } catch (error) {
-    return error;
-  }
-};
-
 export const findOneSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
