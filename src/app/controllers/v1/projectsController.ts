@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { replaceId } from '../../services/replaceService';
 import * as Board from '../../model/board';
-import { generateDefaultStatus } from '../../services/statusService';
+import { addBoardToStatus, generateDefaultStatus } from '../../services/statusService';
 const Project = require('../../model/project');
 const User = require('../../model/user');
 const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
-
+import { asyncHandler } from '../../utils/helper';
 //get
 exports.index = async (req: any, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -40,24 +40,23 @@ exports.show = async (req: any, res: Response) => {
 };
 
 //POST
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+exports.store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  try {
-    const boardModel = Board.getModel(req.dbConnection);
-    const projectModel = Project.getModel(req.dbConnection);
-
-    const defaultStatuses = await generateDefaultStatus(req.dbConnection);
-    const board = await boardModel.create({ title: req.body.name, taskStatus: defaultStatuses });
-    const project = new projectModel({ ...req.body, boardId: board._id, ownerId: req.userId });
-    await project.save();
-    res.status(status.CREATED).send(replaceId(project));
-  } catch (e) {
-    next(e);
+  const boardModel = Board.getModel(req.dbConnection);
+  const projectModel = Project.getModel(req.dbConnection);
+  const defaultStatuses = await generateDefaultStatus(req.dbConnection);
+  const defaultStatusIds = defaultStatuses.map((item) => item._id);
+  const board = await boardModel.create({ title: req.body.name, taskStatus: defaultStatusIds });
+  for (const statusId of defaultStatusIds) {
+    await addBoardToStatus(board._id.toString(), statusId.toString(), req.dbConnection);
   }
-};
+  const project = new projectModel({ ...req.body, boardId: board._id, ownerId: req.userId });
+  await project.save();
+  res.status(status.CREATED).send(replaceId(project));
+});
 
 // put
 exports.update = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,15 @@
-import { Types, Mongoose } from 'mongoose';
+/* eslint-disable @typescript-eslint/indent */
+import { Document, Mongoose, Types } from 'mongoose';
 import { getModel, IStatus } from '../model/status';
-export const generateDefaultStatus = async (dbConnection: Mongoose): Promise<Types.ObjectId[]> => {
+
+export const generateDefaultStatus = async (
+  dbConnection: Mongoose,
+): Promise<
+  (Document<unknown, any, IStatus> &
+    IStatus & {
+      _id: Types.ObjectId;
+    })[]
+> => {
   const defaultStatus: Partial<IStatus>[] = [
     {
       name: 'to do',
@@ -18,8 +27,20 @@ export const generateDefaultStatus = async (dbConnection: Mongoose): Promise<Typ
 
   try {
     const statuses = await getModel(dbConnection).create(defaultStatus);
-    const statusIds = statuses.map((status) => status._id);
-    return statusIds;
+    return statuses;
+  } catch (error: any) {
+    return error;
+  }
+};
+
+export const addBoardToStatus = async (
+  boardId: string,
+  statusId: string,
+  dbConnection: Mongoose,
+) => {
+  const statusModel = getModel(dbConnection);
+  try {
+    await statusModel.findByIdAndUpdate(statusId, { boardId: boardId });
   } catch (error: any) {
     return error;
   }
