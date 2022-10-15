@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/indent */
 import { Document, Mongoose, Types } from 'mongoose';
-import { getModel, IStatus } from '../model/status';
+import { IStatus } from '../model/status';
+import * as Status from '../model/status';
 
-export const generateDefaultStatus = async (
+export const getDefaultBoardStatus = async (
   dbConnection: Mongoose,
 ): Promise<
   (Document<unknown, any, IStatus> &
@@ -10,7 +11,7 @@ export const generateDefaultStatus = async (
       _id: Types.ObjectId;
     })[]
 > => {
-  const defaultStatus: Partial<IStatus>[] = [
+  const defaultStatus: Pick<IStatus, 'name' | 'order'>[] = [
     {
       name: 'to do',
       order: 0,
@@ -25,22 +26,17 @@ export const generateDefaultStatus = async (
     },
   ];
 
+  const defaultStatusNames = defaultStatus.map((item) => item.name);
   try {
-    const statuses = await getModel(dbConnection).create(defaultStatus);
-    return statuses;
-  } catch (error: any) {
-    return error;
-  }
-};
+    const existingStatus = await Status.getModel(dbConnection).find({
+      name: { $in: defaultStatusNames },
+    });
 
-export const addBoardToStatus = async (
-  boardId: string,
-  statusId: string,
-  dbConnection: Mongoose,
-) => {
-  const statusModel = getModel(dbConnection);
-  try {
-    await statusModel.findByIdAndUpdate(statusId, { boardId: boardId });
+    if (!existingStatus) {
+      const statuses = await Status.getModel(dbConnection).create(defaultStatus);
+      return statuses;
+    }
+    return existingStatus;
   } catch (error: any) {
     return error;
   }

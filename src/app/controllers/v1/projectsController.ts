@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { replaceId } from '../../services/replaceService';
 import * as Board from '../../model/board';
-import { addBoardToStatus, generateDefaultStatus } from '../../services/statusService';
+import { getDefaultBoardStatus } from '../../services/statusService';
 const Project = require('../../model/project');
 const User = require('../../model/user');
 const status = require('http-status');
@@ -47,12 +47,9 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   }
   const boardModel = Board.getModel(req.dbConnection);
   const projectModel = Project.getModel(req.dbConnection);
-  const defaultStatuses = await generateDefaultStatus(req.dbConnection);
+  const defaultStatuses = await getDefaultBoardStatus(req.dbConnection);
   const defaultStatusIds = defaultStatuses.map((item) => item._id);
   const board = await boardModel.create({ title: req.body.name, taskStatus: defaultStatusIds });
-  for (const statusId of defaultStatusIds) {
-    await addBoardToStatus(board._id.toString(), statusId.toString(), req.dbConnection);
-  }
   const project = new projectModel({ ...req.body, boardId: board._id, ownerId: req.userId });
   await project.save();
   res.status(status.CREATED).send(replaceId(project));
