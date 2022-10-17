@@ -4,11 +4,11 @@ import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
 const Task = require('../../model/task');
-const Label = require('../../model/label');
-const status = require('http-status');
+const httpStatus = require('http-status');
 const Board = require('../../model/board');
 const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
+import * as Status from '../../model/status';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -20,49 +20,76 @@ declare module 'express-serve-static-core' {
 exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
   const tasks = await findTasks({ _id: req.params.id }, req.dbConnection);
   res.status(200).send(replaceId(tasks[0]));
 });
 
-// //POST
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+//POST
+exports.store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
   }
 
-  try {
-    const { boardId } = req.body;
-    const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
+  const { boardId, status } = req.body;
 
-    const statusId = board.taskStatus[0]._id;
-    const taskModel = Task.getModel(req.dbConnection);
-    const task = new taskModel({ ...req.body, statusId, reporterId: req.userId });
+  const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
 
-    const length = board.taskStatus[0].items.length;
-    board.taskStatus[0].items.push({ taskId: task._id, order: length });
-    await board.save();
-    await task.save();
+  if (!board)
+    return res
+      .sendStatus(httpStatus.UNPROCESSABLE_ENTITY)
+      .json({ message: 'no associated board with given ID' });
 
-    res.status(status.CREATED).send(task);
-  } catch (e: any) {
-    next(e);
+  const taskModel = Task.getModel(req.dbConnection);
+
+  // if no status provided in body, set task's status to default status
+  if (!status) {
+    const defaultStatus = await Status.getModel(req.dbConnection).findOne({ name: 'to do' });
+
+    if (!defaultStatus)
+      return res
+        .status(httpStatus.UNPROCESSABLE_ENTITY)
+        .json({ message: "default status named 'to do' was not found, please contact admin" });
+
+    const task = await taskModel.create({
+      ...req.body,
+      statusId: defaultStatus._id,
+      reporterId: req.userId,
+    });
+
+    return res.status(httpStatus.CREATED).send(task);
   }
-};
+
+  // otherwise attempt to save with given status from body
+  const existingStatus = await Status.getModel(req.dbConnection).findOne({ name: status, boardId });
+
+  if (!existingStatus)
+    return res
+      .status(httpStatus.UNPROCESSABLE_ENTITY)
+      .json({ message: 'this status does not exist, please create one from the board page first' });
+
+  const task = await taskModel.create({
+    ...req.body,
+    statusId: existingStatus._id,
+    reporterId: req.userId,
+  });
+
+  res.status(httpStatus.CREATED).send(task);
+});
 
 //PUT
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
   try {
     const updatedTask = await taskUpdate(req);
-    if (Object.keys(updatedTask).length === 0) return res.status(status.NOT_FOUND).send();
+    if (Object.keys(updatedTask).length === 0) return res.status(httpStatus.NOT_FOUND).send();
     res.send(updatedTask);
   } catch (e) {
     next(e);
@@ -73,7 +100,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 exports.delete = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
   try {

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 const status = require('http-status');
-const { replaceId } = require('../../services/replaceService');
 import { validationResult } from 'express-validator';
-import * as Board from '../../model/board';
-import * as Status from '../../model/status';
+import httpStatus from 'http-status';
+import { getBoardTasks } from '../../services/boardService';
 // GET one
 exports.show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -17,9 +16,7 @@ exports.show = async (req: Request, res: Response) => {
     return;
   }
 
-  const boardInfo = await Board.getModel(req.dbConnection)
-    .findById(boardId)
-    .populate({ path: 'taskStatus', model: Status.getModel(req.dbConnection) });
+  const boardTasks = await getBoardTasks(boardId, req.dbConnection);
 
-  res.send(replaceId(boardInfo));
+  res.status(httpStatus.OK).json(boardTasks);
 };
