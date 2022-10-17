@@ -3,17 +3,20 @@ import * as Status from '../model/status';
 import { IStatus } from '../model/status';
 const Board = require('../model/board');
 
-export const DEFAULT_STATUS: Pick<IStatus, 'name' | 'order'>[] = [
+export const DEFAULT_STATUS: Omit<IStatus, 'boardId' | 'taskIds'>[] = [
   {
     name: 'to do',
+    slug: 'to do',
     order: 0,
   },
   {
     name: 'in progress',
+    slug: 'in progress',
     order: 1,
   },
   {
     name: 'done',
+    slug: 'done',
     order: 2,
   },
 ];
@@ -56,7 +59,7 @@ export const getBoardTasks = async (boardId: string, dbConnection: Mongoose) => 
   const boardModel = Board.getModel(dbConnection);
 
   try {
-    const aggregate = await boardModel.aggregate([
+    const boardTasks = await boardModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(boardId) } },
       {
         $lookup: {
@@ -65,15 +68,18 @@ export const getBoardTasks = async (boardId: string, dbConnection: Mongoose) => 
           foreignField: '_id',
           pipeline: [
             {
-              $lookup: { from: 'tasks', localField: '_id', foreignField: 'statusId', as: 'cards' },
+              $lookup: {
+                from: 'tasks',
+                localField: '_id',
+                foreignField: 'statusId',
+                as: 'taskList',
+              },
             },
           ],
           as: 'taskStatus',
         },
       },
     ]);
-
-    const boardTasks = aggregate[0] || [];
 
     return boardTasks;
   } catch (error: any) {
