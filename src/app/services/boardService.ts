@@ -32,10 +32,10 @@ export const initializeBoard = async (title: string, dbConnection: Mongoose) => 
   const boardModel = Board.getModel(dbConnection);
   try {
     const existingStatus = await statusModel.find({});
-    const existingStatusName = existingStatus.map((doc) => doc.name);
+    const existingStatusName = existingStatus.map((doc) => doc.slug);
     // check if exising status contains default status
     const hasDefaultStatuses = DEFAULT_STATUS.every((status) =>
-      existingStatusName.includes(status.name),
+      existingStatusName.includes(status.slug),
     );
     if (!hasDefaultStatuses) {
       const newStatuses = await statusModel.create(DEFAULT_STATUS);

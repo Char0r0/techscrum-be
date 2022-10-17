@@ -3,6 +3,7 @@ const status = require('http-status');
 import { validationResult } from 'express-validator';
 import httpStatus from 'http-status';
 import { getBoardTasks } from '../../services/boardService';
+import { replaceId } from '../../services/replaceService';
 // GET one
 exports.show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -18,5 +19,7 @@ exports.show = async (req: Request, res: Response) => {
 
   const boardTasks = await getBoardTasks(boardId, req.dbConnection);
 
-  res.status(httpStatus.OK).json(boardTasks);
+  const result = replaceId(boardTasks);
+
+  res.status(httpStatus.OK).json(result);
 };
