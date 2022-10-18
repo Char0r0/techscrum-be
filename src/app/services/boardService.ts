@@ -6,18 +6,23 @@ const Board = require('../model/board');
 export const DEFAULT_STATUS: Omit<IStatus, 'boardId' | 'taskIds'>[] = [
   {
     name: 'to do',
-    slug: 'to do',
+    slug: 'to-do',
     order: 0,
   },
   {
     name: 'in progress',
-    slug: 'in progress',
+    slug: 'in-progress',
     order: 1,
+  },
+  {
+    name: 'review',
+    slug: 'review',
+    order: 2,
   },
   {
     name: 'done',
     slug: 'done',
-    order: 2,
+    order: 3,
   },
 ];
 
