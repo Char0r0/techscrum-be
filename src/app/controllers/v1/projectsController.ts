@@ -6,7 +6,7 @@ const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
 import { asyncHandler } from '../../utils/helper';
-import { initializeBoard } from '../../services/boardService';
+import { initProject } from '../../services/projectService';
 //get
 exports.index = async (req: any, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -44,10 +44,9 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const projectModel = Project.getModel(req.dbConnection);
-  const newBoard = await initializeBoard(req.body.name, req.dbConnection);
-  const project = new projectModel({ ...req.body, boardId: newBoard._id, ownerId: req.userId });
-  await project.save();
+
+  const { body, userId, dbConnection } = req;
+  const project = await initProject(body, userId, dbConnection);
   res.status(status.CREATED).send(replaceId(project));
 });
 
