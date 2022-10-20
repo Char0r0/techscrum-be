@@ -1,30 +1,8 @@
 import { Mongoose } from 'mongoose';
+import { DEFAULT_STATUS } from '../constants/defaultStatus';
 const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-
-export const DEFAULT_STATUS: Omit<Status.IStatus, 'board' | 'taskList'>[] = [
-  {
-    name: 'to do',
-    slug: 'to-do',
-    order: 0,
-  },
-  {
-    name: 'in progress',
-    slug: 'in-progress',
-    order: 1,
-  },
-  {
-    name: 'review',
-    slug: 'review',
-    order: 2,
-  },
-  {
-    name: 'done',
-    slug: 'done',
-    order: 3,
-  },
-];
 
 export const initProject = async (
   body: any,
