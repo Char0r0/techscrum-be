@@ -3,7 +3,7 @@ const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
 
-export const DEFAULT_STATUS: Omit<Status.IStatus, 'boardId' | 'taskIds'>[] = [
+export const DEFAULT_STATUS: Omit<Status.IStatus, 'board' | 'taskList'>[] = [
   {
     name: 'to do',
     slug: 'to-do',
@@ -39,20 +39,21 @@ export const initProject = async (
   if (!ownerId) throw new Error('ownerId is undefined');
 
   try {
-    // check if default status exist
-    const defaultStatusNames = DEFAULT_STATUS.map((item) => item.name);
-    const existingStatus = await statusModel.find({ name: { $in: defaultStatusNames } });
-
     // init statuses;
-    const statuses =
-      existingStatus.length > 0 ? existingStatus : await statusModel.create(DEFAULT_STATUS);
+    const statuses = await statusModel.create(DEFAULT_STATUS);
     // initl board
     const board = new boardModel({ title: body.name });
+    // init proejct
+    const proejct = await projectModel.create({ ...body, boardId: board._id, ownerId });
+
+    // binding refs
     board.taskStatus = statuses.map((doc) => doc._id);
     await board.save();
-    // init proejct
-    const proejct = new projectModel({ ...body, boardId: board._id, ownerId });
-    await proejct.save();
+
+    statuses.forEach(async (statusDoc) => {
+      statusDoc.board = board.id;
+      await statusDoc.save();
+    });
     return proejct;
   } catch (error: any) {
     throw new Error(error);
