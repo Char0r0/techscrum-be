@@ -14,7 +14,7 @@ import * as Status from '../model/status';
 export const findTasks = async (filter: any, dbConnection: Mongoose) => {
   const taskModel = Task.getModel(dbConnection);
 
-  const exludedUserFields = '-password -refreshToken -activeCode -active';
+  const UserFields = 'avatarIcon name email';
   try {
     const tasks = await taskModel
       .find(filter)
@@ -26,16 +26,17 @@ export const findTasks = async (filter: any, dbConnection: Mongoose) => {
       .populate({
         path: 'reporterId',
         model: User.getModel(dbConnection),
-        select: exludedUserFields,
+        select: UserFields,
       })
       .populate({
         path: 'assignId',
         model: User.getModel(dbConnection),
-        select: exludedUserFields,
+        select: UserFields,
       })
       .populate({
-        path: 'statusId',
+        path: 'status',
         model: Status.getModel(dbConnection),
+        select: 'name slug order',
       })
       .populate({
         path: 'comments',
