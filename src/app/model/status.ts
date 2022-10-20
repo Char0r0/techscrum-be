@@ -4,27 +4,41 @@ export interface IStatus {
   name: string;
   slug: string;
   order: number;
+  board: Schema.Types.ObjectId;
+  taskList: Schema.Types.ObjectId[];
 }
 
 const statusSchema = new Schema<IStatus>(
   {
     name: {
       type: Schema.Types.String,
-      unique: true,
       required: true,
+      trim: true,
     },
     slug: {
       type: Schema.Types.String,
-      unique: true,
+      trim: true,
       required: true,
     },
     order: {
       unique: true,
       type: Schema.Types.Number,
     },
+    board: {
+      type: Schema.Types.ObjectId,
+    },
+    taskList: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'tasks',
+      },
+    ],
   },
   {
     timestamps: true,
+    toJSON: {
+      versionKey: false,
+    },
   },
 );
 

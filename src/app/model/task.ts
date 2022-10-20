@@ -9,6 +9,11 @@ const taskSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    order: {
+      type: Number,
+      require: true,
+      index: true,
+    },
     tags: [
       {
         type: Types.ObjectId,
@@ -21,9 +26,10 @@ const taskSchema = new mongoose.Schema(
         ref: 'comments',
       },
     ],
-    statusId: {
+    status: {
       type: Types.ObjectId,
       ref: 'statuses',
+      require: true,
     },
     projectId: {
       type: Types.ObjectId,

@@ -4,11 +4,11 @@ import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
 const Task = require('../../model/task');
-const httpStatus = require('http-status');
+import * as Status from '../../model/status';
 const Board = require('../../model/board');
+const httpStatus = require('http-status');
 const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
-import * as Status from '../../model/status';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -35,48 +35,58 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const { boardId, status } = req.body;
+  const boardModel = Board.getModel(req.dbConnection);
+  const statusModel = Status.getModel(req.dbConnection);
+  const taskModel = Task.getModel(req.dbConnection);
 
-  const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
+  let taskStatus = null;
 
+  // find board with boardId, if no board found, return error message
+  const board = await boardModel.findById(boardId);
   if (!board)
     return res
       .sendStatus(httpStatus.UNPROCESSABLE_ENTITY)
-      .json({ message: 'no associated board with given ID' });
+      .json({ message: 'no associated board with given boardId' });
 
-  const taskModel = Task.getModel(req.dbConnection);
-
-  // if no status provided in body, set task's status to default status
+  // if no status provided, set taskStatus to 'to do'
   if (!status) {
-    const defaultStatus = await Status.getModel(req.dbConnection).findOne({ name: 'to do' });
-
+    const defaultStatus = await statusModel.findOne({
+      name: 'to do',
+      board: boardId,
+    });
     if (!defaultStatus)
       return res
         .status(httpStatus.UNPROCESSABLE_ENTITY)
         .json({ message: "default status named 'to do' was not found, please contact admin" });
 
-    const task = await taskModel.create({
-      ...req.body,
-      statusId: defaultStatus._id,
-      reporterId: req.userId,
-    });
-
-    return res.status(httpStatus.CREATED).send(task);
+    taskStatus = defaultStatus;
+  } else {
+    // else set taskStatus to existing status
+    const existingStatus = await statusModel.findOne({ name: status, board: boardId });
+    if (!existingStatus)
+      return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
+        message: 'this status does not exist, please create one from the board page first',
+      });
+    taskStatus = existingStatus;
   }
 
-  // otherwise attempt to save with given status from body
-  const existingStatus = await Status.getModel(req.dbConnection).findOne({ name: status, boardId });
-
-  if (!existingStatus)
-    return res
-      .status(httpStatus.UNPROCESSABLE_ENTITY)
-      .json({ message: 'this status does not exist, please create one from the board page first' });
-
+  // set new task's order equal
+  const numberOfTasksInColumn: number = await taskModel.count({
+    board: boardId,
+    status: taskStatus.id,
+  });
+  // create new task
   const task = await taskModel.create({
     ...req.body,
-    statusId: existingStatus._id,
+    board: boardId,
+    order: numberOfTasksInColumn,
+    status: taskStatus.id,
     reporterId: req.userId,
   });
+  // bind task ref to status
+  await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
 
+  // return task
   res.status(httpStatus.CREATED).send(task);
 });
 
