@@ -4,8 +4,9 @@ import { validationResult } from 'express-validator';
 import httpStatus from 'http-status';
 import { getBoardTasks } from '../../services/boardService';
 import { replaceId } from '../../services/replaceService';
+import { asyncHandler } from '../../utils/helper';
 // GET one
-exports.show = async (req: Request, res: Response) => {
+exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -21,4 +22,4 @@ exports.show = async (req: Request, res: Response) => {
   const result = replaceId(boardTasks);
 
   res.status(httpStatus.OK).json(result);
-};
+});
