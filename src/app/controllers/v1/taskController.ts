@@ -2,10 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
-import * as Status from '../../model/status';
 const Task = require('../../model/task');
 const mongoose = require('mongoose');
-const Board = require('../../model/board');
+const Status = require('../../model/status');
 const httpStatus = require('http-status');
 const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
@@ -84,32 +83,22 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // //DELETE
-exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+exports.delete = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const task = await Task.getModel(req.dbConnection).findOneAndDelete({
-      _id: mongoose.Types.ObjectId(req.params.id),
-    });
-    if (!task) return res.status(404).send();
-    const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
-    const taskStatus = board.taskStatus.map(
-      (statusDetail: { _id: string; items: { _id: string; taskId: string }[] }) => {
-        if (statusDetail._id.toString() !== task.statusId.toString()) return statusDetail;
-        statusDetail.items = statusDetail.items.filter((item) => {
-          if (item.taskId.toString() === task._id.toString()) return false;
-          return true;
-        });
-        return statusDetail;
-      },
-    );
-    board.taskStatus = taskStatus;
-    board.save();
-    res.status(200).send();
-  } catch (e) {
-    next(e);
-  }
-};
+  // delete task from Task collection
+  const task = await Task.getModel(req.dbConnection).findOneAndDelete({
+    _id: mongoose.Types.ObjectId(req.params.id),
+  });
+  if (!task) return res.status(404).send();
+
+  // delete task id from Status collection
+  await Status.getModel(req.dbConnection).findByIdAndUpdate(task.status, {
+    $pull: { taskList: task.id },
+  });
+
+  return res.status(httpStatus.NO_CONTENT).send();
+});
