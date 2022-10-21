@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
@@ -6,7 +6,6 @@ const Task = require('../../model/task');
 const mongoose = require('mongoose');
 const Status = require('../../model/status');
 const httpStatus = require('http-status');
-const { taskUpdate } = require('../../services/taskUpdateService');
 const { validationResult } = require('express-validator');
 
 declare module 'express-serve-static-core' {
@@ -14,7 +13,6 @@ declare module 'express-serve-static-core' {
     userId?: string;
   }
 }
-
 // GET ONE
 exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -37,7 +35,6 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   const statusModel = Status.getModel(req.dbConnection);
   const taskModel = Task.getModel(req.dbConnection);
   let taskStatus = null;
-
   // if no status provided, set taskStatus to 'to do'
   if (!status) {
     const defaultStatus = await statusModel.findOne({
@@ -67,20 +64,22 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //PUT
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+exports.update = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
+  const { id } = req.params;
+  const task = await Task.getModel(req.dbConnection).findByIdAndUpdate(
+    id,
+    { ...req.body },
+    { new: true },
+  );
 
-  try {
-    const updatedTask = await taskUpdate(req);
-    if (Object.keys(updatedTask).length === 0) return res.status(httpStatus.NOT_FOUND).send();
-    res.send(updatedTask);
-  } catch (e) {
-    next(e);
-  }
-};
+  if (!task) return res.status(httpStatus.NOT_FOUND).send();
+
+  return res.status(httpStatus.OK).send(task);
+});
 
 // //DELETE
 exports.delete = asyncHandler(async (req: Request, res: Response) => {

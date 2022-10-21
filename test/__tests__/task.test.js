@@ -140,13 +140,13 @@ describe('Post Task Test', () => {
   it('should create a task', async () => {
     const newTask = {
       title: 'create task test',
-      board: boardId,
+      boardId: boardId,
       status: 'to do',
       projectId: projectId,
     };
     const res = await request(application)
       .post('/api/v1/tasks')
-      .send({ ...newTask })
+      .send(newTask)
       .set('Authorization', token);
     expect(res.statusCode).toEqual(201);
   });
@@ -182,7 +182,7 @@ describe('Update Task Test', () => {
 describe('Delete task test', () => {
   it('should delete task', async () => {
     const res = await request(application).delete(`/api/v1/tasks/${taskId}`);
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(204);
     const checkDeleteTask = await Task.getModel(dbConnection).findById(taskId);
     expect(checkDeleteTask).toBeFalsy();
   });
