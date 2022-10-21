@@ -16,7 +16,6 @@ exports.show = async (req: Request, res: Response) => {
     res.status(status.NOT_ACCEPTABLE).send({});
     return;
   }
-
   const boardTasks = await getBoardTasks(boardId, req.dbConnection);
 
   const result = replaceId(boardTasks);

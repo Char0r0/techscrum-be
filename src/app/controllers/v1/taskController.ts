@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
-const mongoose = require('mongoose');
-const Task = require('../../model/task');
 import * as Status from '../../model/status';
+const Task = require('../../model/task');
+const mongoose = require('mongoose');
 const Board = require('../../model/board');
 const httpStatus = require('http-status');
 const { taskUpdate } = require('../../services/taskUpdateService');
@@ -35,18 +35,9 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const { boardId, status } = req.body;
-  const boardModel = Board.getModel(req.dbConnection);
   const statusModel = Status.getModel(req.dbConnection);
   const taskModel = Task.getModel(req.dbConnection);
-
   let taskStatus = null;
-
-  // find board with boardId, if no board found, return error message
-  const board = await boardModel.findById(boardId);
-  if (!board)
-    return res
-      .sendStatus(httpStatus.UNPROCESSABLE_ENTITY)
-      .json({ message: 'no associated board with given boardId' });
 
   // if no status provided, set taskStatus to 'to do'
   if (!status) {
@@ -54,40 +45,31 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
       name: 'to do',
       board: boardId,
     });
-    if (!defaultStatus)
-      return res
-        .status(httpStatus.UNPROCESSABLE_ENTITY)
-        .json({ message: "default status named 'to do' was not found, please contact admin" });
-
     taskStatus = defaultStatus;
   } else {
     // else set taskStatus to existing status
     const existingStatus = await statusModel.findOne({ name: status, board: boardId });
-    if (!existingStatus)
-      return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({
-        message: 'this status does not exist, please create one from the board page first',
-      });
     taskStatus = existingStatus;
   }
 
-  // set new task's order equal
-  const numberOfTasksInColumn: number = await taskModel.count({
-    board: boardId,
-    status: taskStatus.id,
-  });
-  // create new task
-  const task = await taskModel.create({
-    ...req.body,
-    board: boardId,
-    order: numberOfTasksInColumn,
-    status: taskStatus.id,
-    reporterId: req.userId,
-  });
-  // bind task ref to status
-  await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
-
-  // return task
-  res.status(httpStatus.CREATED).send(task);
+  if (taskStatus) {
+    // create new task
+    const numberOfTasksInColumn: number = await taskModel.count({
+      board: boardId,
+      status: taskStatus.id,
+    });
+    const task = await taskModel.create({
+      ...req.body,
+      board: boardId,
+      order: numberOfTasksInColumn,
+      status: taskStatus.id,
+      reporterId: req.userId,
+    });
+    // bind task ref to status
+    await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
+    // return task
+    res.status(httpStatus.CREATED).send(task);
+  }
 });
 
 //PUT

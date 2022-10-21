@@ -9,11 +9,6 @@ const taskSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    order: {
-      type: Number,
-      require: true,
-      index: true,
-    },
     tags: [
       {
         type: Types.ObjectId,
