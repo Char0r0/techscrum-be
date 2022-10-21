@@ -54,14 +54,9 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 
   if (taskStatus) {
     // create new task
-    const numberOfTasksInColumn: number = await taskModel.count({
-      board: boardId,
-      status: taskStatus.id,
-    });
     const task = await taskModel.create({
       ...req.body,
       board: boardId,
-      order: numberOfTasksInColumn,
       status: taskStatus.id,
       reporterId: req.userId,
     });
