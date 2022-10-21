@@ -83,7 +83,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // //DELETE
-exports.delete = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+exports.delete = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
