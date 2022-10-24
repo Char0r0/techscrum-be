@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 const status = require('http-status');
-const Board = require('../../model/board');
-const { replaceId } = require('../../services/replaceService');
 import { validationResult } from 'express-validator';
-
-exports.show = async (req: Request, res: Response) => {
+import httpStatus from 'http-status';
+import { getBoardTasks } from '../../services/boardService';
+import { replaceId } from '../../services/replaceService';
+import { asyncHandler } from '../../utils/helper';
+// GET one
+exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -15,7 +17,9 @@ exports.show = async (req: Request, res: Response) => {
     res.status(status.NOT_ACCEPTABLE).send({});
     return;
   }
+  const boardTasks = await getBoardTasks(boardId, req.dbConnection);
 
-  const boardInfo = await Board.getModel(req.dbConnection).findBoardById(boardId);
-  res.send(replaceId(boardInfo));
-};
+  const result = replaceId(boardTasks);
+
+  res.status(httpStatus.OK).json(result);
+});

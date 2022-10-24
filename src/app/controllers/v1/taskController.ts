@@ -1,13 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
-const mongoose = require('mongoose');
+import { findTasks } from '../../services/taskService';
+import { asyncHandler } from '../../utils/helper';
 const Task = require('../../model/task');
-const Label = require('../../model/label');
-const status = require('http-status');
-const Board = require('../../model/board');
-const User = require('../../model/user');
-const Type = require('../../model/type');
-const { taskUpdate } = require('../../services/taskUpdateService');
+const mongoose = require('mongoose');
+const Status = require('../../model/status');
+const httpStatus = require('http-status');
 const { validationResult } = require('express-validator');
 
 declare module 'express-serve-static-core' {
@@ -15,98 +13,91 @@ declare module 'express-serve-static-core' {
     userId?: string;
   }
 }
-
 // GET ONE
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const task = await Task.getModel(req.dbConnection)
-      .findOne({ _id: req.params.id })
-      .populate({ path: 'reporterId', Model: User.getModel(req.dbConnection) })
-      .populate({ path: 'assignId', Model: User.getModel(req.dbConnection) })
-      .populate({ path: 'typeId', Model: Type.getModel(req.dbConnection) });
-    const tagsId = task.tags;
-    const tagsList = await Label.getModel(req.dbConnection).find({ _id: { $in: tagsId } });
-    task.tags = tagsList;
-    res.status(200).send(replaceId(task));
-  } catch (e) {
-    next(e);
-  }
-};
+  const tasks = await findTasks({ _id: req.params.id }, req.dbConnection);
+  res.status(200).send(replaceId(tasks[0]));
+});
 
-// //POST
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+//POST
+exports.store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
   }
 
-  try {
-    const { boardId } = req.body;
-    const board = await Board.getModel(req.dbConnection).findOne({ _id: boardId });
-
-    const statusId = board.taskStatus[0]._id;
-    const taskModel = Task.getModel(req.dbConnection);
-    const task = new taskModel({ ...req.body, statusId, reporterId: req.userId });
-
-    const length = board.taskStatus[0].items.length;
-    board.taskStatus[0].items.push({ taskId: task._id, order: length });
-    await board.save();
-    await task.save();
-
-    res.status(status.CREATED).send(task);
-  } catch (e: any) {
-    next(e);
+  const { boardId, status } = req.body;
+  const statusModel = Status.getModel(req.dbConnection);
+  const taskModel = Task.getModel(req.dbConnection);
+  let taskStatus = null;
+  // if no status provided, set taskStatus to 'to do'
+  if (!status) {
+    const defaultStatus = await statusModel.findOne({
+      name: 'to do',
+      board: boardId,
+    });
+    taskStatus = defaultStatus;
+  } else {
+    // else set taskStatus to existing status
+    const existingStatus = await statusModel.findOne({ name: status, board: boardId });
+    taskStatus = existingStatus;
   }
-};
+
+  if (taskStatus) {
+    // create new task
+    const task = await taskModel.create({
+      ...req.body,
+      board: boardId,
+      status: taskStatus.id,
+      reporterId: req.userId,
+    });
+    // bind task ref to status
+    await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
+    // return task
+    res.status(httpStatus.CREATED).send(task);
+  }
+});
 
 //PUT
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+exports.update = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
+  const { id } = req.params;
+  const task = await Task.getModel(req.dbConnection).findByIdAndUpdate(
+    id,
+    { ...req.body },
+    { new: true },
+  );
 
-  try {
-    const updatedTask = await taskUpdate(req);
-    if (Object.keys(updatedTask).length === 0) return res.status(status.NOT_FOUND).send();
-    res.send(updatedTask);
-  } catch (e) {
-    next(e);
-  }
-};
+  if (!task) return res.status(httpStatus.NOT_FOUND).send();
+
+  return res.status(httpStatus.OK).send(task);
+});
 
 // //DELETE
-exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+exports.delete = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const task = await Task.getModel(req.dbConnection).findOneAndDelete({
-      _id: mongoose.Types.ObjectId(req.params.id),
-    });
-    if (!task) return res.status(404).send();
-    const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
-    const taskStatus = board.taskStatus.map(
-      (statusDetail: { _id: string; items: { _id: string; taskId: string }[] }) => {
-        if (statusDetail._id.toString() !== task.statusId.toString()) return statusDetail;
-        statusDetail.items = statusDetail.items.filter((item) => {
-          if (item.taskId.toString() === task._id.toString()) return false;
-          return true;
-        });
-        return statusDetail;
-      },
-    );
-    board.taskStatus = taskStatus;
-    board.save();
-    res.status(200).send();
-  } catch (e) {
-    next(e);
-  }
-};
+  // delete task from Task collection
+  const task = await Task.getModel(req.dbConnection).findOneAndDelete({
+    _id: mongoose.Types.ObjectId(req.params.id),
+  });
+  if (!task) return res.status(404).send();
+
+  // delete task id from Status collection
+  await Status.getModel(req.dbConnection).findByIdAndUpdate(task.status, {
+    $pull: { taskList: task.id },
+  });
+
+  return res.status(httpStatus.NO_CONTENT).send();
+});
