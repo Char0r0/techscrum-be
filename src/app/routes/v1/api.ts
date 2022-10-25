@@ -48,6 +48,7 @@ const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
+const activityControllers = require('../../controllers/v1/activityController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as backlogController from '../../controllers/v1/backlogController';
 
@@ -55,7 +56,7 @@ router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 
-router.get('/healthcheck', (req:any, res:any) => {
+router.get('/healthcheck', (req: any, res: any) => {
   res.sendStatus(200);
 });
 
@@ -330,5 +331,10 @@ router.get('/projects/:projectId/backlogs/search', backlogController.searchBackl
 router.post('/sprints', sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
+
+//activities
+router.get('/activities/:tid', activityControllers.show);
+router.post('/activities', activityControllers.store);
+router.delete('/activities/:id', activityControllers.destroy);
 
 module.exports = router;
