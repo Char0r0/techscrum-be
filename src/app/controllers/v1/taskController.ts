@@ -69,7 +69,23 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
+
   const { id } = req.params;
+
+  const { status } = req.body;
+
+  // remove ref from old status and add ref to new status
+  if (status) {
+    await Status.getModel(req.dbConnection).findOneAndUpdate(
+      { taskList: id },
+      { $pull: { taskList: id } },
+    );
+
+    await Status.getModel(req.dbConnection).findByIdAndUpdate(status, {
+      $addToSet: { taskList: id },
+    });
+  }
+
   const task = await Task.getModel(req.dbConnection).findByIdAndUpdate(
     id,
     { ...req.body },
@@ -78,7 +94,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
-  return res.status(httpStatus.OK).send(task);
+  return res.status(httpStatus.OK).json(task);
 });
 
 // //DELETE
