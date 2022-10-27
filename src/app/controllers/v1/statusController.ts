@@ -16,6 +16,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   const statuses = await Status.getModel(req.dbConnection).find(
     { board: boardId },
     { taskList: 0, createdAt: 0, updatedAt: 0 },
+    { sort: { order: 1 } },
   );
 
   return res.status(httpStatus.OK).json(statuses);
