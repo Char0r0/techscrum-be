@@ -7,7 +7,6 @@ const store = [body(['boardId', 'title']).notEmpty()];
 
 const update = [
   param('id').notEmpty().isString(),
-  // if title field exist, must be a string with min length of 1
   body('title').if(body('title').exists()).isString().isLength({ min: 1 }),
 ];
 
