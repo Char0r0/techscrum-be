@@ -51,13 +51,22 @@ afterAll(async () => {
 
 describe('Create Shortcut Test', () => {
   it('should create shortcut', async () => {
-    const shortcut = { shortcutLink: 'google.com', name: 'Google' };
+    const shortcut = { shortcutLink: 'http://google.com', name: 'Google' };
     const res = await request(application)
       .post(`/api/v1/projects/${projectId}/shortcuts`)
       .send({ ...shortcut });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual(expect.objectContaining({ ...shortcut }));
   });
+
+  it('should return 403 if provided a link without http://', async () => {
+    const shortcut = { shortcutLink: 'go.com', name: 'go' };
+    const res = await request(application)
+      .post(`/api/v1/projects/${projectId}/shortcuts`)
+      .send({ ...shortcut });
+    expect(res.statusCode).toEqual(403);
+  });
+
   it('should return 422', async () => {
     const shortcut = { shortcutLink: undefined, name: undefined };
     const res = await request(application)
