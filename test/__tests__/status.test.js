@@ -42,20 +42,22 @@ const statuses = [
   },
 ];
 
+const board = {
+  _id: boardId,
+  title: 'test board',
+  taskStatus: [
+    '6350d443bddbe8fed0138ff4',
+    '6350d443bddbe8fed0138ff5',
+    '6350d443bddbe8fed0138ff6',
+    '6350d443bddbe8fed0138ff7',
+  ],
+};
+
 beforeAll(async () => {
   dbConnection = await dbHandler.connect();
   await dbHandler.clearDatabase();
 
-  await Board.getModel(dbConnection).create({
-    _id: boardId,
-    title: 'test board',
-    taskStatus: [
-      '6350d443bddbe8fed0138ff4',
-      '6350d443bddbe8fed0138ff5',
-      '6350d443bddbe8fed0138ff6',
-      '6350d443bddbe8fed0138ff7',
-    ],
-  });
+  await Board.getModel(dbConnection).create(board);
 
   await Status.getModel(dbConnection).create(statuses);
 
