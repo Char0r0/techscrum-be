@@ -89,7 +89,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
   const task = await Task.getModel(req.dbConnection).findByIdAndUpdate(
     id,
     { ...req.body },
-    { new: true },
+    { new: true, runValidators: true },
   );
 
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
