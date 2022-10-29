@@ -11,7 +11,7 @@ let authStub = null;
 let sassStub = null;
 
 const setup = async () => {
-  dbConnection = await dbHandler.connect();
+  const dbConnection = await dbHandler.connect();
   await dbHandler.clearDatabase();
 
   /**
