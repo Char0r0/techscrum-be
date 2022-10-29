@@ -51,7 +51,7 @@ afterAll(async () => {
 
 describe('Create Shortcut Test', () => {
   it('should create shortcut', async () => {
-    const shortcut = { shortcutLink: 'http://google.com', name: 'Google' };
+    const shortcut = { shortcutLink: 'https://www.google.com', name: 'Google' };
     const res = await request(application)
       .post(`/api/v1/projects/${projectId}/shortcuts`)
       .send({ ...shortcut });
@@ -77,7 +77,7 @@ describe('Create Shortcut Test', () => {
 });
 describe('Update Shortcut Test', () => {
   it('should update shortcut', async () => {
-    const newShortcut = { shortcutLink: 'http://steinsgate.jp/', name: 'Steins Gate' };
+    const newShortcut = { shortcutLink: 'https://www.steinsgate.jp/', name: 'Steins Gate' };
     const res = await request(application)
       .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
       .send({ ...newShortcut });
