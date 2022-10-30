@@ -39,12 +39,10 @@ beforeAll(async () => {
   await dbHandler.clearDatabase();
   await User.getModel(dbConnection).create(user);
   await Task.getModel(dbConnection).create(task);
-
   sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
     return next();
   });
-
   const app = require('../../src/loaders/express');
   application = app();
 });
