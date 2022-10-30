@@ -15,14 +15,12 @@ const projectId = new mongoose.Types.ObjectId();
 const boardId = new mongoose.Types.ObjectId();
 const reportedId = new mongoose.Types.ObjectId();
 const typeId = new mongoose.Types.ObjectId();
-
 const user = {
   _id: userId,
   email: 'test@gamil.com',
   password: 'testtesttest',
   active: true,
 };
-
 const task = {
   _id: taskId,
   title: 'demo',
