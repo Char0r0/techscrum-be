@@ -2,10 +2,7 @@ const sinon = require('sinon');
 const dbHandler = require('./dbHandler');
 const saasMiddleware = require('../src/app/middleware/saasMiddleware');
 const authMiddleware = require('../src/app/middleware/authMiddleware');
-const Board = require('../src/app/model/board');
-const Status = require('../src/app/model/status');
-const board = require('./fixtures/board');
-const statuses = require('./fixtures/statuses');
+const seed = require('./seed');
 
 let authStub = null;
 let sassStub = null;
@@ -14,11 +11,7 @@ const setup = async () => {
   const dbConnection = await dbHandler.connect();
   await dbHandler.clearDatabase();
 
-  /**
-   * seed database
-   */
-  await Board.getModel(dbConnection).create(board);
-  await Status.getModel(dbConnection).create(statuses);
+  await seed(dbConnection);
 
   authStub = sinon
     .stub(authMiddleware, 'authenticationTokenMiddleware')
