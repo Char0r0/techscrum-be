@@ -33,6 +33,7 @@ const task = {
   typeId: typeId,
   attachmentUrls: [],
 };
+const activity = { operation: 'created', userId: userId, taskId: taskId };
 
 beforeAll(async () => {
   dbConnection = await dbHandler.connect();
@@ -54,7 +55,6 @@ afterAll(async () => {
 
 describe('Create and Get Activity Test', () => {
   it('should create shortcut', async () => {
-    const activity = { operation: 'created', userId: userId, taskId: taskId };
     const res = await request(application)
       .post('/api/v1/activities')
       .send({ ...activity });
@@ -69,10 +69,15 @@ describe('Create and Get Activity Test', () => {
 describe('Delete Activity Test', () => {
   it('Should delete activity', async () => {
     const res = await request(application).delete(`/api/v1/activities/${taskId}`).send();
-    expect(res.statusCode).toEqual(204);
+    expect(res.statusCode).toEqual(200);
   });
-  it('should return empty array', async () => {
+  it('should return deleted activities', async () => {
     const res = await request(application).get(`/api/v1/activities/${taskId}`).send();
-    expect(res.body).toEqual([]);
+    const deletedActivity = {
+      ...activity,
+      isDeleted: true,
+      userId: { _id: userId },
+    };
+    expect(res.body).toMatchObject([deletedActivity]);
   });
 });
