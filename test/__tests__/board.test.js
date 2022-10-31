@@ -18,4 +18,10 @@ describe('Show one board', () => {
     expect(statusCode).toBe(200);
     expect(body).toEqual(BOARD_TEST);
   });
+
+  it('should should return 500 if invalid boardId provided', async () => {
+    const wrongId = '123';
+    const { statusCode } = await request(app).get(`/api/v1/board/${wrongId}`);
+    expect(statusCode).toBe(500);
+  });
 });
