@@ -11,6 +11,7 @@ const Status = require('../../src/app/model/status');
 const Type = require('../../src/app/model/type');
 const fixture = require('../fixtures/task');
 const bcrypt = require('bcrypt');
+const { replaceId } = require('../../src/app/services/replaceService');
 
 let application = null;
 let dbConnection = '';
@@ -130,7 +131,7 @@ describe('Get One Task Test', () => {
   it('should show one task', async () => {
     const res = await request(application).get(`/api/v1/tasks/${taskId}`);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toEqual(fixture.getTask());
+    expect(res.body).toEqual(replaceId(fixture.getTask()));
   });
 });
 
