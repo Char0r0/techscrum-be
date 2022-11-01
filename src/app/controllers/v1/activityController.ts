@@ -51,12 +51,10 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   }
   const taskId = req.params.id;
   try {
-    const deleteActivity = await activity.getModel(req.dbConnection).deleteMany({ taskId: taskId });
-    if (!deleteActivity) {
-      res.sendStatus(status.UNPROCESSABLE_ENTITY);
-      return;
-    }
-    res.sendStatus(status.NO_CONTENT);
+    await activity.getModel(req.dbConnection).updateMany({ taskId: taskId }, { isDeleted: true });
+    const deletedActivities = await activity.getModel(req.dbConnection).find({ taskId: taskId });
+    res.send(deletedActivities);
+    return;
   } catch (e) {
     next(e);
   }

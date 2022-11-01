@@ -7,6 +7,7 @@ const activitySchema = new mongoose.Schema(
     operation: { type: String, required: true, index: true },
     userId: { type: Types.ObjectId, ref: 'users' },
     taskId: { type: Types.ObjectId, ref: 'task' },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
