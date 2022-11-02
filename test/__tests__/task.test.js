@@ -11,6 +11,7 @@ const Status = require('../../src/app/model/status');
 const Type = require('../../src/app/model/type');
 const fixture = require('../fixtures/task');
 const bcrypt = require('bcrypt');
+const { replaceId } = require('../../src/app/services/replaceService');
 
 let application = null;
 let dbConnection = '';
@@ -55,7 +56,6 @@ beforeAll(async () => {
   await Task.getModel(dbConnection).create({
     _id: taskId,
     title: 'test task',
-    order: 0,
     description: '',
     projectId: projectId,
     boardId: boardId,
@@ -64,7 +64,6 @@ beforeAll(async () => {
     status: statusId,
     dueAt: '2022-10-20T06:06:45.946Z',
     createdAt: '2022-10-20T06:06:49.590Z',
-    updatedAt: '2022-10-20T06:06:49.590Z',
   });
 
   await Status.getModel(dbConnection).create([
@@ -132,7 +131,7 @@ describe('Get One Task Test', () => {
   it('should show one task', async () => {
     const res = await request(application).get(`/api/v1/tasks/${taskId}`);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toEqual(fixture.getTask());
+    expect(res.body).toEqual(replaceId(fixture.getTask()));
   });
 });
 
@@ -150,18 +149,40 @@ describe('Post Task Test', () => {
       .set('Authorization', token);
     expect(res.statusCode).toEqual(201);
   });
+
+  it('should return 422 if no title was given', async () => {
+    const newTask = {
+      boardId: boardId,
+      status: 'to do',
+      projectId: projectId,
+    };
+    const res = await request(application)
+      .post('/api/v1/tasks')
+      .send(newTask)
+      .set('Authorization', token);
+    expect(res.statusCode).toEqual(422);
+  });
 });
 
 describe('Update Task Test', () => {
   it('should update task', async () => {
-    const newTask = { title: 'updated task' };
-    const res = await request(application)
-      .put(`/api/v1/tasks/${taskId}`)
-      .send({ ...newTask });
-    expect(res.body).toMatchObject({ ...newTask });
-    const checkUpdateTask = await Task.getModel(dbConnection).findById(taskId);
-    expect(checkUpdateTask.title).toEqual(newTask.title);
+    const updatedField = { description: 'updated task' };
+    const res = await request(application).put(`/api/v1/tasks/${taskId}`).send(updatedField);
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toMatchObject({
+      id: taskId,
+      title: 'test task',
+      description: 'updated task',
+      projectId: projectId,
+      boardId: boardId,
+      reporterId: userId,
+      typeId: typeId,
+      status: statusId,
+      dueAt: '2022-10-20T06:06:45.946Z',
+      createdAt: '2022-10-20T06:06:49.590Z',
+    });
   });
+
   it('should return 404 not found', async () => {
     const wrongId = '62e4bc9692266e6c8fcd0bb1';
     const newTask = { title: 'updated task' };
@@ -170,8 +191,9 @@ describe('Update Task Test', () => {
       .send({ ...newTask });
     expect(res.statusCode).toEqual(404);
   });
-  it('should return 422 unprocessable entity', async () => {
-    const newTask = { title: undefined };
+
+  it('should return 422 if title is an empty string', async () => {
+    const newTask = { title: '', description: 'hello' };
     const res = await request(application)
       .put(`/api/v1/tasks/${taskId}`)
       .send({ ...newTask });
