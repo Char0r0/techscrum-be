@@ -55,7 +55,6 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
       board: boardId,
       status: taskStatus.id,
       reporterId: req.userId,
-      priority: 'Medium',
     });
     // bind task ref to status
     await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });

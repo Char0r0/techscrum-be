@@ -9,6 +9,7 @@ exports.getTask = () => {
       slug: 'to-do',
       order: 0,
     },
+    priority: 'Medium',
     projectId: '6350d443bddbe8fed0138ffe',
     boardId: '6350d443bddbe8fed0138ffd',
     sprintId: null,

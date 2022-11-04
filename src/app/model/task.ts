@@ -30,6 +30,7 @@ const taskSchema = new mongoose.Schema(
       type: String,
       enum: ['Highest', 'High', 'Medium', 'Low', 'Lowest'],
       require: true,
+      default: 'Medium',
     },
     projectId: {
       type: Types.ObjectId,
