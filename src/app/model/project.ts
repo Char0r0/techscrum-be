@@ -1,7 +1,6 @@
 export {};
 const mongoose = require('mongoose');
 const { Types } = require('mongoose');
-//TODO: need to find out why crash and did application stop
 const projectSchema = mongoose.Schema(
   {
     name: {
