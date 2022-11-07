@@ -25,6 +25,7 @@ const BOARD_TEST = {
           comments: [],
           description: '',
           id: '6350e579d6a0ceeb4fc89fd9',
+          priority: 'Medium',
           projectId: '6350d443bddbe8fed0138ffe',
           reporterId: '632fc37a89d19ed1f57c7ab1',
           sprintId: null,

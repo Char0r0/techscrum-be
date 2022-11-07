@@ -166,7 +166,7 @@ describe('Post Task Test', () => {
 
 describe('Update Task Test', () => {
   it('should update task', async () => {
-    const updatedField = { description: 'updated task' };
+    const updatedField = { description: 'updated task', priority: 'Lowest' };
     const res = await request(application).put(`/api/v1/tasks/${taskId}`).send(updatedField);
     expect(res.statusCode).toBe(200);
     expect(res.body).toMatchObject({
@@ -174,6 +174,7 @@ describe('Update Task Test', () => {
       title: 'test task',
       description: 'updated task',
       projectId: projectId,
+      priority: 'Lowest',
       boardId: boardId,
       reporterId: userId,
       typeId: typeId,
