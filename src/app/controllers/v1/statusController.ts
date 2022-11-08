@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import httpStatus from 'http-status';
 import { asyncHandler } from '../../utils/helper';
 import * as Status from '../../model/status';
+import { replaceId } from '../../services/replaceService';
 
 // GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
@@ -19,5 +20,5 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
     { sort: { order: 1 } },
   );
 
-  return res.status(httpStatus.OK).json(statuses);
+  return res.status(httpStatus.OK).json(replaceId(statuses));
 });
