@@ -30,6 +30,7 @@ exports.getTask = () => {
       updatedAt: '2022-09-11T07:57:04.258Z',
       __v: 0,
     },
+    assignId: null,
     attachmentUrls: [],
     createdAt: '2022-10-20T06:06:49.590Z',
     updatedAt: '2022-10-20T06:06:49.590Z',

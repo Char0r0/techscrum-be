@@ -64,6 +64,7 @@ const taskSchema = new mongoose.Schema(
     assignId: {
       type: Types.ObjectId,
       ref: 'users',
+      default: null,
     },
     typeId: {
       type: Types.ObjectId,
