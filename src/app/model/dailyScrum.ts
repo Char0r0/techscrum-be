@@ -11,6 +11,9 @@ const dailyScrumSchema = new mongoose.Schema(
     userId: { type: Types.ObjectId, ref: 'user' },
     projectId: { type: Types.ObjectId, ref: 'project' },
     taskId: { type: Types.ObjectId, ref: 'task' },
+    createdDate: { type: String },
+    finishValidation: { type: Boolean, default: false },
+    supportValidation: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
