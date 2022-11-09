@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import { findDailyScrums } from '../../services/dailyScrumService';
 const dailyScrum = require('../../model/dailyScrum');
-const user = require('../../model/user');
-const project = require('../../model/project');
 const task = require('../../model/task');
 const status = require('http-status');
 
@@ -14,16 +13,15 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const projectId = req.params.pid;
   const userId = req.params.uid;
   try {
-    const results = await dailyScrum
-      .getModel(req.dbConnection)
-      .find({ projectId: projectId, userId: userId })
-      .populate({ path: 'userId', model: user.getModel(req.dbConnection) })
-      .populate({ path: 'projectId', model: project.getModel(req.dbConnection) })
-      .populate({
+    const results = await findDailyScrums(
+      { projectId: projectId, userId: userId },
+      {
         path: 'taskId',
         model: task.getModel(req.dbConnection),
         match: { assignId: userId },
-      });
+      },
+      req.dbConnection,
+    );
     const filteredResults = results.filter((result: { taskId: any }) => {
       return result.taskId !== null;
     });
@@ -44,16 +42,15 @@ exports.assignShow = async (req: Request, res: Response, next: NextFunction) => 
   const createdDate = req.params.cdate;
   const taskId = req.params.tid;
   try {
-    const results = await dailyScrum
-      .getModel(req.dbConnection)
-      .find({ projectId: projectId, userId: userId, createdDate: createdDate })
-      .populate({ path: 'userId', model: user.getModel(req.dbConnection) })
-      .populate({ path: 'projectId', model: project.getModel(req.dbConnection) })
-      .populate({
+    const results = await findDailyScrums(
+      { projectId: projectId, userId: userId, createdDate: createdDate },
+      {
         path: 'taskId',
         model: task.getModel(req.dbConnection),
         match: { _id: taskId },
-      });
+      },
+      req.dbConnection,
+    );
     const trueResults = results.filter((result: any) => {
       return result.taskId !== null;
     });
@@ -72,16 +69,15 @@ exports.showByTask = async (req: Request, res: Response, next: NextFunction) => 
   const projectId = req.params.pid;
   const taskId = req.params.tid;
   try {
-    const results = await dailyScrum
-      .getModel(req.dbConnection)
-      .find({ projectId: projectId })
-      .populate({ path: 'userId', model: user.getModel(req.dbConnection) })
-      .populate({ path: 'projectId', model: project.getModel(req.dbConnection) })
-      .populate({
+    const results = await findDailyScrums(
+      { projectId: projectId },
+      {
         path: 'taskId',
         model: task.getModel(req.dbConnection),
         match: { _id: taskId },
-      });
+      },
+      req.dbConnection,
+    );
     const trueResults = results.filter((result: any) => {
       return result.taskId !== null;
     });
