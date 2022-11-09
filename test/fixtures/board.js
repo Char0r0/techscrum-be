@@ -21,6 +21,7 @@ const BOARD_TEST = {
       taskList: [
         {
           attachmentUrls: [],
+          assignId: null,
           boardId: '6350d443bddbe8fed0138ffd',
           comments: [],
           description: '',
