@@ -3,7 +3,7 @@ const { param, body } = require('express-validator');
 
 const show = [param('id').notEmpty()];
 
-const store = [body(['boardId', 'title']).notEmpty()];
+const store = [body(['boardId', 'title', 'typeId']).notEmpty()];
 
 const update = [
   param('id').notEmpty().isString(),
