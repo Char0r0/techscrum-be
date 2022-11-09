@@ -136,9 +136,10 @@ describe('Get One Task Test', () => {
 });
 
 describe('Post Task Test', () => {
-  it('should create a task', async () => {
+  it('should create a new task if valid info provided', async () => {
     const newTask = {
       title: 'create task test',
+      typeId: typeId,
       boardId: boardId,
       status: 'to do',
       projectId: projectId,
@@ -147,7 +148,64 @@ describe('Post Task Test', () => {
       .post('/api/v1/tasks')
       .send(newTask)
       .set('Authorization', token);
-    expect(res.statusCode).toEqual(201);
+
+    expect(res.statusCode).toBe(201);
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      assignId: null,
+      attachmentUrls: [],
+      boardId: '6350d443bddbe8fed0138ffd',
+      comments: [],
+      dueAt: expect.any(Object),
+      priority: 'Medium',
+      projectId: '6350d443bddbe8fed0138ffe',
+      sprintId: null,
+      status: {
+        id: '6350d443bddbe8fed0138ff4',
+        name: 'to do',
+        order: 0,
+        slug: 'to-do',
+      },
+      typeId: {
+        __v: 0,
+        createdAt: expect.any(String),
+        id: '631d94d08a05945727602cd1',
+        name: 'Story',
+        slug: 'story',
+        updatedAt: expect.any(String),
+      },
+      storyPoint: 0,
+      tags: [],
+      title: 'create task test',
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
+  });
+
+  it.each`
+    field          | value
+    ${'title'}     | ${''}
+    ${'boardId'}   | ${undefined}
+    ${'projectId'} | ${undefined}
+    ${'typeId'}    | ${undefined}
+  `('should return 422 if $field is $value', async ({ field, value }) => {
+    const correctTask = {
+      title: 'create task test',
+      boardId: boardId,
+      projectId: projectId,
+    };
+
+    const wrongTask = {
+      ...correctTask,
+      [field]: value,
+    };
+
+    const res = await request(application)
+      .post('/api/v1/tasks')
+      .send(wrongTask)
+      .set('Authorization', token);
+
+    expect(res.statusCode).toEqual(422);
   });
 
   it('should return 422 if no title was given', async () => {
@@ -169,18 +227,42 @@ describe('Update Task Test', () => {
     const updatedField = { description: 'updated task', priority: 'Lowest' };
     const res = await request(application).put(`/api/v1/tasks/${taskId}`).send(updatedField);
     expect(res.statusCode).toBe(200);
-    expect(res.body).toMatchObject({
+    expect(res.body).toEqual({
       id: taskId,
+      assignId: null,
+      attachmentUrls: [],
       title: 'test task',
       description: 'updated task',
       projectId: projectId,
       priority: 'Lowest',
       boardId: boardId,
-      reporterId: userId,
-      typeId: typeId,
-      status: statusId,
+      comments: [],
+      reporterId: {
+        avatarIcon: 'https://example.png',
+        email: 'test@gmail.com',
+        id: '632fc37a89d19ed1f57c7ab1',
+        name: 'Joe',
+      },
+      sprintId: null,
+      storyPoint: 0,
+      tags: [],
+      typeId: {
+        __v: 0,
+        createdAt: '2022-09-11T07:57:04.258Z',
+        id: '631d94d08a05945727602cd1',
+        name: 'Story',
+        slug: 'story',
+        updatedAt: '2022-09-11T07:57:04.258Z',
+      },
+      status: {
+        id: '6350d443bddbe8fed0138ff4',
+        name: 'to do',
+        order: 0,
+        slug: 'to-do',
+      },
       dueAt: '2022-10-20T06:06:45.946Z',
-      createdAt: '2022-10-20T06:06:49.590Z',
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     });
   });
 

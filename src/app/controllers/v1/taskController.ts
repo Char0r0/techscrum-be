@@ -59,7 +59,8 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     // bind task ref to status
     await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
     // return task
-    res.status(httpStatus.CREATED).send(task);
+    const result = await findTasks({ _id: task._id }, req.dbConnection);
+    res.status(httpStatus.CREATED).json(replaceId(result[0]));
   }
 });
 
@@ -94,7 +95,9 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
-  return res.status(httpStatus.OK).json(task);
+  const result = await findTasks({ _id: id }, req.dbConnection);
+
+  return res.status(httpStatus.OK).json(replaceId(result[0]));
 });
 
 // //DELETE

@@ -29,7 +29,6 @@ const taskSchema = new mongoose.Schema(
     priority: {
       type: String,
       enum: ['Highest', 'High', 'Medium', 'Low', 'Lowest'],
-      require: true,
       default: 'Medium',
     },
     projectId: {
@@ -55,7 +54,7 @@ const taskSchema = new mongoose.Schema(
     },
     dueAt: {
       type: Date,
-      default: 0,
+      default: null,
     },
     reporterId: {
       type: Types.ObjectId,
@@ -69,6 +68,7 @@ const taskSchema = new mongoose.Schema(
     typeId: {
       type: Types.ObjectId,
       ref: 'types',
+      require: true,
     },
     attachmentUrls: [
       {
