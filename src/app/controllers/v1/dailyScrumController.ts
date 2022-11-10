@@ -10,78 +10,46 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const projectId = req.params.pid;
-  const userId = req.params.uid;
+  const { projectId, userId, taskId, date } = req.params;
   try {
-    const results = await findDailyScrums(
-      { projectId: projectId, userId: userId },
-      {
-        path: 'taskId',
-        model: task.getModel(req.dbConnection),
-        match: { assignId: userId },
-      },
-      req.dbConnection,
-    );
+    let results = [];
+    if (taskId === 'none' && date === 'none' && userId != 'none') {
+      results = await findDailyScrums(
+        { projectId: projectId, userId: userId },
+        {
+          path: 'taskId',
+          model: task.getModel(req.dbConnection),
+          match: { assignId: userId },
+        },
+        req.dbConnection,
+      );
+    }
+    if (date === 'none' && userId === 'none' && taskId != 'none') {
+      results = await findDailyScrums(
+        { projectId: projectId },
+        {
+          path: 'taskId',
+          model: task.getModel(req.dbConnection),
+          match: { _id: taskId },
+        },
+        req.dbConnection,
+      );
+    }
+    if (date !== 'none' && userId !== 'none' && taskId !== 'none') {
+      results = await findDailyScrums(
+        { projectId: projectId, userId: userId, createdDate: date },
+        {
+          path: 'taskId',
+          model: task.getModel(req.dbConnection),
+          match: { _id: taskId },
+        },
+        req.dbConnection,
+      );
+    }
     const filteredResults = results.filter((result: { taskId: any }) => {
       return result.taskId !== null;
     });
     res.send(filteredResults);
-  } catch (e) {
-    next(e);
-    res.send(e);
-  }
-};
-
-exports.assignShow = async (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
-  }
-  const projectId = req.params.pid;
-  const userId = req.params.uid;
-  const createdDate = req.params.cdate;
-  const taskId = req.params.tid;
-  try {
-    const results = await findDailyScrums(
-      { projectId: projectId, userId: userId, createdDate: createdDate },
-      {
-        path: 'taskId',
-        model: task.getModel(req.dbConnection),
-        match: { _id: taskId },
-      },
-      req.dbConnection,
-    );
-    const trueResults = results.filter((result: any) => {
-      return result.taskId !== null;
-    });
-    res.send(trueResults);
-  } catch (e) {
-    next(e);
-    res.send(e);
-  }
-};
-
-exports.showByTask = async (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
-  }
-  const projectId = req.params.pid;
-  const taskId = req.params.tid;
-  try {
-    const results = await findDailyScrums(
-      { projectId: projectId },
-      {
-        path: 'taskId',
-        model: task.getModel(req.dbConnection),
-        match: { _id: taskId },
-      },
-      req.dbConnection,
-    );
-    const trueResults = results.filter((result: any) => {
-      return result.taskId !== null;
-    });
-    res.send(trueResults);
   } catch (e) {
     next(e);
     res.send(e);
@@ -94,7 +62,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projectId = req.params.pid;
+    const { projectId } = req.params;
     const {
       title,
       progress,
@@ -135,9 +103,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projectId = req.params.pid;
-    const userId = req.params.uid;
-    const taskId = req.params.tid;
+    const { projectId, userId, taskId } = req.params;
     const {
       progress,
       isFinished,
@@ -179,8 +145,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const projectId = req.params.pid;
-    const taskId = req.params.tid;
+    const { projectId, taskId } = req.params;
     await dailyScrum
       .getModel(req.dbConnection)
       .deleteMany({ projectId: projectId, taskId: taskId });

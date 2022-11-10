@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
@@ -23,24 +23,6 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   const tasks = await findTasks({ _id: req.params.id }, req.dbConnection);
   res.status(200).send(replaceId(tasks[0]));
 });
-
-// GET MANY
-exports.showMany = async (req: Request, res: Response, next: NextFunction) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
-  }
-  try {
-    const tasks = await Task.getModel(req.dbConnection).find({
-      projectId: req.params.pid,
-      assignId: req.params.uid,
-    });
-    res.status(200).send(tasks);
-  } catch (e) {
-    next(e);
-    res.send(e);
-  }
-};
 
 //POST
 exports.store = asyncHandler(async (req: Request, res: Response) => {
