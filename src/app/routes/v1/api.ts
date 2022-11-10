@@ -343,9 +343,9 @@ router.post('/activities', activityControllers.store);
 router.delete('/activities/:id', activityControllers.destroy);
 
 //dailyScrums
-router.get('/projects/:projectId/dailyscrums/:userId/:taskId/:date', dailyScrumControllers.show);
-router.post('/projects/:projectId/dailyscrums', dailyScrumControllers.store);
-router.patch('/projects/:projectId/dailyscrums/:userId/:taskId', dailyScrumControllers.update);
-router.delete('/projects/:projectId/dailyscrums/:taskId', dailyScrumControllers.destroy);
+router.get('/projects/:projectId/dailyScrums/:userId/:taskId/:date', dailyScrumControllers.show);
+router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
+router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
+router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 module.exports = router;
