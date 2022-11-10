@@ -15,6 +15,7 @@ const sprintSchema = new mongoose.Schema(
     },
     endDate: {
       type: Date,
+      default: null,
     },
     description: {
       type: String,
