@@ -1,4 +1,4 @@
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { deleteSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
@@ -9,7 +9,6 @@ const Sprint = require('../../model/sprint');
 export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const sprintModel = Sprint.getModel(req.dbConnection);
@@ -21,6 +20,9 @@ export const store = asyncHandler(async (req: Request, res: Response) => {
 // update
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const sprint = await Sprint.getModel(req.dbConnection).findById(id);
+  if (!sprint) return res.status(404).send();
+
   const updatedSprint = await updateSprint(req.dbConnection, id, req.body);
   res.status(status.OK).json(updatedSprint);
 });
@@ -28,6 +30,9 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 // delete
 export const destroy = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const sprint = await Sprint.getModel(req.dbConnection).findById(id);
+  if (!sprint) return res.status(404).send();
+
   await deleteSprint(req.dbConnection, id);
-  res.status(status.OK).json({});
+  return res.status(status.NO_CONTENT).json({});
 });
