@@ -49,6 +49,7 @@ const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
+const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
@@ -340,5 +341,11 @@ router.get('/boards/:boardId/statuses', statuseValidation.index, statusesControl
 router.get('/activities/:tid', activityControllers.show);
 router.post('/activities', activityControllers.store);
 router.delete('/activities/:id', activityControllers.destroy);
+
+//dailyScrums
+router.get('/projects/:projectId/dailyScrums/:userId/:taskId/:date', dailyScrumControllers.show);
+router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
+router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
+router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 module.exports = router;

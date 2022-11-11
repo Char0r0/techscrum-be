@@ -13,13 +13,13 @@ declare module 'express-serve-static-core' {
     userId?: string;
   }
 }
+
 // GET ONE
 exports.show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
-
   const tasks = await findTasks({ _id: req.params.id }, req.dbConnection);
   res.status(200).send(replaceId(tasks[0]));
 });
