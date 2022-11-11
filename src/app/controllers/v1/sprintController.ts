@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import e, { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { deleteSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
@@ -9,6 +9,7 @@ const Sprint = require('../../model/sprint');
 export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const sprintModel = Sprint.getModel(req.dbConnection);
