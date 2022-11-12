@@ -129,6 +129,7 @@ describe('UPDATE sprint', () => {
     });
 
     expect(res.statusCode).toBe(404);
+    expect(res.body).toEqual({});
   });
 });
 
@@ -142,5 +143,6 @@ describe('DELETE sprint', () => {
   it('should return 404 with incorrect id', async () => {
     const res = await request(application).delete(`${baseURL}/6350d443b82be8fed0138ff2`);
     expect(res.statusCode).toBe(404);
+    expect(res.body).toEqual({});
   });
 });
