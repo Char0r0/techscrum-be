@@ -343,7 +343,10 @@ router.post('/activities', activityControllers.store);
 router.delete('/activities/:id', activityControllers.destroy);
 
 //dailyScrums
-router.get('/projects/:projectId/dailyScrums/:userId/:taskId/:date', dailyScrumControllers.show);
+router.get(
+  '/projects/:projectId/dailyScrums/:userId/:taskId/:date/:searchCase',
+  dailyScrumControllers.show,
+);
 router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
 router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
 router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);

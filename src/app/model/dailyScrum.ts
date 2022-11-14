@@ -19,13 +19,13 @@ const dailyScrumSchema = new mongoose.Schema(
 );
 
 dailyScrumSchema.methods.toJSON = function () {
-  const dailyscrum = this;
-  const dailyscrumObject = dailyscrum.toObject();
-  const id = dailyscrumObject._id;
-  dailyscrumObject.id = id;
-  delete dailyscrumObject._id;
-  delete dailyscrumObject.__v;
-  return dailyscrumObject;
+  const dailyScrum = this;
+  const dailyScrumObject = dailyScrum.toObject();
+  const id = dailyScrumObject._id;
+  dailyScrumObject.id = id;
+  delete dailyScrumObject._id;
+  delete dailyScrumObject.__v;
+  return dailyScrumObject;
 };
 
 module.exports.getModel = (connection: any) => {

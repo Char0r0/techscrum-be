@@ -10,12 +10,12 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const { projectId, userId, taskId, date } = req.params;
+  const { projectId, userId, taskId, date, searchCase } = req.params;
   try {
     let results = [];
-    if (taskId === 'none' && date === 'none' && userId != 'none') {
+    if (searchCase === 'search-all') {
       results = await findDailyScrums(
-        { projectId: projectId, userId: userId },
+        { projectId: projectId, userId: userId, createdDate: date },
         {
           path: 'taskId',
           model: task.getModel(req.dbConnection),
@@ -24,20 +24,9 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
         req.dbConnection,
       );
     }
-    if (date === 'none' && userId === 'none' && taskId != 'none') {
+    if (searchCase === 'search-by-user-task-date') {
       results = await findDailyScrums(
-        { projectId: projectId },
-        {
-          path: 'taskId',
-          model: task.getModel(req.dbConnection),
-          match: { _id: taskId },
-        },
-        req.dbConnection,
-      );
-    }
-    if (date !== 'none' && userId !== 'none' && taskId !== 'none') {
-      results = await findDailyScrums(
-        { projectId: projectId, userId: userId, createdDate: date },
+        { projectId: projectId, createdDate: date },
         {
           path: 'taskId',
           model: task.getModel(req.dbConnection),
