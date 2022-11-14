@@ -51,6 +51,7 @@ const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
 import * as sprintController from '../../controllers/v1/sprintController';
+import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
@@ -330,7 +331,7 @@ router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
-router.post('/sprints', sprintController.store);
+router.post('/sprints', sprintValidation.store, sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
 

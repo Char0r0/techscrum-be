@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { findDailyScrums } from '../../services/dailyScrumService';
+import { replaceId } from '../../services/replaceService';
 const dailyScrum = require('../../model/dailyScrum');
 const task = require('../../model/task');
 const status = require('http-status');
@@ -38,7 +39,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     const filteredResults = results.filter((result: { taskId: any }) => {
       return result.taskId !== null;
     });
-    res.send(filteredResults);
+    res.send(replaceId(filteredResults));
   } catch (e) {
     next(e);
     res.send(e);
@@ -79,7 +80,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     if (!newDailyScrum) {
       return res.sendStatus(status.UNPROCESSABLE_ENTITY);
     }
-    res.send(newDailyScrum);
+    res.send(replaceId(newDailyScrum));
   } catch (e) {
     next(e);
     res.send(e);
@@ -121,7 +122,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     if (!newDailyScrum) {
       return res.sendStatus(status.NOT_FOUND);
     }
-    return res.send(newDailyScrum);
+    return res.send(replaceId(newDailyScrum));
   } catch (e) {
     next(e);
     res.send(e);
@@ -141,7 +142,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
     const deletedDailyScrums = await dailyScrum
       .getModel(req.dbConnection)
       .find({ projectId: projectId, taskId: taskId });
-    return res.send(deletedDailyScrums);
+    return res.send(replaceId(deletedDailyScrums));
   } catch (e) {
     next(e);
     res.sendStatus(status.UNPROCESSABLE_ENTITY);
