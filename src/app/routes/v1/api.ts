@@ -331,6 +331,7 @@ router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
+router.get('/sprints', sprintController.show);
 router.post('/sprints', sprintValidation.store, sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
