@@ -238,6 +238,8 @@ router.delete(
   accountSettingControllers.destroy,
 );
 
+router.patch('/account/change-password', accountSettingControllers.updatePassword);
+
 router.post(
   '/auto-fetch-userInfo',
   authenticationTokenValidationMiddleware,
