@@ -11,10 +11,14 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+  const cases = {
+    case1: 'search-all',
+    case2: 'search-by-user-task-date',
+  };
   const { projectId, userId, taskId, date, searchCase } = req.params;
   try {
     let results = [];
-    if (searchCase === 'search-all') {
+    if (searchCase === cases.case1) {
       results = await findDailyScrums(
         { projectId: projectId, userId: userId, createdDate: date },
         {
@@ -25,7 +29,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
         req.dbConnection,
       );
     }
-    if (searchCase === 'search-by-user-task-date') {
+    if (searchCase === cases.case2) {
       results = await findDailyScrums(
         { projectId: projectId, createdDate: date },
         {
