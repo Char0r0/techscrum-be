@@ -68,7 +68,7 @@ export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId
 export const deleteSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
-    const deletedSprint = await sprintModel.findOneAndDelete(id);
+    const deletedSprint = await sprintModel.findByIdAndDelete(id);
     return deletedSprint;
   } catch (error) {
     return error;
