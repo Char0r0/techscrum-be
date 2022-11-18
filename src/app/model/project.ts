@@ -6,7 +6,6 @@ const projectSchema = mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     key: {
       type: String,

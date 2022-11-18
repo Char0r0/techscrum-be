@@ -72,14 +72,8 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   if (Types.ObjectId.isValid(req.params.id)) {
-    const currentProject = await Project.getModel(req.dbConnection).findById(
-      Types.ObjectId(req.params.id),
-    );
-    const projectName = currentProject.name;
-    const newProjectName = projectName + '_' + req.params.id + '_deleted';
     await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), {
       isDelete: true,
-      name: newProjectName,
     });
     res.status(status.NO_CONTENT).json({});
   }
