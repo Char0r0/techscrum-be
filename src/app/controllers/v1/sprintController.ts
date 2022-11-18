@@ -4,7 +4,15 @@ import { deleteSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 const Sprint = require('../../model/sprint');
-
+// show
+export const show = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+  const sprints = await Sprint.getModel(req.dbConnection).find();
+  res.status(status.OK).send(sprints);
+});
 // create
 export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
