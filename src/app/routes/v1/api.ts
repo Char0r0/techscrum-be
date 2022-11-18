@@ -238,6 +238,12 @@ router.delete(
   accountSettingControllers.destroy,
 );
 
+router.patch(
+  '/account/change-password',
+  authenticationTokenMiddleware,
+  accountSettingControllers.updatePassword,
+);
+
 router.post(
   '/auto-fetch-userInfo',
   authenticationTokenValidationMiddleware,
@@ -331,6 +337,7 @@ router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
+router.get('/sprints', sprintController.show);
 router.post('/sprints', sprintValidation.store, sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
