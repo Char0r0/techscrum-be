@@ -41,7 +41,8 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const { body, userId, dbConnection } = req;
+  const { body, dbConnection } = req;
+  const userId = req.body.userId;
   const project = await initProject(body, userId, dbConnection);
   res.status(status.CREATED).send(replaceId(project));
 });

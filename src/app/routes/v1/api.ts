@@ -49,7 +49,9 @@ const contactValidation = require('../../validations/contact');
 const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
+const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
 import * as sprintController from '../../controllers/v1/sprintController';
+import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
@@ -236,6 +238,12 @@ router.delete(
   accountSettingControllers.destroy,
 );
 
+router.patch(
+  '/account/change-password',
+  authenticationTokenMiddleware,
+  accountSettingControllers.updatePassword,
+);
+
 router.post(
   '/auto-fetch-userInfo',
   authenticationTokenValidationMiddleware,
@@ -329,7 +337,8 @@ router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 
 // sprints
-router.post('/sprints', sprintController.store);
+router.get('/sprints', sprintController.show);
+router.post('/sprints', sprintValidation.store, sprintController.store);
 router.put('/sprints/:id', sprintController.update);
 router.delete('/sprints/:id', sprintController.destroy);
 
@@ -340,5 +349,11 @@ router.get('/boards/:boardId/statuses', statuseValidation.index, statusesControl
 router.get('/activities/:tid', activityControllers.show);
 router.post('/activities', activityControllers.store);
 router.delete('/activities/:id', activityControllers.destroy);
+
+//dailyScrums
+router.get('/projects/:projectId/dailyScrums/:userId/:taskId/:date', dailyScrumControllers.show);
+router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
+router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
+router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 module.exports = router;

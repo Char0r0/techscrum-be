@@ -6,7 +6,8 @@ const { STATUS_TEST } = require('../fixtures/statuses');
 let application = null;
 
 beforeAll(async () => {
-  application = await setup();
+  const { app } = await setup();
+  application = app();
 });
 
 afterAll(async () => {

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/helper';
 import { findTasks } from '../../services/taskService';
+import { replaceId } from '../../services/replaceService';
+import { findSprints } from '../../services/sprintService';
 import httpStatus from 'http-status';
 import escapeStringRegexp from 'escape-string-regexp';
 
@@ -11,20 +13,18 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   // Backlog tasks are task whose sprintId is null
   // Sprint tasks are task whose sprintId is not null
   const backlogTasksFilter = { sprintId: null, projectId };
-  const sprintTasksFilter = { sprintId: { $ne: null }, projectId };
-
+  const sprintFilter = { projectId };
   const backlogTasks = await findTasks(backlogTasksFilter, req.dbConnection);
-  const sprintTasks = await findTasks(sprintTasksFilter, req.dbConnection);
+  const sprints = await findSprints(sprintFilter, req.dbConnection);
 
   const result = {
     backlog: {
       cards: backlogTasks,
     },
-    sprints: {
-      cards: sprintTasks,
-    },
+    sprints: sprints,
   };
-  return res.status(httpStatus.OK).json(result);
+
+  return res.status(httpStatus.OK).json(replaceId(result));
 });
 
 // GET - fuzzy search

@@ -25,7 +25,10 @@ const setup = async () => {
 
   const app = require('../src/loaders/express');
 
-  return app();
+  return {
+    app,
+    dbConnection,
+  };
 };
 
 const restore = async () => {
