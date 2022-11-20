@@ -20,6 +20,10 @@ const sprintSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    currentSprint: {
+      type: Boolean,
+      default: false,
+    },
     isComplete: {
       type: Boolean,
       default: false,
@@ -27,6 +31,9 @@ const sprintSchema = new mongoose.Schema(
     projectId: {
       ref: 'projects',
       type: Types.ObjectId,
+    },
+    sprintGoal: {
+      type: String,
     },
     boardId: {
       ref: 'boards',

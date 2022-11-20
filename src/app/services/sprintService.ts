@@ -24,11 +24,14 @@ const populateTasks = function (dbConnection: Mongoose) {
 export const findSprints = async (sprintFilter: { projectId: string }, dbConnection: Mongoose) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
-    const sprint = await sprintModel.find(sprintFilter).populate({
-      path: 'taskId',
-      model: Task.getModel(dbConnection),
-      populate: populateTasks(dbConnection),
-    });
+    const sprint = await sprintModel
+      .find(sprintFilter)
+      .populate({
+        path: 'taskId',
+        model: Task.getModel(dbConnection),
+        populate: populateTasks(dbConnection),
+      })
+      .sort({ currentSprint: -1 });
     return sprint;
   } catch (error) {
     return error;
@@ -51,6 +54,9 @@ export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId) 
 export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId, updates: any) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
+    if (updates.currentSprint) {
+      await sprintModel.updateMany({ currentSprint: false });
+    }
     const updatedSprint = await sprintModel
       .findByIdAndUpdate(id, updates, {
         returnDocument: 'after',
@@ -68,7 +74,7 @@ export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId
 export const deleteSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
-    const deletedSprint = await sprintModel.findOneAndDelete(id);
+    const deletedSprint = await sprintModel.findByIdAndDelete(id);
     return deletedSprint;
   } catch (error) {
     return error;
