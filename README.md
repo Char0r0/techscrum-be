@@ -65,9 +65,8 @@ To know more about this package you can visit https://www.npmjs.com/package/swag
 ## Contact
 
 Kitman Yiu - [Kitman Yiu](www.kitmanyiu.com)
-Emil (Junqian Su)
-Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
-Jest testing: forgetPassword
+Emil (Junqian Su) - Implement Register, Login, Forgetpassword, board, tasks, account setting, email send, jest testing: forgetPassword
+David Guo - Implement prioirty, sprint, current sprint
 
 ## Acknowledgments
 
