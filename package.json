@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
-  "engines": {
-    "node": "16.x"
-  },
   "scripts": {
     "test": "jest --runInBand",
     "coverage": "nyc --reporter=text npm test",
@@ -68,7 +65,7 @@
     "nyc": "^15.1.0",
     "prettier": "^2.6.2",
     "sinon": "^14.0.0",
-    "supertest": "^6.2.4",
+    "supertest": "^8.0.3",
     "swagger-autogen": "^2.22.0",
     "ts-jest": "^28.0.7",
     "ts-node": "^10.9.1",
