@@ -40,7 +40,7 @@ One time command
 
 ### Start application
 
-docker run -p 8000:8000 -d -v `pwd`:/app techscrum:lastest (WINDOW ONLY)
+docker run -p 8000:8000 -d -v ${pwd}/.:/app techscrum:lastest (WINDOW ONLY)
 
 localhost:8000
 
@@ -65,8 +65,9 @@ To know more about this package you can visit https://www.npmjs.com/package/swag
 ## Contact
 
 Kitman Yiu - [Kitman Yiu](www.kitmanyiu.com)
-Emil (Junqian Su) - Implement Register, Login, Forgetpassword, board, tasks, account setting, email send, jest testing: forgetPassword
-David Guo - Implement prioirty, sprint, current sprint
+Emil (Junqian Su)
+Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
+Jest testing: forgetPassword
 
 ## Acknowledgments
 
@@ -81,3 +82,12 @@ basic docker command
 - go into docker
   docker ps (find your container id)
   docker exec -it <container_id> bash
+
+- kill all unused docker images
+  docker system prune
+
+cat filename
+
+//history | grep run
+
+docker run -p 8000:8080 -d -v ${pwd}/.:/app techscrum:lastest
