@@ -11,7 +11,7 @@ orbs:
 executors:
   docker-publisher: 
     environment:
-      IMAGE_NAME: techscrumappdocker/docker-node-app
+      IMAGE_NAME: kitman20022002/techscrumapp
     docker: # Each job requires specifying an executor
     # (either docker, macos, or machine), see
       - image: circleci/node:latest
