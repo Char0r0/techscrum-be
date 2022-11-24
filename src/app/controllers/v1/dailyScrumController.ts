@@ -20,7 +20,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     let results = [];
     if (searchCase === Cases.searchAllCase) {
       results = await findDailyScrums(
-        { projectId: projectId, userId: userId, createdDate: date },
+        { projectId: projectId, userId: userId },
         {
           path: 'taskId',
           model: task.getModel(req.dbConnection),
