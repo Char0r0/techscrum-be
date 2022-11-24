@@ -6,9 +6,32 @@ orbs:
   heroku: circleci/heroku@1.2.6
   snyk: snyk/snyk@1.2.3
   sonarcloud: sonarsource/sonarcloud@1.0.3
+  docker: circleci/docker@1.7.0
+
+executors:
+  docker-publisher: 
+    environment:
+      IMAGE_NAME: techscrumappdocker/docker-node-app
+    docker: # Each job requires specifying an executor
+    # (either docker, macos, or machine), see
+      - image: circleci/node:latest
+        auth:
+            username: $DOCKERHUB_USERNAME
+            password: $DOCKERHUB_PASSWORD
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  deploy_dockerhub: 
+    executor: docker-publisher
+    steps: 
+      - checkout
+      - setup_remote_docker
+      - run: 
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t $IMAGE_NAME .
+            docker push $IMAGE_NAME:latest
   security_test:
     docker:
       - image: cimg/node:16.17.0-browsers
@@ -86,7 +109,7 @@ workflows:
     jobs:
       - static_code_analysis
       - e2e_test
-      - deploy: 
+      - deploy_dockerhub: 
           filters:
             branches:
               only:
