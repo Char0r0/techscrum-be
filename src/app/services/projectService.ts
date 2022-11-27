@@ -25,9 +25,7 @@ export const initProject = async (
     // init board
     const board = new boardModel({ title: body.name });
     // init project
-
     const project = await projectModel.create({ ...body, boardId: board._id, ownerId });
-
     // binding refs
     board.taskStatus = statuses.map((doc) => doc._id);
     await board.save();
