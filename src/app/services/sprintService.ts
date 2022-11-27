@@ -73,8 +73,10 @@ export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId
 
 export const deleteSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
   const sprintModel = Sprint.getModel(dbConnection);
+  const taskModel = Task.getModel(dbConnection);
   try {
     const deletedSprint = await sprintModel.findByIdAndDelete(id);
+    await taskModel.deleteMany({ _id: { $in: deletedSprint.taskId } });
     return deletedSprint;
   } catch (error) {
     return error;
