@@ -15,14 +15,18 @@ export const initProject = async (
 
   if (!body.name) throw new Error('name for project must be provided');
   if (!ownerId) throw new Error('ownerId is undefined');
+  if (body.projectLeadId.projectsRoles) {
+    throw new Error('Project Leader is not selected');
+  }
 
   try {
     // init statuses;
     const statuses = await statusModel.create(DEFAULT_STATUS);
-    // initl board
+    // init board
     const board = new boardModel({ title: body.name });
-    // init proejct
-    const proejct = await projectModel.create({ ...body, boardId: board._id, ownerId });
+    // init project
+
+    const project = await projectModel.create({ ...body, boardId: board._id, ownerId });
 
     // binding refs
     board.taskStatus = statuses.map((doc) => doc._id);
@@ -32,7 +36,7 @@ export const initProject = async (
       statusDoc.board = board.id;
       await statusDoc.save();
     });
-    return proejct;
+    return project;
   } catch (error: any) {
     throw new Error(error);
   }

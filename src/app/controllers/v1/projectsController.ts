@@ -40,11 +40,14 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-
   const { body, dbConnection } = req;
   const userId = req.body.userId;
-  const project = await initProject(body, userId, dbConnection);
-  res.status(status.CREATED).send(replaceId(project));
+  try {
+    const project = await initProject(body, userId, dbConnection);
+    res.status(status.CREATED).send(replaceId(project));
+  } catch (e) {
+    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
 });
 
 // put
