@@ -4,8 +4,7 @@ const Type = require('../model/type');
 const User = require('../model/user');
 const Comment = require('../model/comment');
 const Label = require('../model/label');
-const Sprint = require('../model/sprint');
-import * as Status from '../model/status';
+const Status = require('../model/status');
 
 /** Find tasks with given filter
  * @param filter FilterQuery, e.g. {taskId, projectId}
@@ -43,11 +42,7 @@ export const findTasks = async (filter: any, dbConnection: Mongoose) => {
         path: 'comments',
         model: Comment.getModel(dbConnection),
       })
-      .sort({ createdAt: 1 })
-      .populate({
-        path: 'sprintId',
-        model: Sprint.getModel(dbConnection),
-      });
+      .sort({ createdAt: 1 });
     return tasks;
   } catch (error: any) {
     return error;
