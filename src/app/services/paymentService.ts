@@ -1,23 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
-const createPrice = async (p: number) => {
-  try {
-    const price = await stripe.prices.create({
-      currency: 'aud',
-      unit_amount: p * 100,
-      product_data: {
-        name: 'My Product',
-      },
-    });
-    return price.id;
-  } catch (e: any) {
-    
-  }
-};
-
 let session : any;
 const paymentEntrance = async (price: number) => {
-  const priceId = await createPrice(price);
   try {
     session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
