@@ -8,10 +8,10 @@ const paymentEntrance = async (price: number) => {
       mode: 'payment',
       line_items: [{
         price_data: {
-          currency: 'usd',
+          currency: 'aud',
           unit_amount: price * 100,
           product_data: {
-            name: 'haha',
+            name: 'membership',
           },
         },
         quantity: 1,
