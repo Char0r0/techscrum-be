@@ -20,19 +20,8 @@ const paymentEntrance = async (price: number) => {
       cancel_url: 'http://localhost:3000/price',
     });
   } catch (e: any) {
-    switch (e.type) {
-      case 'StripeCardError':
-        break;
-      case 'StripeInvalidRequestError':
-        break;
-      default:
-        break;
-    } 
-  } finally {
-    if (session) {
-      return session.url;
-    }
   }
+  return session.url;
 };
 
 export { paymentEntrance };
