@@ -11,7 +11,7 @@ const createPrice = async (p: number) => {
     });
     return price.id;
   } catch (e: any) {
-
+    
   }
 };
 
@@ -25,15 +25,15 @@ const paymentEntrance = async (price: number) => {
       line_items: [{
         price_data: {
           currency: 'usd',
-          unit_amount: 2000,
+          unit_amount: price * 100,
           product_data: {
             name: 'haha',
           },
         },
         quantity: 1,
       }],
-      success_url: 'http://localhost:3000/',
-      cancel_url: 'http://localhost:3000/',
+      success_url: 'http://localhost:3000/price',
+      cancel_url: 'http://localhost:3000/price',
     });
   } catch (e: any) {
     switch (e.type) {
