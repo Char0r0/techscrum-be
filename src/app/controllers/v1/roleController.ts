@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
+import { asyncHandler } from '../../utils/helper';
 const Role = require('../../model/role');
 const Permission = require('../../model/permission');
 const status = require('http-status');
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const mongoose = require('mongoose');
+
 //get
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -21,6 +23,18 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+//getOne
+exports.getOne = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+  const roles = await Role.getModel(req.dbConnection)
+    .findById(req.params.id)
+    .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
+  res.send(replaceId(roles));
+});
+
 //put
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const { id, permissionId } = req.params;
@@ -29,17 +43,18 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {
-    const roles = await Role.getModel(req.dbConnection).find({
-      _id: id,
-      permission: mongoose.Types.ObjectId(permissionId),
-    });
-    if (roles.length !== 0) {
-      res.send(replaceId(roles[0]));
-      return;
-    }
+    // const roles = await Role.getModel(req.dbConnection).find({
+    //   _id: id,
+    //   permission: mongoose.Types.ObjectId(permissionId),
+    // });
+    // if (roles.length !== 0) {
+    //   res.send(replaceId(roles[0]));
+    //   return;
+    // }
     const r = await Role.getModel(req.dbConnection).findById(id);
     r.permission.push(mongoose.Types.ObjectId(permissionId));
-    r.save();
+    const result = await r.save();
+    return res.send(replaceId(result));
   } catch (e) {
     next(e);
   }

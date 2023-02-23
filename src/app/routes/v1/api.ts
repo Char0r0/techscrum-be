@@ -310,9 +310,11 @@ router.post(
 );
 
 router.get('/roles', roleController.index);
+router.get('/roles/:id', roleController.getOne);
 router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
 router.get('/permissions', permissionController.index);
 router.delete('/roles/:id/permissions/:permissionId', roleValidation.remove, roleController.remove);
+
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });

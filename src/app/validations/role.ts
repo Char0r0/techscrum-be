@@ -1,9 +1,9 @@
 export {};
 const { param } = require('express-validator');
 
-const update = [param('index').notEmpty().isString(), param('permissionId').notEmpty().isString()];
+const update = [param('id').notEmpty().isString(), param('permissionId').notEmpty().isString()];
 
-const remove = [param('index').notEmpty().isString(), param('permissionId').notEmpty().isString()];
+const remove = [param('id').notEmpty().isString(), param('permissionId').notEmpty().isString()];
 
 module.exports = {
   update,

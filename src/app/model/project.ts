@@ -17,6 +17,14 @@ const projectSchema = mongoose.Schema(
       type: Types.ObjectId,
       required: true,
     },
+    // roles for project
+    roles: [
+      {
+        ref: 'roles',
+        type: Types.ObjectId,
+        required: true,
+      },
+    ],
     ownerId: {
       ref: 'users',
       type: Types.ObjectId,

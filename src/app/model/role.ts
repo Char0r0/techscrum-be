@@ -7,16 +7,13 @@ const roleSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    description: {
-      type: String,
-    },
+    // slug: {
+    //   type: String,
+    //   required: true,
+    //   unique: true,
+    // },
     permission: [
       { 
         ref: 'permissions',
