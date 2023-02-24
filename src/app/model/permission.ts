@@ -1,7 +1,12 @@
-export {};
-const mongoose = require('mongoose');
+import mongoose, { Mongoose } from 'mongoose';
 
-const permissionSchema = new mongoose.Schema(
+export interface IPermission {
+  slug: string;
+  operation: string;
+  authority: string;
+}
+
+const permissionSchema = new mongoose.Schema<IPermission>(
   {
     // slug: {
     //   type: String,
@@ -31,7 +36,7 @@ const permissionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: any) => {
+module.exports.getModel = (connection: Mongoose) => {
   if (!connection) {
     throw new Error('No connection');
   }

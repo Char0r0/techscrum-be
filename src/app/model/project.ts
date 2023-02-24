@@ -18,11 +18,16 @@ const projectSchema = mongoose.Schema(
       required: true,
     },
     // roles for project
+    // 创建新project的时候直接从roles里面拿default数据
     roles: [
       {
-        ref: 'roles',
-        type: Types.ObjectId,
-        required: true,
+        roleId: { type: Types.ObjectId, required: true, ref: 'roles' },
+        permissions: [
+          {
+            type: Types.ObjectId,
+            ref: 'permissions',
+          },
+        ],
       },
     ],
     ownerId: {
