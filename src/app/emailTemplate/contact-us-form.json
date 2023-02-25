@@ -1,0 +1,7 @@
+{
+  "Template": {
+    "TemplateName": "CustomerEmailUs",
+    "SubjectPart": "Customer Email InfoTechscrum from contact page",
+    "TextPart": "Hi {{fullName}},\r\n Thanks for sending from {{domain}} - with title - {{title}} your phone is {{phone}} your message is {{message}} your company is {{company}} your email is {{email}}"
+  }
+}

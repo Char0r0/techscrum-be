@@ -45,6 +45,33 @@ const emailSenderTemplate = (
   });
 };
 
+const emailRecipientTemplate = (
+  email: string,
+  data: any,
+  templateName: string,
+  callback: (email_err: any, email_data: any) => void,
+) => {
+  const ses = new aws.SES();
+  const destination = {
+    ToAddresses: ['infotechscrum@gmail.com'],
+  };
+
+  let params = {
+    Source: email,
+    Destination: destination,
+    Template: templateName,
+    TemplateData: JSON.stringify(data),
+  };
+
+  ses.sendTemplatedEmail(params, function (email_err: any, email_data: any) {
+    if (email_err) {
+      callback(email_err, email_data);
+    } else {
+      callback(null, email_data);
+    }
+  });
+};
+
 export const emailSender = (
   email: string,
   validationCode: string,
@@ -90,12 +117,7 @@ export const invite = (
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
 
-export const forgetPassword = (
-  email: string,
-  name: string,
-  token: string,
-  domain: string,
-) => {
+export const forgetPassword = (email: string, name: string, token: string, domain: string) => {
   const templateData = {
     name: name ?? email,
     appName: 'TECHSCRUMAPP',
@@ -110,4 +132,20 @@ export const forgetPassword = (
   };
 
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
+};
+
+export const customerEmailUs = (senderEmail: string, customerData: any, domain: string) => {
+  // destructure customerData
+  const { company, email, fullName, message, phone, title } = customerData;
+  // Create sendEmail params
+  const templateData = {
+    company,
+    email,
+    fullName,
+    message,
+    phone,
+    title,
+    domain,
+  };
+  emailRecipientTemplate(senderEmail, templateData, 'CustomerEmailUs', cb);
 };
