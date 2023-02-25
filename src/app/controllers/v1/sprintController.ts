@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { deleteSprint, updateSprint } from '../../services/sprintService';
+import { replaceId } from '../../services/replaceService';
+import { deleteSprint, findSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
 const status = require('http-status');
 const Sprint = require('../../model/sprint');
@@ -22,7 +23,8 @@ export const store = asyncHandler(async (req: Request, res: Response) => {
   const sprintModel = Sprint.getModel(req.dbConnection);
   const sprint = new sprintModel(req.body);
   await sprint.save();
-  res.status(status.CREATED).send(sprint);
+  const createdSprint = await findSprint(req.dbConnection, sprint.id);
+  res.status(status.CREATED).send(replaceId(createdSprint));
 });
 
 // update
@@ -32,7 +34,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   if (!sprint) return res.status(404).send();
 
   const updatedSprint = await updateSprint(req.dbConnection, id, req.body);
-  res.status(status.OK).json(updatedSprint);
+  res.status(status.OK).json(replaceId(updatedSprint));
 });
 
 // delete
