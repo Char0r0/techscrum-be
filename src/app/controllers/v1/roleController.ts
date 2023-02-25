@@ -2,10 +2,27 @@ import { Request, Response, NextFunction } from 'express';
 import { asyncHandler } from '../../utils/helper';
 const Role = require('../../model/role');
 const Permission = require('../../model/permission');
+const Project = require('../../model/project');
 const status = require('http-status');
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const mongoose = require('mongoose');
+
+// //get
+// exports.index = async (req: Request, res: Response, next: NextFunction) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+//   }
+//   try {
+//     const roles = await Role.getModel(req.dbConnection)
+//       .find()
+//       .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
+//     res.send(replaceId(roles));
+//   } catch (e) {
+//     next(e);
+//   }
+// };
 
 //get
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,11 +30,16 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+
   try {
-    const roles = await Role.getModel(req.dbConnection)
-      .find()
-      .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-    res.send(replaceId(roles));
+    const { projectId } = req.params;
+    const roles = await Project.getModel(req.dbConnection).findById(projectId);
+    let rolesArr = roles.roles;
+    // rolesArr = JSON.stringify(rolesArr);
+    // const roles1 = await Role.getModel(req.dbConnection)
+    //   .find()
+    //   .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
+    res.send(replaceId(rolesArr));
   } catch (e) {
     next(e);
   }

@@ -3,7 +3,7 @@ import { DEFAULT_STATUS } from '../constants/defaultStatus';
 const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-// import * as Role from '../model/role';
+
 const Role = require('../model/role');
 const Permission = require('../model/permission');
 
@@ -22,16 +22,20 @@ export const initProject = async (
     throw new Error('Project Leader is not selected');
   }
 
+  // let initRoles = await Role.getModel(dbConnection)
+  //   .find()
+  //   .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
   let initRoles = await Role.getModel(dbConnection)
-    .find()
+    .find({}, { name: 1, slug: 1, permission: 1, _id: 0 })
     .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
-  initRoles = initRoles.map((role: { _id: any; permission: any }) => {
-    return {
-      roleId: role._id,
-      permissions: role.permission,
-    };
-  });
 
+  // initRoles = initRoles.map((role: { name: any; slug: any; permission: any }) => {
+  //   return {
+  //     name: role.name,
+  //     slug: role.slug,
+  //     permissions: role.permission,
+  //   };
+  // });
   try {
     // init statuses;
     const statuses = await statusModel.create(DEFAULT_STATUS);
