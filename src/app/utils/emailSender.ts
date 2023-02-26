@@ -46,19 +46,18 @@ const emailSenderTemplate = (
 };
 
 const emailRecipientTemplate = (
-  email: string,
+  email: string, // EMAIL FROM CONTACT PAGE (TEC-561)
   data: any,
   templateName: string,
   callback: (email_err: any, email_data: any) => void,
 ) => {
   const ses = new aws.SES();
-  const destination = {
-    ToAddresses: ['infotechscrum@gmail.com'],
-  };
 
   let params = {
     Source: email,
-    Destination: destination,
+    Destination: {
+      ToAddresses: ['infotechscrum@gmail.com', '515698086@qq.com'],
+    },
     Template: templateName,
     TemplateData: JSON.stringify(data),
   };
@@ -136,16 +135,12 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 
 export const customerEmailUs = (senderEmail: string, customerData: any, domain: string) => {
   // destructure customerData
-  const { company, email, fullName, message, phone, title } = customerData;
+  const { email, favoritecolor } = customerData;
   // Create sendEmail params
   const templateData = {
-    company,
     email,
-    fullName,
-    message,
-    phone,
-    title,
+    favoritecolor,
     domain,
   };
-  emailRecipientTemplate(senderEmail, templateData, 'CustomerEmailUs', cb);
+  emailRecipientTemplate(senderEmail, templateData, 'ExampleTemplate', cb);
 };

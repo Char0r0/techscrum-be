@@ -1,0 +1,8 @@
+{
+  "Template": {
+    "TemplateName": "ExampleTemplate",
+    "SubjectPart": "Hello, {{email}}!",
+    "HtmlPart": "<h1>Hello {{email}},</h1><p>Your favorite color is {{favoritecolor}}.</p>",
+    "TextPart": "Dear {{email}},\r\nYour favorite color is {{favoritecolor}}."
+  }
+}
