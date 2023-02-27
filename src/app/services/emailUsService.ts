@@ -4,6 +4,13 @@ const { emailRecipientTemplate } = require('../utils/emailSender');
 const FULLNAME_REGEX = /^[a-z ,.'-]+$/i;
 const PHONE_REGEX = /^[0-9]{10}$/;
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+const enquiryTitles = [
+  `Just saying hi!`,
+  `I'd like to request a feature`,
+  `I have a question about billing`,
+  `I'm confused about how something works`,
+  `Other`,
+];
 
 interface IdataReqType {
   fullName: string;
@@ -23,10 +30,23 @@ const customerContactUs = (req: Request, res: Response) => {
     FULLNAME_REGEX.test(data.fullName),
     PHONE_REGEX.test(data.phone),
     EMAIL_REGEX.test(data.email),
+    enquiryTitles.includes(title),
   ].every((each) => each);
   if (!isAllFilled || !isAllRegexPassed) {
     return res.status(400).json({
-      error: 'Required fields: fullName (valid), company, phone (10 digit), email (valid), message',
+      error: 'The data you passed were not all valid',
+      fullName: 'required, string, no special symbols',
+      company: 'required, string',
+      phone: 'required, string, 10 digit',
+      email: 'required, valid email',
+      message: 'required, string',
+      title: {
+        one: 'Just saying hi!',
+        two: `I'd like to request a feature`,
+        three: 'I have a question about billing',
+        four: `I'm confused about how something works`,
+        five: 'Other',
+      },
     });
   }
 
@@ -34,7 +54,7 @@ const customerContactUs = (req: Request, res: Response) => {
   const emailTo = ['infotechscrum@gmail.com'];
   emailRecipientTemplate(emailFrom, emailTo, data, 'contactPageEmailTemplate')
     .then(() => {
-      res.status(200).json({ message: 'Successful, sent to infotechscrum@gmail.com.' });
+      res.status(202).json({ message: 'Email Sent Successfully.' });
     })
     .catch((err: any) => {
       res.status(400).json(err);
