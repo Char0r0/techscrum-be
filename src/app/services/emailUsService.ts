@@ -5,11 +5,11 @@ const FULLNAME_REGEX = /^[a-z ,.'-]+$/i;
 const PHONE_REGEX = /^[0-9]{10}$/;
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const enquiryTitles = [
-  `Just saying hi!`,
-  `I'd like to request a feature`,
-  `I have a question about billing`,
-  `I'm confused about how something works`,
-  `Other`,
+  'Just saying hi!',
+  "I'd like to request a feature",
+  'I have a question about billing',
+  "I'm confused about how something works",
+  'Other',
 ];
 
 interface IdataReqType {
@@ -42,9 +42,9 @@ const customerContactUs = (req: Request, res: Response) => {
       message: 'required, string',
       title: {
         one: 'Just saying hi!',
-        two: `I'd like to request a feature`,
+        two: "I'd like to request a feature",
         three: 'I have a question about billing',
-        four: `I'm confused about how something works`,
+        four: "I'm confused about how something works",
         five: 'Other',
       },
     });
