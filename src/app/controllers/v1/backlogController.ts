@@ -6,7 +6,6 @@ import { findSprints } from '../../services/sprintService';
 import httpStatus from 'http-status';
 import escapeStringRegexp from 'escape-string-regexp';
 import { validationResult } from 'express-validator';
-import status from 'http-status';
 
 // GET all
 export const index = asyncHandler(async (req: Request, res: Response) => {
@@ -51,7 +50,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 export const filter = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+    return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({});
   }
   const { projectId, inputCase, userCase } = req.params;
 
