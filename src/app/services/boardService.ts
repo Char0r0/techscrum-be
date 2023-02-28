@@ -5,14 +5,19 @@ const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
 
-export const getBoardTasks = async (boardId: string, dbConnection: Mongoose) => {
+export const getBoardTasks = async (
+  boardId: any,
+  input: any,
+  users: any,
+  dbConnection: Mongoose,
+) => {
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
   const userModel = User.getModel(dbConnection);
   const labelModel = Label.getModel(dbConnection);
 
-  const boardTasks = await boardModel.findById(boardId).populate({
+  const boardTasks = await boardModel.find({ _id: boardId }).populate({
     path: 'taskStatus',
     model: statusModel,
     select: '-board -createdAt -updatedAt',
@@ -33,7 +38,11 @@ export const getBoardTasks = async (boardId: string, dbConnection: Mongoose) => 
           select: 'name',
         },
       ],
+      match: {
+        $and: [users, input],
+      },
     },
   });
+
   return boardTasks;
 };

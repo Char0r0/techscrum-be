@@ -319,7 +319,7 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
 
 router.get('/types', typeController.index);
 
-router.get('/board/:id', boardValidation.show, boardController.show);
+router.get('/board/:id/:inputFilter/:userFilter', boardValidation.show, boardController.show);
 
 router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
