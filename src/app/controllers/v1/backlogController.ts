@@ -16,7 +16,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   // Sprint tasks are task whose sprintId is not null
   const backlogTasksFilter = { sprintId: null, projectId };
   const sprintFilter = { projectId };
-  const backlogTasks = await findTasks(backlogTasksFilter, req.dbConnection);
+  const backlogTasks = await findTasks(backlogTasksFilter, {}, req.dbConnection);
   const sprints = await findSprints(sprintFilter, req.dbConnection);
 
   const result = {
@@ -42,7 +42,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 
   const regex = new RegExp(escapeRegex);
   const fuzzySearchFilter = { title: regex, projectId };
-  const tasks = await findTasks(fuzzySearchFilter, req.dbConnection);
+  const tasks = await findTasks(fuzzySearchFilter, {}, req.dbConnection);
 
   return res.status(httpStatus.OK).json(tasks);
 });
@@ -53,44 +53,52 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const { projectId, filterCase } = req.params;
+  const { projectId, inputCase, userCase } = req.params;
 
   if (!projectId) throw new Error('no projectId provided');
 
-  if (filterCase === 'all') {
-    const tasks = await findTasks({}, req.dbConnection);
-    const sprints = await findSprints({}, req.dbConnection);
+  let inputFilter;
+  let fuzzySearchFilter: any;
+  let userFilter: any;
 
-    const result = {
-      backlog: {
-        cards: tasks,
-      },
-      sprints: sprints,
-    };
-
-    return res.status(httpStatus.OK).json(result);
+  if (inputCase === 'all') {
+    fuzzySearchFilter = { projectId };
   } else {
-    let tasks = [];
-    let sprints: any[] = [];
-    const userIds = filterCase.split('-');
-    for (const userId of userIds) {
-      const taskOfUser = await findTasks({ assignId: userId }, req.dbConnection);
-      const sprintOfUser = await findSprints({}, req.dbConnection);
-      for (const singleTask of taskOfUser) {
-        tasks.push(singleTask);
-      }
-      for (const singleSprint of sprintOfUser) {
-        sprints.push(singleSprint);
-      }
-    }
-
-    const result = {
-      backlog: {
-        cards: tasks,
-      },
-      sprints: sprints,
-    };
-
-    return res.status(httpStatus.OK).json(result);
+    inputFilter = inputCase;
+    const escapeRegex = escapeStringRegexp(inputFilter.toString());
+    const regex = new RegExp(escapeRegex, 'i');
+    fuzzySearchFilter = { title: regex, projectId };
   }
+
+  if (userCase === 'all') {
+    userFilter = { projectId };
+  } else {
+    userFilter = userCase;
+    const userIds = userFilter.split('-');
+    userFilter = { assignId: { $in: userIds }, projectId };
+  }
+
+  const sprints = await findSprints({ isComplete: false, projectId }, req.dbConnection);
+  for (const sprint of sprints) {
+    sprint.taskId = await findTasks(
+      { ...fuzzySearchFilter, sprintId: sprint.id },
+      { ...userFilter, sprintId: sprint.id },
+      req.dbConnection,
+    );
+  }
+
+  const tasks = await findTasks(
+    { ...fuzzySearchFilter, sprintId: null },
+    { ...userFilter, sprintId: null },
+    req.dbConnection,
+  );
+
+  const result = {
+    backlog: {
+      cards: tasks,
+    },
+    sprints: sprints,
+  };
+
+  return res.status(httpStatus.OK).json(result);
 });
