@@ -6,9 +6,9 @@ const Status = require('../model/status');
 const Label = require('../model/label');
 
 export const getBoardTasks = async (
-  boardId: any,
-  input: any,
-  users: any,
+  boardId: string,
+  input: object,
+  users: object,
   dbConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);

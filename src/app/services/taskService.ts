@@ -12,7 +12,11 @@ const Status = require('../model/status');
  * @param dbConnection Mongoose
  * @returns Document result
  */
-export const findTasks = async (queryFilter: any, userFilter: any, dbConnection: Mongoose) => {
+export const findTasks = async (
+  queryFilter: object,
+  userFilter: object,
+  dbConnection: Mongoose,
+) => {
   const taskModel = Task.getModel(dbConnection);
 
   const UserFields = 'avatarIcon name email';
