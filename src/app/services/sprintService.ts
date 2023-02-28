@@ -19,7 +19,7 @@ const populateTasks = function (dbConnection: Mongoose) {
   ];
 };
 
-export const findSprints = async (sprintFilter: any, dbConnection: Mongoose) => {
+export const findSprints = async (sprintFilter: object, dbConnection: Mongoose) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     const sprints = await sprintModel
