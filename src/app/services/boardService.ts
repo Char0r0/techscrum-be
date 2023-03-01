@@ -7,8 +7,8 @@ const Label = require('../model/label');
 
 export const getBoardTasks = async (
   boardId: string,
-  input: object,
-  users: object,
+  input: { title: RegExp } | {},
+  users: { assignId: string[] } | {},
   dbConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);

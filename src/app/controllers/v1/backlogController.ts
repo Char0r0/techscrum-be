@@ -16,7 +16,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   const backlogTasksFilter = { sprintId: null, projectId };
   const sprintFilter = { projectId };
   const backlogTasks = await findTasks(backlogTasksFilter, {}, req.dbConnection);
-  const sprints = await findSprints(sprintFilter, req.dbConnection);
+  const sprints = await findSprints(sprintFilter, {}, req.dbConnection);
 
   const result = {
     backlog: {
@@ -77,7 +77,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     userFilter = { assignId: { $in: userIds }, projectId };
   }
 
-  const sprints = await findSprints({ isComplete: false, projectId }, req.dbConnection);
+  const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection);
   for (const sprint of sprints) {
     sprint.taskId = await findTasks(
       { ...fuzzySearchFilter, sprintId: sprint.id },
