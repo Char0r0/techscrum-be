@@ -8,6 +8,7 @@ const TASK_TYPES = [
   { name:'Story', slug:'story' },
   { name:'Task', slug:'task' },
   { name:'Bug', slug:'bug' },
+  { name:'Tech Debt', slug:'techDebt' },
 ];
 
 exports.init = async (dbConnection:any) =>{
