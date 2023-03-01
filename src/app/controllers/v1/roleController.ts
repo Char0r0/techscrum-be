@@ -27,6 +27,29 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+exports.getRoleById = async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+
+  try {
+    const { projectId, roleId } = req.params;
+    const project = await Project.getModel(req.dbConnection)
+      .findById(projectId)
+      .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
+
+    let rolesArr;
+    for (const element of project.roles) {
+      if (element?.id?.toString() === roleId) rolesArr = element;
+    }
+
+    res.send(replaceId(rolesArr));
+  } catch (e) {
+    next(e);
+  }
+};
+
 //put
 exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -78,7 +101,7 @@ exports.delete = async (req: Request, res: Response) => {
   const { projectId, roleId } = req.params;
   const project = await Project.getModel(req.dbConnection).findById(projectId);
   const updatedProjectRoles = project.roles.filter((item: any) => {
-    return item.roleId?.toString() !== roleId;
+    return item._id?.toString() !== roleId;
   });
   project.roles = updatedProjectRoles;
   const updateProject = await project.save();

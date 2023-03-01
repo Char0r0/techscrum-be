@@ -42,7 +42,7 @@ const memberController = require('../../controllers/v1/memberController');
 const memberValidation = require('../../validations/member');
 const roleController = require('../../controllers/v1/roleController');
 const roleValidation = require('../../validations/role');
-// const permissionController = require('../../controllers/v1/permissionController');
+const permissionController = require('../../controllers/v1/permissionController');
 const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
@@ -309,20 +309,17 @@ router.post(
   memberController.invite,
 );
 
-// router.get('/roles/:id', roleController.getOne);
-// router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
-// router.get('/permissions', permissionController.index);
-// router.delete('/roles/:id/permissions/:permissionId', roleValidation.remove, roleController.remove);
-
 // roleV2
+router.get('/permissions', permissionController.index);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
+router.get('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.getRoleById);
 // add new role
 router.put('/projects/:projectId/roles', roleValidation.getProject, roleController.addNewRole);
 // update role
-router.put('/projects/:projectId/roles/:roleId', roleValidation.update, roleController.update);
+router.put('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.update);
 // delete role
-router.delete('/projects/:projectId/roles/:roleId', roleValidation.remove, roleController.delete);
+router.delete('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.delete);
 
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
