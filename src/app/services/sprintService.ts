@@ -19,11 +19,15 @@ const populateTasks = function (dbConnection: Mongoose) {
   ];
 };
 
-export const findSprints = async (sprintFilter: { projectId: string }, dbConnection: Mongoose) => {
+export const findSprints = async (
+  projectId: { projectId: string },
+  isCompleted: { isComplete: boolean } | {},
+  dbConnection: Mongoose,
+) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     const sprints = await sprintModel
-      .find(sprintFilter)
+      .find(projectId)
       .populate({
         path: 'taskId',
         model: Task.getModel(dbConnection),
