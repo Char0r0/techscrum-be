@@ -1,8 +1,6 @@
 import { Mongoose, ObjectId } from 'mongoose';
 
 const Sprint = require('../model/sprint');
-const Project = require('../model/project');
-const Board = require('../model/board');
 const Task = require('../model/task');
 const Status = require('../model/status');
 const User = require('../model/user');
@@ -21,18 +19,22 @@ const populateTasks = function (dbConnection: Mongoose) {
   ];
 };
 
-export const findSprints = async (sprintFilter: { projectId: string }, dbConnection: Mongoose) => {
+export const findSprints = async (
+  projectId: { projectId: string },
+  isCompleted: { isComplete: boolean } | {},
+  dbConnection: Mongoose,
+) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
-    const sprint = await sprintModel
-      .find(sprintFilter)
+    const sprints = await sprintModel
+      .find(projectId)
       .populate({
         path: 'taskId',
         model: Task.getModel(dbConnection),
         populate: populateTasks(dbConnection),
       })
       .sort({ currentSprint: -1 });
-    return sprint;
+    return sprints;
   } catch (error) {
     return error;
   }
@@ -40,11 +42,11 @@ export const findSprints = async (sprintFilter: { projectId: string }, dbConnect
 export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
-    const sprint = await sprintModel
-      .findById(id)
-      .populate({ path: 'projectId', model: Project.getModel(dbConnection) })
-      .populate({ path: 'boardId', model: Board.getModel(dbConnection) })
-      .populate({ path: 'taskId', model: Task.getModel(dbConnection) });
+    const sprint = await sprintModel.findById(id).populate({
+      path: 'taskId',
+      model: Task.getModel(dbConnection),
+      populate: populateTasks(dbConnection),
+    });
     return sprint;
   } catch (error) {
     return error;
@@ -61,9 +63,11 @@ export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId
       .findByIdAndUpdate(id, updates, {
         returnDocument: 'after',
       })
-      .populate({ path: 'projectId', model: Project.getModel(dbConnection) })
-      .populate({ path: 'boardId', model: Board.getModel(dbConnection) })
-      .populate({ path: 'taskId', model: Task.getModel(dbConnection) });
+      .populate({
+        path: 'taskId',
+        model: Task.getModel(dbConnection),
+        populate: populateTasks(dbConnection),
+      });
 
     return updatedSprint;
   } catch (error) {
