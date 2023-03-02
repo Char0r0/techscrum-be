@@ -15,7 +15,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   const boardId = req.params.id;
-  const { inputFilter, userFilter } = req.params;
+  const { inputFilter, userFilter, taskTypeFilter } = req.params;
 
   if (boardId === 'undefined' || boardId === 'null') {
     res.status(status.NOT_ACCEPTABLE).send({});
@@ -24,6 +24,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
 
   let input = {};
   let users = {};
+  let taskTypes = {};
 
   if (inputFilter !== 'all') {
     const escapeRegex = escapeStringRegexp(inputFilter.toString());
@@ -36,7 +37,12 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     users = { assignId: { $in: userIds } };
   }
 
-  let boardTasks = await getBoardTasks(boardId, input, users, req.dbConnection);
+  if (taskTypeFilter !== 'all') {
+    const taskTypeIds = taskTypeFilter.split('-');
+    taskTypes = { typeId: { $in: taskTypeIds } };
+  }
+
+  let boardTasks = await getBoardTasks(boardId, input, users, taskTypes, req.dbConnection);
 
   const result = replaceId(boardTasks);
 

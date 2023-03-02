@@ -2,18 +2,24 @@ export {};
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const typeSchema = new Schema({
-  slug: {
-    type: String,
-    required: true,
-    unique:true,
+const typeSchema = new Schema(
+  {
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    icon: {
+      type: String,
+      default:
+        'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10321?size=medium',
+    },
   },
-  name: {
-    type: String, 
-    required: true,
-  },
-},
-{ timestamps: true },
+  { timestamps: true },
 );
 
 typeSchema.methods.toJSON = function () {
