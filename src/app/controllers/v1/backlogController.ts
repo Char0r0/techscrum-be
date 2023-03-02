@@ -58,8 +58,8 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
 
   let inputFilter;
   let fuzzySearchFilter: any;
-  let userFilter: object | String;
-  let typeFilter: object | String;
+  let userFilter: any;
+  let typeFilter: any;
 
   if (inputCase === 'all') {
     fuzzySearchFilter = { projectId };
