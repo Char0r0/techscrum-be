@@ -2,22 +2,23 @@ export {};
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const typeSchema = new Schema({
-  slug: {
-    type: String,
-    required: true,
-    unique:true,
+const typeSchema = new Schema(
+  {
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    icon: {
+      type: String,
+      required: true,
+    },
   },
-  name: {
-    type: String, 
-    required: true,
-  },
-  icon: {
-    type: String, 
-    required: true,
-  }
-},
-{ timestamps: true },
+  { timestamps: true },
 );
 
 typeSchema.methods.toJSON = function () {
