@@ -26,7 +26,7 @@ export const initProject = async (
   //   .find()
   //   .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
   let initRoles = await Role.getModel(dbConnection)
-    .find({}, { name: 1, slug: 1, permission: 1, _id: 0 })
+    .find({}, { name: 1, slug: 1, permission: 1, allowDelete: 1, _id: 0 })
     .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
 
   // initRoles = initRoles.map((role: { name: any; slug: any; permission: any }) => {

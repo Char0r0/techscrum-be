@@ -3,6 +3,7 @@ import mongoose, { Mongoose, Types } from 'mongoose';
 export interface IRole {
   name: string;
   slug: string;
+  allowDelete: Boolean;
   permission: Types.ObjectId[];
 }
 
@@ -16,6 +17,7 @@ const roleSchema = new mongoose.Schema<IRole>(
       type: String,
       required: true,
     },
+    allowDelete: { type: Boolean, required: true, default: false },
     permission: [
       {
         type: Types.ObjectId,
