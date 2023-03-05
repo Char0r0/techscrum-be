@@ -313,13 +313,32 @@ router.post(
 router.get('/permissions', permissionController.index);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
-router.get('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.getRoleById);
+router.get(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  roleController.getRoleById,
+);
 // add new role
-router.put('/projects/:projectId/roles', roleValidation.getProject, roleController.addNewRole);
+router.put(
+  '/projects/:projectId/roles',
+  roleValidation.getProject,
+  authenticationTokenMiddleware,
+  roleController.addNewRole,
+);
 // update role
-router.put('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.update);
+router.put(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.update,
+);
 // delete role
-router.delete('/projects/:projectId/roles/:roleId', roleValidation.projectAndRole, roleController.delete);
+router.delete(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.delete,
+);
 
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
