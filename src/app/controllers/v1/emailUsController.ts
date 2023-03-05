@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-const { emailRecipientTemplate } = require('../utils/emailSender');
+const { emailRecipientTemplate } = require('../../utils/emailSender');
 
 const FULLNAME_REGEX = /^[a-z ,.'-]+$/i;
 const PHONE_REGEX = /^\d{10}$/;
@@ -21,9 +21,9 @@ interface IdataReqType {
   title: string;
 }
 
-const customerContactUs = (req: Request, res: Response) => {
-  // req.body validation
+const emailUs = (req: Request, res: Response) => {
   const data: IdataReqType = req.body;
+
   const { fullName, company, phone, email, message, title } = data;
   const isAllFilled = [fullName, company, phone, email, message, title].every((item) => item);
   const isAllRegexPassed = [
@@ -61,4 +61,4 @@ const customerContactUs = (req: Request, res: Response) => {
     });
 };
 
-module.exports = { customerContactUs };
+module.exports = emailUs;

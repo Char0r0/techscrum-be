@@ -46,7 +46,7 @@ const permissionController = require('../../controllers/v1/permissionController'
 const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
-const emailUsService = require('../../services/emailUsService');
+const emailUsController = require('../../controllers/v1/emailUsController');
 const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
@@ -74,7 +74,7 @@ router.post(
 
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
-router.post('/emailus', emailUsService.customerContactUs);
+router.post('/emailus', emailUsController);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
