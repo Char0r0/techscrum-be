@@ -8,26 +8,15 @@ export interface IPermission {
 
 const permissionSchema = new mongoose.Schema<IPermission>(
   {
-    // slug: {
-    //   type: String,
-    //   required: true,
-    //   unique: true,
-    // },
-    // description: {
-    //   type: String,
-    // },
-    // eg: view:project
     slug: {
       type: String,
       required: true,
       unique: true,
     },
-    // eg: project
     operation: {
       type: String,
       required: true,
     },
-    // eg: view
     authority: {
       type: String,
       required: true,

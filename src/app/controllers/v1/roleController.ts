@@ -7,8 +7,6 @@ const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const { Types } = require('mongoose');
 
-//get
-// 已经改好
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -50,7 +48,6 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-//put
 exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -107,46 +104,3 @@ exports.delete = async (req: Request, res: Response) => {
   const updateProject = await project.save();
   res.send(replaceId(updateProject));
 };
-
-//getOne
-// exports.getOne = asyncHandler(async (req: Request, res: Response) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
-//   }
-//   const roles = await Role.getModel(req.dbConnection)
-//     .findById(req.params.id)
-//     .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-//   res.send(replaceId(roles));
-// });
-
-// exports.remove = async (req: Request, res: Response) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(status.UNPROCESSABLE_ENTITY).json({});
-//   }
-//   const { id, permissionId } = req.params;
-//   const roleModel = Role.getModel(req.dbConnection);
-//   const role = await roleModel.findById(id);
-//   role.permission = await role.permission.filter((item: any) => {
-//     return item._id.toString() !== permissionId;
-//   });
-//   const result = await role.save();
-//   return res.send(replaceId(result));
-// };
-
-// //get
-// exports.index = async (req: Request, res: Response, next: NextFunction) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
-//   }
-//   try {
-//     const roles = await Role.getModel(req.dbConnection)
-//       .find()
-//       .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-//     res.send(replaceId(roles));
-//   } catch (e) {
-//     next(e);
-//   }
-// };

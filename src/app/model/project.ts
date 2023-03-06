@@ -17,11 +17,8 @@ const projectSchema = mongoose.Schema(
       type: Types.ObjectId,
       required: true,
     },
-    // roles for project
-    // 创建新project的时候直接从roles里面拿default数据
     roles: [
       {
-        // roleId: { type: Types.ObjectId, required: true, ref: 'roles' },
         name: { type: String, required: true, unique: true },
         slug: { type: String, required: true, unique: true },
         allowDelete: { type: Boolean, required: true, default: true },
