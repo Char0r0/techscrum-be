@@ -4,10 +4,10 @@ const Product = require('../../model/product');
 
 let monthlyRecurringPrice: any;
 let yearlyRecurringPrice: any;
-let priceId: String;
-let productId:  String;
-let planName: String;
-let freeTrial: Number;
+let priceId: string;
+let productId:  string;
+let planName: string;
+let freeTrial: number;
 
 exports.createAdvancedPayment = async (req: Request, res: Response, next: NextFunction) => {
   const { price, userId } = req.body;
