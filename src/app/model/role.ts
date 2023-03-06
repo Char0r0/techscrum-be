@@ -3,7 +3,7 @@ import mongoose, { Mongoose, Types } from 'mongoose';
 export interface IRole {
   name: string;
   slug: string;
-  allowDelete: Boolean;
+  allowDelete: boolean;
   permission: Types.ObjectId[];
 }
 
