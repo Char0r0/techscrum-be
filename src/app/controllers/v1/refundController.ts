@@ -4,7 +4,7 @@ exports.refundController = async (paymentIntent: string) => {
   try {
     const intent = await stripe.paymentIntents.retrieve(paymentIntent);
     const refund = await stripe.refunds.create({ payment_intent: intent.id });
-  
+    return refund;
   } catch (e) {
 
   }
