@@ -42,7 +42,7 @@ One time command
 
 docker run -p 8000:8000 -d -v ${pwd}/.:/app techscrum:lastest (WINDOW ONLY)
 
-<!-- wendy -->
+<!-- run -->
 npm run dev
 
 <!-- 账号 -->
