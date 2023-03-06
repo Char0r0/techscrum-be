@@ -7,17 +7,23 @@ const Label = require('../model/label');
 const Status = require('../model/status');
 
 /** Find tasks with given filter
- * @param filter FilterQuery, e.g. {taskId, projectId}
+ * @param queryFilter
+ * @param userFilter
  * @param dbConnection Mongoose
  * @returns Document result
  */
-export const findTasks = async (filter: any, dbConnection: Mongoose) => {
+export const findTasks = async (
+  queryFilter: object,
+  userFilter: object,
+  dbConnection: Mongoose,
+) => {
   const taskModel = Task.getModel(dbConnection);
 
   const UserFields = 'avatarIcon name email';
   try {
     const tasks = await taskModel
-      .find(filter)
+      .find(queryFilter)
+      .find(userFilter)
       .populate({ path: 'typeId', model: Type.getModel(dbConnection) })
       .populate({
         path: 'tags',
