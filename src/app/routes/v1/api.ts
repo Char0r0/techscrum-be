@@ -364,8 +364,8 @@ router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumContr
 router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 // payment
-router.post('/payment/advanced', priceController.createAdvancedPayment);
-router.post('/payment/ultra', priceController.createUltraPayment);
+router.post('/payment/monthly', priceController.createMonthlyPayment);
+router.post('/payment/yearly', priceController.createYearlyPayment);
 router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
 router.post('./refund', refundController.refundController);
 
