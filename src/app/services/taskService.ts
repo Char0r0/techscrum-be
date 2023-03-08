@@ -9,6 +9,7 @@ const Status = require('../model/status');
 /** Find tasks with given filter
  * @param queryFilter
  * @param userFilter
+ * @param typeFilter
  * @param dbConnection Mongoose
  * @returns Document result
  */

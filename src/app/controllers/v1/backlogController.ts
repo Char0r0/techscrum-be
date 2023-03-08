@@ -61,7 +61,11 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   let userFilter: any;
   let typeFilter: any;
 
-  if (inputCase === 'all') {
+  enum Cases {
+    searchAllCase = 'all',
+  }
+
+  if (inputCase === Cases.searchAllCase) {
     fuzzySearchFilter = { projectId };
   } else {
     inputFilter = inputCase;
@@ -70,7 +74,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     fuzzySearchFilter = { title: regex, projectId };
   }
 
-  if (userCase === 'all') {
+  if (userCase === Cases.searchAllCase) {
     userFilter = { projectId };
   } else {
     userFilter = userCase;
@@ -78,7 +82,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     userFilter = { assignId: { $in: userIds }, projectId };
   }
 
-  if (typeCase === 'all') {
+  if (typeCase === Cases.searchAllCase) {
     typeFilter = { projectId };
   } else {
     typeFilter = typeCase;
