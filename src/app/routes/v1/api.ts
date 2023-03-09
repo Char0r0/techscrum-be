@@ -52,7 +52,6 @@ const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
-const refundController = require('../../controllers/v1/refundController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
