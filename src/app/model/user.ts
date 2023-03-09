@@ -28,10 +28,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    activeCode: {
-      type: String,
-      trim: true,
-    },
+    // activeCode: {
+    //   type: String,
+    //   trim: true,
+    // },
     active: {
       type: Boolean,
       trim: true,

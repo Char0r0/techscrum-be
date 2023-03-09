@@ -90,12 +90,7 @@ export const invite = (
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
 
-export const forgetPassword = (
-  email: string,
-  name: string,
-  token: string,
-  domain: string,
-) => {
+export const forgetPassword = (email: string, name: string, token: string, domain: string) => {
   const templateData = {
     name: name ?? email,
     appName: 'TECHSCRUMAPP',
