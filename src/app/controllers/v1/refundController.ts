@@ -4,6 +4,6 @@ exports.refundController = async (paymentIntent: string) => {
     const refund = await config.stripe.refunds.create({ payment_intent: intent.id });
     return refund;
   } catch (e) {
-
+    
   }
 };
