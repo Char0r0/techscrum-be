@@ -33,6 +33,11 @@ exports.stripeController = async (req: Request, res: Response) => {
       break; 
       
     case 'customer.subscription.created':
+      
+      // reject directly, payment failed.
+      // even failed, need to store into paymentHistory schema.
+      // email sent to customers 
+
       const freeTrialStartDate = event.data.object.trial_start;
       const startDate = new Date(freeTrialStartDate * 1000);
       const startYear = startDate.getFullYear();

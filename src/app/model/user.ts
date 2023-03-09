@@ -91,7 +91,7 @@ const userSchema = new mongoose.Schema(
 
     ProductId: {
       ref: 'product',
-      type: String, 
+      type: String,
     },
 
     freeTrialStartDate: {

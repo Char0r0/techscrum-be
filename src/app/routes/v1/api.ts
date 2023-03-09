@@ -50,7 +50,7 @@ const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
-const priceController = require('../../controllers/v1/priceController');
+const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 const refundController = require('../../controllers/v1/refundController');
 import * as sprintController from '../../controllers/v1/sprintController';
@@ -364,9 +364,8 @@ router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumContr
 router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 // payment
-router.post('/payment/monthly', priceController.createMonthlyPayment);
-router.post('/payment/yearly', priceController.createYearlyPayment);
+router.post('/payment/', paymentController.createPayment);
 router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
-router.post('./refund', refundController.refundController);
+router.post('/refund', refundController.refundController);
 
 module.exports = router;
