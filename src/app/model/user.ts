@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    ProductId: {
+    stripeProductId: {
       ref: 'product',
       type: String,
     },

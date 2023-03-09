@@ -364,7 +364,7 @@ router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumContr
 router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
 
 // payment
-router.post('/payment/', paymentController.createPayment);
+router.post('/payment', paymentController.createPayment);
 router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
 router.post('/refund', refundController.refundController);
 

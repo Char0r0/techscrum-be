@@ -19,7 +19,7 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
 
-    productId: {
+    stripeProductId: {
       ref: 'product', 
       type: String,
     },

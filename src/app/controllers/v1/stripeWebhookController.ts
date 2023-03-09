@@ -3,18 +3,17 @@ import { Request, Response } from 'express';
 const User = require('../../model/user');
 const PaymentHistory = require('../../model/paymentHistory');
 
-const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 exports.stripeController = async (req: Request, res: Response) => {
   let event;
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const payloadString = Buffer.from(JSON.stringify(req.body)).toString();
-  const header = stripe.webhooks.generateTestHeaderString({
+  const header = config.stripe.webhooks.generateTestHeaderString({
     payload: payloadString,
     secret,
   });
 
   try {
-    event = stripe.webhooks.constructEvent(payloadString, header, process.env.STRIPE_WEBHOOK_SECRET);
+    event = config.stripe.webhooks.constructEvent(payloadString, header, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (e: any) {
     return res.status(400).send(`Webhook Error: ${e.message}`);
   }
@@ -63,7 +62,7 @@ exports.stripeController = async (req: Request, res: Response) => {
         {
           currentChargeStartDate,
           currentChargeEndDate,
-          productId,
+          stripeProductId: productId,
         },
         { new: true },
       );
@@ -74,7 +73,7 @@ exports.stripeController = async (req: Request, res: Response) => {
         currentChargeStartDate,
         currentChargeEndDate,
         currentChargeStatus,
-        productId,
+        stripeProductId: productId,
       });
       await paymentHistory.save();
       break;

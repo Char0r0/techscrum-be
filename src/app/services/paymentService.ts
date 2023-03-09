@@ -1,10 +1,10 @@
-const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 const Product = require('../model/product');
+const config = require('../config/app');
 import { Request } from 'express';
+import Stripe from 'stripe';
 
-
-let session : any;
-let productPrice: any;
+let session : Stripe.Checkout.Session;
+let productPrice: Stripe.Price;
 let price: number;
 let interval: string;
 const ADVANCED_PLAN = 0;
@@ -17,6 +17,7 @@ const PRODUCT_QUANTILITY = 1;
 
 
 const createPrice = async (req: Request, planIdentifier: number, productName: string, paymentMode: boolean) => {
+
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
       price = ADVANCED_MONTHLY_PRICE;
@@ -36,15 +37,15 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
   }
 
   try {
-    const product = await stripe.products.create({ name: productName });
-    productPrice = await stripe.prices.create({
+    const product = await config.stripe.products.create({ name: productName });
+    productPrice = await config.stripe.prices.create({
       product: product.id,
       unit_amount: price * PRICE_UNIT,
       currency: 'aud',
       recurring: { interval: interval },
     });
     const productModel = Product.getModel(req.dbConnection);
-    const productInformation = new productModel({ productId: product.id, productName: productName, productPrice: productPrice.id });
+    const productInformation = new productModel({ stripeProductId: product.id, productName: productName, productPrice: productPrice.id });
     await productInformation.save();
   } catch (e) {
   }
@@ -53,7 +54,7 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
 
 const subscriptionEntrance = async (productId: string, priceId: string, userId: string, freeTrial: number) => {
   try {
-    session = await stripe.checkout.sessions.create({
+    session = await config.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
         price: priceId,
@@ -68,8 +69,8 @@ const subscriptionEntrance = async (productId: string, priceId: string, userId: 
         trial_period_days: freeTrial,
       },
       mode: 'subscription',
-      success_url: 'http://localhost:3000/price',
-      cancel_url: 'http://localhost:3000/price',
+      success_url: 'https://www.techscrumapp.com/price',
+      cancel_url: 'https://www.techscrumapp.com/price',
     });
   } catch (e: any) {
   }

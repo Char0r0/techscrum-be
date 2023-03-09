@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import Stripe from 'stripe';
 const { createPrice, subscriptionEntrance } = require('../../services/paymentService');
 const Product = require('../../model/product');
 
-let recurringPrice: any;
+let recurringPrice: Stripe.Price;
 let priceId: string;
-let productId:  string;
+let productId: string | Stripe.Product | Stripe.DeletedProduct;
 let freeTrial: number;
 let planName: string;
 const ADVANCED_PLAN = 0;
@@ -35,7 +36,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
       productId = product; 
       priceId = id;
     } else {
-      productId = isProductExist.productId;
+      productId = isProductExist.stripeProductId;
       priceId = isProductExist.productPrice;
     }
     freeTrial = FREE_TRIAL;
