@@ -5,11 +5,10 @@ const PaymentHistory = require('../../model/paymentHistory');
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event;
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const payloadString = Buffer.from(JSON.stringify(req.body)).toString();
   const header = config.stripe.webhooks.generateTestHeaderString({
     payload: payloadString,
-    secret,
+    secret: process.env.STRIPE_WEBHOOK_SECRET,
   });
 
   try {

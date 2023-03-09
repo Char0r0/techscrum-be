@@ -366,6 +366,5 @@ router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.
 // payment
 router.post('/payment', paymentController.createPayment);
 router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
-router.post('/refund', refundController.refundController);
 
 module.exports = router;
