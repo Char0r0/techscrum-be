@@ -52,7 +52,7 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
   return productPrice;
 };
 
-const subscriptionEntrance = async (productId: string, priceId: string, userId: string, freeTrial: number) => {
+const subscribe = async (productId: string, priceId: string, userId: string, freeTrial: number) => {
   try {
     session = await config.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -78,4 +78,4 @@ const subscriptionEntrance = async (productId: string, priceId: string, userId: 
 };
 
 
-export { createPrice, subscriptionEntrance };
+export { createPrice, subscribe };

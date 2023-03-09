@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
-const { createPrice, subscriptionEntrance } = require('../../services/paymentService');
+const { createPrice, subscribe } = require('../../services/paymentService');
 const Product = require('../../model/product');
 
 let recurringPrice: Stripe.Price;
@@ -40,7 +40,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
       priceId = isProductExist.productPrice;
     }
     freeTrial = FREE_TRIAL;
-    const payment = await subscriptionEntrance(productId, priceId, userId, freeTrial, req.dbConnection);
+    const payment = await subscribe(productId, priceId, userId, freeTrial, req.dbConnection);
     res.send(payment);
   } catch (e) {
     next(e);
