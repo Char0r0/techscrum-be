@@ -46,9 +46,9 @@ const emailSenderTemplate = (
 };
 
 export const emailRecipientTemplate = (
-  emailFrom: string, // EMAIL FROM CONTACT PAGE (TEC-561)
+  emailFrom: string,
   emailTo: string[],
-  data: any,
+  data: {},
   templateName: string,
 ) => {
   const ses = new aws.SES();

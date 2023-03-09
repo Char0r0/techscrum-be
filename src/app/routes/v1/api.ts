@@ -74,7 +74,7 @@ router.post(
 
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
-router.post('/emailus', emailUsController);
+router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
