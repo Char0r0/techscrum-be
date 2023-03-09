@@ -50,6 +50,7 @@ const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
+const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -143,13 +144,19 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 router.post('/login', loginValidation.login, loginController.login);
 
+//
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
+
+//active account
 router.put(
   '/register/:token',
   registerValidation.store,
   authenticationEmailTokenMiddleware,
   registerController.store,
 );
+
+//register
+router.post('/registerV2', registerV2Controller.register);
 
 router.post(
   '/reset-password',

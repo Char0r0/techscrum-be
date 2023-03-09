@@ -1,4 +1,3 @@
-
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
@@ -16,7 +15,6 @@ declare module 'express-serve-static-core' {
   }
 }
 
-
 exports.register = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -30,15 +28,18 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
 
   if (config.useDefaultDatabase.toString() === false.toString()) {
     const dataConnectionMongoose = new Mongoose();
-    const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
+    const tenantConnection = await dataConnectionMongoose.connect(config.tenantConnection);
     const tenantModel = Tenant.getModel(tenantConnection);
-    const tenantOrigin =  `https://${appName.toLowerCase()}.${removeHttp(tenantUrl).replace('www.', '')}}`;
+    const tenantOrigin = `https://${appName.toLowerCase()}.${removeHttp(tenantUrl).replace(
+      'www.',
+      '',
+    )}}`;
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
       res.sendStatus(409);
-      return; 
+      return;
     }
-    const tenant = new tenantModel({ origin: tenantOrigin } );
+    const tenant = new tenantModel({ origin: tenantOrigin });
     tenant.save();
     tenantId = tenant._id;
     tenantUrl = tenantOrigin;
@@ -56,7 +57,6 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
   }
   res.status(status.FOUND).send();
 });
-
 
 exports.adminRegister = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
