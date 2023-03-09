@@ -59,7 +59,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   let inputFilter;
   let fuzzySearchFilter: any;
   let userFilter: any;
-  let typeFilter: any;
+  let typeFilter;
 
   enum Cases {
     searchAllCase = 'all',
