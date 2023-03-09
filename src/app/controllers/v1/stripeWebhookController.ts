@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 const User = require('../../model/user');
+const config = require('../../config/app');
 const PaymentHistory = require('../../model/paymentHistory');
 
 exports.stripeController = async (req: Request, res: Response) => {
