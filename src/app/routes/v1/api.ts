@@ -319,7 +319,11 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
 
 router.get('/types', typeController.index);
 
-router.get('/board/:id/:inputFilter/:userFilter', boardValidation.show, boardController.show);
+router.get(
+  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter',
+  boardValidation.show,
+  boardController.show,
+);
 
 router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
@@ -335,7 +339,10 @@ router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 // backlogs
 router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
-router.get('/projects/:projectId/backlogs/:inputCase/:userCase', backlogController.filter);
+router.get(
+  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase',
+  backlogController.filter,
+);
 
 // sprints
 router.get('/sprints', sprintController.show);
