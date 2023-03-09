@@ -26,18 +26,22 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   let users = {};
   let taskTypes = {};
 
-  if (inputFilter !== 'all') {
+  enum Cases {
+    searchAll = 'all',
+  }
+
+  if (inputFilter !== Cases.searchAll) {
     const escapeRegex = escapeStringRegexp(inputFilter.toString());
     const regex = new RegExp(escapeRegex, 'i');
     input = { title: regex };
   }
 
-  if (userFilter !== 'all') {
+  if (userFilter !== Cases.searchAll) {
     const userIds = userFilter.split('-');
     users = { assignId: { $in: userIds } };
   }
 
-  if (taskTypeFilter !== 'all') {
+  if (taskTypeFilter !== Cases.searchAll) {
     const taskTypeIds = taskTypeFilter.split('-');
     taskTypes = { typeId: { $in: taskTypeIds } };
   }
