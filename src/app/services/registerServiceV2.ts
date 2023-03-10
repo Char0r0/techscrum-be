@@ -16,11 +16,11 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
   const tenantsId = mongoose.Types.ObjectId(newTenants.id);
   let newUser;
   let url;
-
+  let validationToken;
   if (targetUser && targetUser.active) {
     targetUser.tenants.push(tenantsId);
     newUser = await targetUser.save();
-    url = 'user-confirm';
+    url = 'verify-v2';
   } else if (!targetUser) {
     newUser = await userModel.create({
       email,
@@ -31,7 +31,7 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
     url = 'verify-v2';
   }
   try {
-    const validationToken = jwt.sign({ email }, configApp.emailSecret);
+    validationToken = jwt.sign({ email }, configApp.emailSecret);
     emailSender(email, `token=${validationToken}`, url, newTenants.origin);
   } catch (e) {
     if (newUser.tenants.length === 0) {
@@ -42,5 +42,5 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
     }
   }
 
-  return newUser;
+  return { newUser, validationToken };
 };

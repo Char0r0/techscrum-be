@@ -102,7 +102,6 @@ exports.store = asyncHandler(async (req: Request, res: Response, next: NextFunct
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-
   try {
     const { email, name, password } = req.body;
     const user = await User.getModel(req.dbConnection).saveInfo(email, name, password, req);

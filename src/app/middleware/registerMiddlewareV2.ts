@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Mongoose } from 'mongoose';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
+const Tenant = require('../model/tenant');
 const status = require('http-status');
 const logger = require('../../loaders/logger');
 const config = require('../../app/config/app');
@@ -14,8 +15,7 @@ declare module 'express-serve-static-core' {
 const connectUserDb = async () => {
   const userDbConnection = new Mongoose();
   const resUserDbConnection = await userDbConnection.connect(config.userConnection);
-  const userModel = await User.getModel(resUserDbConnection);
-  return userModel;
+  return resUserDbConnection;
 };
 
 const authenticationEmailTokenMiddlewareV2 = async (
@@ -32,14 +32,24 @@ const authenticationEmailTokenMiddlewareV2 = async (
   jwt.verify(token, config.emailSecret, async (err: Error) => {
     if (err) return res.status(status.FORBIDDEN).send();
     const { email } = jwt.verify(token, config.emailSecret);
-    const userModel = await connectUserDb();
-    const user = userModel.findOne({ email });
+    const resUserDbConnection = await connectUserDb();
+    const userModel = await User.getModel(resUserDbConnection);
+    const user = await userModel
+      .findOne({ email });
     if (user && !user.active) {
       req.verifyEmail = email;
       return next();
     }
-    logger.info(email + 'activation code incorrect. User input ');
-    res.status(status.FORBIDDEN).send();
+    // 如果用户已经active，添加tenants，再返回成功页面，跳过第三步
+    const activeTenant = user.tenants.at(-1);
+    const tenantModel = await Tenant.getModel(resUserDbConnection);
+    await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
+
+    res.status(200).json({
+      status: 'success',
+      data: user,
+      message: 'This account is an active account, domain application approved..',
+    });
   });
 };
 

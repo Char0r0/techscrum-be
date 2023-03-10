@@ -40,24 +40,30 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     tenantModel = await Tenant.getModel(resUserDbConnection);
     newTenants = await tenantModel.create({ origin: tenantsUrl });
   } catch (err) {
-    return res.status(400).json({ status: 'fail', err });
+    return res.status(400).json({ status: 'fail', err: 'tenant' });
   }
 
   try {
     // update User and send email
-    const newUser = await emailRegister(resUserDbConnection, email, newTenants);
+    const { newUser, validationToken } = await emailRegister(
+      resUserDbConnection,
+      email,
+      newTenants,
+    );
     newTenants.owner = mongoose.Types.ObjectId(newUser.id);
     await newTenants.save();
-    return res.status(200).json({ status: 'success', data: { newTenants, newUser } });
+    return res
+      .status(200)
+      .json({ status: 'success', data: { newTenants, newUser, validationToken } });
   } catch (err) {
     // delete tenant if error
     await tenantModel.findOneAndDelete({ origin: tenantsUrl });
-    res.status(401).json({ status: 'fail', err });
+    res.status(401).json({ status: 'fail', err: 'user' });
   }
 });
 
 //Active account
-exports.store = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+exports.store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -65,12 +71,32 @@ exports.store = asyncHandler(async (req: Request, res: Response, next: NextFunct
 
   const userDbConnect = new Mongoose();
   const resUserDbConnection = await userDbConnect.connect(config.userConnection);
-
   try {
     const { email, name, password } = req.body;
     const user = await User.getModel(resUserDbConnection).saveInfo(email, name, password, req);
     user.activeAccount();
+    const activeTenant = user.tenants.at(-1);
+    const tenantModel = await Tenant.getModel(resUserDbConnection);
+    await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
     res.send({ user });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      error: 'register err',
+    });
+  }
+});
+
+//Verify Email by token
+exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+
+  try {
+    const email = req.verifyEmail ?? '';
+    res.send({ email });
   } catch (e) {
     next(e);
   }
