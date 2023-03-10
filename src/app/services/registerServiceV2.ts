@@ -28,7 +28,7 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
     });
   }
   try {
-    const validationToken = jwt.sign({ id: newUser.id }, configApp.emailSecret);
+    const validationToken = jwt.sign({ email }, configApp.emailSecret);
     emailSender(email, `token=${validationToken}`, newTenants.origin);
   } catch (e) {
     if (newUser.tenants.length === 0) {

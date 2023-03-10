@@ -10,6 +10,7 @@ const {
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
 const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
+const { authenticationEmailTokenMiddlewareV2 } = require('../../middleware/registerMiddlewareV2');
 const {
   authenticationForgetPasswordMiddleware,
 } = require('../../middleware/forgetPasswordMiddleware');
@@ -144,7 +145,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 router.post('/login', loginValidation.login, loginController.login);
 
-//
+//verify email
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
 
 //active account
@@ -155,8 +156,10 @@ router.put(
   registerController.store,
 );
 
-//register
+//registerV2
 router.post('/registerV2', registerV2Controller.register);
+////verify email V2
+router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerController.get);
 
 router.post(
   '/reset-password',
