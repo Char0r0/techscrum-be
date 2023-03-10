@@ -1,4 +1,4 @@
-const { emailSender } = require('../utils/emailSender');
+const { emailSender } = require('../utils/emailSenderV2');
 const jwt = require('jsonwebtoken');
 const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');
@@ -15,21 +15,24 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
   const targetUser = await userModel.findOne({ email });
   const tenantsId = mongoose.Types.ObjectId(newTenants.id);
   let newUser;
+  let url;
 
-  if (targetUser) {
+  if (targetUser && targetUser.active) {
     targetUser.tenants.push(tenantsId);
     newUser = await targetUser.save();
-  } else {
+    url = 'user-confirm';
+  } else if (!targetUser) {
     newUser = await userModel.create({
       email,
       active: false,
       refreshToken: '',
       tenants: [tenantsId],
     });
+    url = 'verify-v2';
   }
   try {
     const validationToken = jwt.sign({ email }, configApp.emailSecret);
-    emailSender(email, `token=${validationToken}`, newTenants.origin);
+    emailSender(email, `token=${validationToken}`, url, newTenants.origin);
   } catch (e) {
     if (newUser.tenants.length === 0) {
       userModel.deleteOne({ email });

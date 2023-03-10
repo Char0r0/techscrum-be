@@ -1,5 +1,6 @@
 export {};
 const mongoose = require('mongoose');
+import { Types } from 'mongoose';
 const Schema = mongoose.Schema;
 
 const tenantSchema = new Schema(
@@ -19,6 +20,7 @@ const tenantSchema = new Schema(
       default: 'Free',
       required: true,
     },
+    owner: { type: Types.ObjectId },
   },
   { timestamps: true },
 );

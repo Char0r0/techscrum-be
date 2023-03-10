@@ -48,6 +48,7 @@ const emailSenderTemplate = (
 export const emailSender = (
   email: string,
   validationCode: string,
+  url: string,
   domain: string = config.frontEndAddress,
 ) => {
   // Create sendEmail params
@@ -55,7 +56,7 @@ export const emailSender = (
     name: email,
     appName: 'TECHSCRUMAPP',
     domain,
-    url: 'verifyv2',
+    url: url,
     token: validationCode,
     color: '#7291F7',
     border: '5px solid #7291F7',

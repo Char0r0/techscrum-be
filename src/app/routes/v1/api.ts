@@ -145,7 +145,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 router.post('/login', loginValidation.login, loginController.login);
 
-//verify email
+//get email by token
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
 
 //active account
@@ -158,8 +158,16 @@ router.put(
 
 //registerV2
 router.post('/registerV2', registerV2Controller.register);
-////verify email V2
+//get email by token V2
 router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerController.get);
+
+//active account
+router.put(
+  '/registerV2/:token',
+  registerValidation.store,
+  authenticationEmailTokenMiddlewareV2,
+  registerV2Controller.store,
+);
 
 router.post(
   '/reset-password',
