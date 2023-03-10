@@ -34,8 +34,7 @@ const authenticationEmailTokenMiddlewareV2 = async (
     const { email } = jwt.verify(token, config.emailSecret);
     const resUserDbConnection = await connectUserDb();
     const userModel = await User.getModel(resUserDbConnection);
-    const user = await userModel
-      .findOne({ email });
+    const user = await userModel.findOne({ email });
     if (user && !user.active) {
       req.verifyEmail = email;
       return next();
@@ -47,7 +46,7 @@ const authenticationEmailTokenMiddlewareV2 = async (
 
     res.status(200).json({
       status: 'success',
-      data: user,
+      active: true,
       message: 'This account is an active account, domain application approved..',
     });
   });

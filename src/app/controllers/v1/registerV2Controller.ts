@@ -15,7 +15,7 @@ const connectUserDb = async (res: Response) => {
     const resUserDbConnection = await userDbConnection.connect(config.userConnection);
     return resUserDbConnection;
   } catch (err) {
-    return res.status(401).json({ status: 'fail', err });
+    return res.status(401).json({ status: 'fail', error: 'Database connection fail' });
   }
 };
 
@@ -40,7 +40,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     tenantModel = await Tenant.getModel(resUserDbConnection);
     newTenants = await tenantModel.create({ origin: tenantsUrl });
   } catch (err) {
-    return res.status(400).json({ status: 'fail', err: 'tenant' });
+    return res.status(400).json({ status: 'fail', err });
   }
 
   try {
@@ -96,7 +96,7 @@ exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunctio
 
   try {
     const email = req.verifyEmail ?? '';
-    res.send({ email });
+    res.send({ email, active: false });
   } catch (e) {
     next(e);
   }
