@@ -21,6 +21,7 @@ const tenantSchema = new Schema(
       required: true,
     },
     owner: { type: Types.ObjectId },
+    active: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

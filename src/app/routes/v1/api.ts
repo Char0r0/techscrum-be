@@ -155,20 +155,21 @@ router.put(
   authenticationEmailTokenMiddleware,
   registerController.store,
 );
-
-//registerV2
+// ----------------------- register -------------------------
+//apply tenant and register-stepOne-V2
 router.post('/registerV2', registerV2Controller.register);
-//get email by token V2
-router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerController.get);
 
-//active account
+//emailVerifyCheck-stepTwo-V2
+router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
+
+//active account-stepThree-V2
 router.put(
   '/registerV2/:token',
   registerValidation.store,
   authenticationEmailTokenMiddlewareV2,
   registerV2Controller.store,
 );
-
+// ----------------------- register -------------------------
 router.post(
   '/reset-password',
   forgetPasswordValidation.forgetPasswordApplication,

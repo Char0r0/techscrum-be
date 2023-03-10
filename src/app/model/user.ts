@@ -74,7 +74,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    tenants: [{ type: Types.ObjectId, ref: 'tenants' }],
+    tenants: [
+      {
+        ref: 'tenants',
+        type: Types.ObjectId,
+      },
+    ],
   },
   { timestamps: true },
 );
