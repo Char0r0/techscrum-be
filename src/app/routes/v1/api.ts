@@ -331,6 +331,7 @@ router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
 });
 
+router.get('/labels', labelController.index);
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelValidation.store, labelController.store);
