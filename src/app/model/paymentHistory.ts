@@ -3,6 +3,14 @@ const mongoose = require('mongoose');
 
 const paymentHistorySchema = new mongoose.Schema(
   {
+    stripePaymentIntentId: {
+      type: String,
+    },
+    
+    paymentIntentStatus: {
+      type: String,
+    },
+
     subscriptionId: {
       type: String,
     },

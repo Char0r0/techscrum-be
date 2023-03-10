@@ -44,9 +44,11 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
       currency: 'aud',
       recurring: { interval: interval },
     });
+
     const productModel = Product.getModel(req.dbConnection);
     const productInformation = new productModel({ stripeProductId: product.id, productName: productName, productPrice: productPrice.id });
     await productInformation.save();
+
   } catch (e) {
   }
   return productPrice;

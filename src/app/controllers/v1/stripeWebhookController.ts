@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 const User = require('../../model/user');
 const PaymentHistory = require('../../model/paymentHistory');
+const config = require('../../config/app');
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event;
@@ -25,7 +26,6 @@ exports.stripeController = async (req: Request, res: Response) => {
         { _id: event.data.object.metadata.userId },
         {
           customerId: event.data.object.customer,
-          $addToSet: { paymentHistoryId: event.data.object.subscription },
         },
         { new: true },
       );
@@ -36,7 +36,7 @@ exports.stripeController = async (req: Request, res: Response) => {
       // reject directly, payment failed.
       // even failed, need to store into paymentHistory schema.
       // email sent to customers 
-
+      
       const freeTrialStartDate = event.data.object.trial_start;
       const startDate = new Date(freeTrialStartDate * 1000);
       const startYear = startDate.getFullYear();
@@ -55,6 +55,24 @@ exports.stripeController = async (req: Request, res: Response) => {
       const currentChargeEndDate = formattedFreeTrialEndDate;
       const productId = event.data.object.metadata.productId;
       const currentChargeStatus = event.data.object.status;
+      
+      const paymentIntent = await config.stripe.paymentIntents.create({
+        amount: event.data.object.plan.amount,
+        currency: 'aud',
+        payment_method_types: ['card'],
+      });
+
+      const PaymentHistoryModal = PaymentHistory.getModel(req.dbConnection);
+      const PaymentHistoryInformation = new PaymentHistoryModal({
+        subscriptionId: event.data.object.id,
+        currentChargeStartDate,
+        currentChargeEndDate,
+        currentChargeStatus,
+        stripeProductId: productId,
+        stripePaymentIntentId: paymentIntent.id,
+        paymentIntentStatus: paymentIntent.status,
+      });
+      PaymentHistoryInformation.save();
 
       const userModel = User.getModel(req.dbConnection);
       userModel.findOneAndUpdate(
@@ -63,21 +81,34 @@ exports.stripeController = async (req: Request, res: Response) => {
           currentChargeStartDate,
           currentChargeEndDate,
           stripeProductId: productId,
+          stripePaymentIntentId: paymentIntent.id,
+          $addToSet: { paymentHistoryId: PaymentHistoryInformation._id }, 
         },
         { new: true },
+        (err: any, updatedUser: any) => {
+          if (err) {
+            //console.log(err);
+          } else {
+            //console.log('INTENT', updatedUser.stripePaymentIntentId);
+            //console.log(updatedUser);
+          }
+        }
       );
-
-      const paymentHistoryModel = PaymentHistory.getModel(req.dbConnection);
-      const paymentHistory = new paymentHistoryModel({
-        subscriptionId: event.data.object.id,
-        currentChargeStartDate,
-        currentChargeEndDate,
-        currentChargeStatus,
-        stripeProductId: productId,
-      });
-      await paymentHistory.save();
       break;
+
+    // CHECK HERE !!!!!!!!!!!!!!!
+    case 'invoice.payment_succeeded':
+      console.log(event.data.object);
+      break;
+    
+    case 'invoice.paid':
       
+      break;
+    
+    case 'payment_intent.amount_refunded':
+      //console.log(event.data.object);
+      break;
+
     case 'customer.subscription.updated':
       break;
 
@@ -85,9 +116,14 @@ exports.stripeController = async (req: Request, res: Response) => {
       break; 
 
     case 'payment_intent.succeeded':
+      console.log('HAHAHAHA2', event.data.object);
       break;
 
     case 'payment_intent.payment_failed':
+      break;
+
+    case 'charge.refunded':
+      console.log(event.data.object);
       break;
       
     default:
@@ -95,3 +131,7 @@ exports.stripeController = async (req: Request, res: Response) => {
 
   res.status(200).send();
 };
+
+function refundController() {
+  throw new Error('Function not implemented.');
+}
