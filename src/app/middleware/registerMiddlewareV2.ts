@@ -33,13 +33,16 @@ const authenticationEmailTokenMiddlewareV2 = async (
     if (err) return res.status(status.FORBIDDEN).send();
     const { email } = jwt.verify(token, config.emailSecret);
     const userModel = await connectUserDb();
-    const user = userModel.findOne({ email });
+    const user = await userModel.findOne({ email });
     if (user && !user.active) {
       req.verifyEmail = email;
       return next();
     }
     logger.info(email + 'activation code incorrect. User input ');
-    res.status(status.FORBIDDEN).send();
+    res.status(200).json({
+      status: 'success',
+      message: 'This account is an active account, domain application approved..',
+    });
   });
 };
 

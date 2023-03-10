@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    tenants: [{ tenantsId: { type: Types.ObjectId } }],
+    tenants: [{ type: Types.ObjectId, ref: 'tenants' }],
   },
   { timestamps: true },
 );
