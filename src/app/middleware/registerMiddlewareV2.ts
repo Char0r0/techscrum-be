@@ -45,9 +45,8 @@ const authenticationEmailTokenMiddlewareV2 = async (
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
 
     res.status(200).json({
-      status: 'success',
-      data: user,
-      message: 'This account is an active account, domain application approved..',
+      user,
+      active: user.active,
     });
   });
 };

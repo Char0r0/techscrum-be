@@ -96,7 +96,10 @@ exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunctio
 
   try {
     const email = req.verifyEmail ?? '';
-    res.send({ email });
+    const userDbConnect = new Mongoose();
+    const resUserDbConnection = await userDbConnect.connect(config.userConnection);
+    const user = await User.getModel(resUserDbConnection).findOne({ email });
+    res.send({ email, active: user.active });
   } catch (e) {
     next(e);
   }
