@@ -9,7 +9,7 @@ export const checkUserTenants = async (email: string, origin: any, dbConnection:
   const userTenants = await userModel.findOne({ email }).populate({
     path: 'tenants',
     model: tenantsModel,
-    match: { origin: origin },
+    match: { $and: [{ origin, active: true }] },
   });
 
   return userTenants.tenants;
