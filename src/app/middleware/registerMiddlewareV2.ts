@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Mongoose } from 'mongoose';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
-const Tenant = require('../model/tenant');
+const Tenant = require('../model/tenants');
 const status = require('http-status');
 const logger = require('../../loaders/logger');
 const config = require('../../app/config/app');
@@ -45,9 +45,8 @@ const authenticationEmailTokenMiddlewareV2 = async (
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
 
     res.status(200).json({
-      status: 'success',
-      active: true,
-      message: 'This account is an active account, domain application approved..',
+      user,
+      active: user.active,
     });
   });
 };

@@ -20,7 +20,7 @@ const tenantSchema = new Schema(
       default: 'Free',
       required: true,
     },
-    owner: { type: Types.ObjectId },
+    owner: { type: Types.ObjectId, ref: 'users' },
     active: { type: Boolean, default: false },
   },
   { timestamps: true },

@@ -5,7 +5,7 @@ import { Mongoose } from 'mongoose';
 const mongoose = require('mongoose');
 const status = require('http-status');
 const config = require('../../config/app');
-const Tenant = require('../../model/tenant');
+const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
 
@@ -96,7 +96,10 @@ exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunctio
 
   try {
     const email = req.verifyEmail ?? '';
-    res.send({ email, active: false });
+    const userDbConnect = new Mongoose();
+    const resUserDbConnection = await userDbConnect.connect(config.userConnection);
+    const user = await User.getModel(resUserDbConnection).findOne({ email });
+    res.send({ email, active: user.active });
   } catch (e) {
     next(e);
   }
