@@ -5,7 +5,7 @@ import { Mongoose } from 'mongoose';
 const mongoose = require('mongoose');
 const status = require('http-status');
 const config = require('../../config/app');
-const Tenant = require('../../model/tenant');
+const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
 

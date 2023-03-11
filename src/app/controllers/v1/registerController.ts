@@ -7,7 +7,7 @@ const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
 const database = require('../../database/init');
 const User = require('../../model/user');
-const Tenant = require('../../model/tenant');
+const Tenant = require('../../model/tenants');
 const config = require('../../config/app');
 declare module 'express-serve-static-core' {
   interface Request {

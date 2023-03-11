@@ -1,6 +1,6 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
-const TenantSchema = require('../model/tenant');
+const TenantSchema = require('../model/tenants');
 const connection = require('../utils/db');
 const config = require('../config/app');
 exports.dbContextInitializer = (req: Request, res: Response, next: NextFunction) => {
@@ -8,7 +8,7 @@ exports.dbContextInitializer = (req: Request, res: Response, next: NextFunction)
   let connectDB = config.tenantConnection;
   if (!origin) {
     res.status(403).send({
-      'response': 'Invalid database request',
+      response: 'Invalid database request',
     });
   }
 

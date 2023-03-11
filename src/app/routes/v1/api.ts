@@ -15,6 +15,7 @@ const {
   authenticationForgetPasswordMiddleware,
 } = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
+const loginControllerV2 = require('../../controllers/v1/loginControllerV2');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
@@ -143,7 +144,10 @@ router.all('*', saasMiddleware.saas);
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
+// ----------------------- login -------------------------
 router.post('/login', loginValidation.login, loginController.login);
+router.post('/loginv2', loginValidation.login, loginControllerV2.login);
+// ----------------------- login -------------------------
 
 //get email by token
 router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
