@@ -322,7 +322,7 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
 router.get('/types', typeController.index);
 
 router.get(
-  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter',
+  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter/:labelFilter',
   boardValidation.show,
   boardController.show,
 );
