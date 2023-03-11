@@ -36,7 +36,8 @@ const shortcutValidation = require('../../validations/shortcut');
 const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
 const multerMiddleware = require('../../middleware/multerMiddleware');
-const saasMiddleware = require('../../middleware/saasMiddleware');
+// const saasMiddleware = require('../../middleware/saasMiddleware');
+const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
 const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
 const permissionMiddleware = require('../../middleware/permissionMiddleware');
@@ -76,7 +77,8 @@ router.post(
 
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
-router.all('*', saasMiddleware.saas);
+// router.all('*', saasMiddleware.saas);
+router.all('*', saasMiddlewareV2.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
  * @swagger

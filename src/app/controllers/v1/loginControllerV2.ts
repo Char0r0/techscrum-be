@@ -6,6 +6,7 @@ import { asyncHandler } from '../../utils/helper';
 import { checkUserTenants } from '../../services/loginService';
 const config = require('../../config/app');
 const status = require('http-status');
+const { userConnection } = require('../../utils/dbContext');
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -25,9 +26,9 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
 
   const origin = req.get('origin');
   const userDbConnection = new Mongoose();
-  const resUserDbConnection = await userDbConnection.connect(config.userConnection);
+  userConnection.connection = await userDbConnection.connect(config.userConnection);
 
-  const user = await User.getModel(resUserDbConnection).findByCredentials(
+  const user = await User.getModel(userConnection.connection).findByCredentials(
     req.body.email,
     req.body.password,
   );
@@ -36,7 +37,11 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
   if (user === undefined) return res.status(403).send();
 
   //检查登入时的域名是否在该user的tenants中
-  const qualifiedTenants = await checkUserTenants(req.body.email, origin, resUserDbConnection);
+  const qualifiedTenants = await checkUserTenants(
+    req.body.email,
+    origin,
+    userConnection.connection,
+  );
 
   //还需要判断登入www.techscrumapp.com的情况
   if (qualifiedTenants.length > 0) {
