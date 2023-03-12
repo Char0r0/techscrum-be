@@ -1,10 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
-import { Mongoose } from 'mongoose';
 const User = require('../../model/user');
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { checkUserTenants } from '../../services/loginService';
-const config = require('../../config/app');
 const status = require('http-status');
 const { userConnection } = require('../../utils/dbContext');
 
@@ -25,8 +23,8 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const origin = req.get('origin');
-  const userDbConnection = new Mongoose();
-  userConnection.connection = await userDbConnection.connect(config.userConnection);
+  // const userDbConnection = new Mongoose();
+  // userConnection.connection = await userDbConnection.connect(config.userConnection);
 
   const user = await User.getModel(userConnection.connection).findByCredentials(
     req.body.email,
