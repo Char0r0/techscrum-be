@@ -59,6 +59,25 @@ import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
+
+// ----------------------- register -------------------------
+//apply tenant and register-stepOne-V2
+router.post('/registerV2', registerV2Controller.register);
+
+//emailVerifyCheck-stepTwo-V2
+router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
+
+//active account-stepThree-V2
+router.put(
+  '/registerV2/:token',
+  registerValidation.store,
+  authenticationEmailTokenMiddlewareV2,
+  registerV2Controller.store,
+);
+// ----------------------- register -------------------------
+
+router.use(saasMiddlewareV2.saas);
+router.get('/domains', domainController.index);
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
@@ -66,8 +85,6 @@ router.get('/', (req: any, res: any) => {
 router.get('/healthcheck', (req: any, res: any) => {
   res.sendStatus(200);
 });
-
-router.get('/domains', domainController.index);
 
 router.post(
   '/admin-register/:email',
@@ -78,7 +95,7 @@ router.post(
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 // router.all('*', saasMiddleware.saas);
-router.all('*', saasMiddlewareV2.saas);
+// router.all('*', saasMiddlewareV2.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
  * @swagger
@@ -161,20 +178,7 @@ router.put(
   authenticationEmailTokenMiddleware,
   registerController.store,
 );
-// ----------------------- register -------------------------
-//apply tenant and register-stepOne-V2
-router.post('/registerV2', registerV2Controller.register);
 
-//emailVerifyCheck-stepTwo-V2
-router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
-
-//active account-stepThree-V2
-router.put(
-  '/registerV2/:token',
-  registerValidation.store,
-  authenticationEmailTokenMiddlewareV2,
-  registerV2Controller.store,
-);
 // ----------------------- register -------------------------
 router.post(
   '/reset-password',

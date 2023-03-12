@@ -25,16 +25,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     res.send(status.UNPROCESSABLE_ENTITY).json({});
   }
-
   const { email, company } = req.body;
   let tenantModel;
-
   let newTenants;
-  let tenantsUrl = `https://${company}.techscrumapp.com`;
-  if (company === 'localhost') {
-    tenantsUrl = 'http://localhost:3000';
-  }
+  let tenantsUrl = process.env.LOCAL_HOST_URL || `https://${company}.techscrumapp.com`;
   const resUserDbConnection = await connectUserDb(res);
+
   try {
     // create new Tenant
     tenantModel = await Tenant.getModel(resUserDbConnection);
@@ -49,6 +45,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       resUserDbConnection,
       email,
       newTenants,
+      res,
     );
     newTenants.owner = mongoose.Types.ObjectId(newUser.id);
     await newTenants.save();
@@ -58,7 +55,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   } catch (err) {
     // delete tenant if error
     await tenantModel.findOneAndDelete({ origin: tenantsUrl });
-    res.status(401).json({ status: 'fail', err: 'user' });
+    res.status(401).json({ status: 'fail', err });
   }
 });
 
@@ -69,11 +66,11 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
 
-  const userDbConnect = new Mongoose();
-  const resUserDbConnection = await userDbConnect.connect(config.userConnection);
   try {
+    const userDbConnect = new Mongoose();
+    const resUserDbConnection = await userDbConnect.connect(config.userConnection);
     const { email, name, password } = req.body;
-    const user = await User.getModel(resUserDbConnection).saveInfo(email, name, password, req);
+    const user = await User.getModel(resUserDbConnection).saveInfo(email, name, password);
     user.activeAccount();
     const activeTenant = user.tenants.at(-1);
     const tenantModel = await Tenant.getModel(resUserDbConnection);

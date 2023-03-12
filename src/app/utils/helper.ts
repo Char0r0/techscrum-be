@@ -17,7 +17,7 @@ export const asyncHandler = (fn: any) => (req: Request, res: Response, next: Nex
 //   return Domain.getModel(domainConnection.connection).find({});
 // };
 
-export const shouldExcludeDomainList = async (host: string | undefined) => {
+export const shouldExcludeDomainList = (host: string | undefined) => {
   if (!host) {
     return false;
   }
@@ -26,6 +26,7 @@ export const shouldExcludeDomainList = async (host: string | undefined) => {
     'https://www.techscrumapp.com',
     'https://dev.techscrumapp.com',
     'https://staging.techscrumapp.com',
+    //'http://localhost:3000',
   ];
 
   // for (const domain in domains) {
@@ -33,6 +34,7 @@ export const shouldExcludeDomainList = async (host: string | undefined) => {
   //     return true;
   //   }
   // }
+
   return domains.some((domain) => host.includes(domain));
   // return false;
 };

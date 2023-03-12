@@ -31,12 +31,12 @@ const authenticationEmailTokenMiddlewareV2 = async (
 
   jwt.verify(token, config.emailSecret, async (err: Error) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const { email } = jwt.verify(token, config.emailSecret);
+    const { id } = jwt.verify(token, config.emailSecret);
     const resUserDbConnection = await connectUserDb();
     const userModel = await User.getModel(resUserDbConnection);
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findById(id);
     if (user && !user.active) {
-      req.verifyEmail = email;
+      req.verifyEmail = user.email;
       return next();
     }
     // 如果用户已经active，添加tenants，再返回成功页面，跳过第三步
