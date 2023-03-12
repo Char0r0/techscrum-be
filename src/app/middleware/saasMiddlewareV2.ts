@@ -13,7 +13,6 @@ const getTenant = async (host: string | undefined) => {
   const excludeDomain = await shouldExcludeDomainList(host);
   const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(userConnection).length !== 0;
-
   //只要return true就连接公共数据库
   if (!host || excludeDomain || useDefaultConnection) {
     return defaultConnection;
@@ -26,7 +25,6 @@ const getTenant = async (host: string | undefined) => {
 
   const tenantModel = Tenant.getModel(userConnection.connection);
   const tenant = await tenantModel.findOne({ origin: host });
-
   if (!config || !config.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');

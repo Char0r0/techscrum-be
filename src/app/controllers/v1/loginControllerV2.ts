@@ -23,8 +23,6 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const origin = req.get('origin');
-  // const userDbConnection = new Mongoose();
-  // userConnection.connection = await userDbConnection.connect(config.userConnection);
 
   const user = await User.getModel(userConnection.connection).findByCredentials(
     req.body.email,
