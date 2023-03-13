@@ -38,6 +38,7 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
       .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
 
     let rolesArr;
+    
     for (const element of project.roles) {
       if (element?.id?.toString() === roleId) rolesArr = element;
     }
