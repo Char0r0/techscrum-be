@@ -18,7 +18,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
     const project = await Project.getModel(req.dbConnection)
       .findById(projectId)
       .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
-    let rolesArr = project.roles;
+    const rolesArr = project.roles;
     res.send(replaceId(rolesArr));
   } catch (e) {
     next(e);

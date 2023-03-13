@@ -42,13 +42,6 @@ One time command
 
 docker run -p 8000:8000 -d -v ${pwd}/.:/app techscrum:lastest (WINDOW ONLY)
 
-<!-- run -->
-npm run dev
-
-<!-- account -->
-kitman200220022002@gmail.com
-12345678
-
 localhost:8000
 
 ## API Docs

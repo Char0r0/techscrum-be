@@ -22,7 +22,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
     const projectId = req.params.id;
 
     for (const user of users) {
-      const projectRoles: any = user.projectsRoles;
+      const projectRoles = user.projectsRoles;
       for (const projectRole of projectRoles) {
         if (projectRole?.projectId?.toString() === projectId) {
           projectMembersList.push(user);
@@ -73,7 +73,6 @@ exports.invite = async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  //check all user id correct or not
   const { projectId } = req.params;
   const { roleId, email } = req.body;
   const userModel = User.getModel(req.dbConnection);
