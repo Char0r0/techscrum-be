@@ -37,11 +37,9 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
       .findById(projectId)
       .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
 
-    let rolesArr;
-    
-    for (const element of project.roles) {
-      if (element?.id?.toString() === roleId) rolesArr = element;
-    }
+    const rolesArr = project.roles.filter(
+      (element: { id: { toString: () => string } }) => element?.id?.toString() === roleId,
+    )[0];
 
     res.send(replaceId(rolesArr));
   } catch (e) {
