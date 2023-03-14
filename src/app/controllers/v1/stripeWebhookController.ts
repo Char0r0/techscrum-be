@@ -23,7 +23,7 @@ exports.stripeController = async (req: Request, res: Response) => {
   }
 
   switch (event.type) {
-    
+
     case 'checkout.session.completed':
       try {
         const userModel2 = User.getModel(req.dbConnection);
@@ -166,10 +166,12 @@ exports.stripeController = async (req: Request, res: Response) => {
         amount: event.data.object.amount,
         isRefund: true,
       });
+      
 
       const InvoiceModal2 = Invoice.getModel(req.dbConnection);
       const InvoiceFinalized2 = new InvoiceModal2({
-        stripeInvoiceId: event.data.object.invoice,
+        // change into: stripeInvoiceId: event.data.object.invoice,
+        stripeInvoiceId: PaymentHistoryInformation3._id,
         invoiceNumber: event.data.object.number,
         invoiceURL: event.data.object.receipt_url,
         isRefund: true,
@@ -178,7 +180,6 @@ exports.stripeController = async (req: Request, res: Response) => {
       break;
 
     case 'invoice.payment_failed':
-      console.log(event.data.object);
       break;
 
     case 'invoice.finalized':
