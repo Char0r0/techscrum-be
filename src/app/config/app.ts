@@ -3,6 +3,7 @@ const stripeAPI = require('stripe');
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 dotenv.config();
 
+
 const DEFAULT_MONGODB_URL = 'mongodb+srv://admin:12345678910@cluster0.c7jps.mongodb.net/techscrumapp?retryWrites=true&w=majority';
 const DEFAULT_TANANT_CONNECTION = 'mongodb+srv://admin:12345678910@cluster0.c7jps.mongodb.net/tenant?retryWrites=true&w=majority';
 const DEFAULT_DOMAIN_CONNECTION = 'mongodb+srv://admin:12345678910@cluster0.c7jps.mongodb.net/domain?retryWrites=true&w=majority';

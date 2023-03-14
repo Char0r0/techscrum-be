@@ -311,10 +311,37 @@ router.post(
   memberController.invite,
 );
 
-router.get('/roles', roleController.index);
-router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
+// roleV2
 router.get('/permissions', permissionController.index);
-router.delete('/roles/:id/permissions/:permissionId', roleValidation.remove, roleController.remove);
+// get all roles from peoject
+router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
+router.get(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  roleController.getRoleById,
+);
+// add new role
+router.put(
+  '/projects/:projectId/roles',
+  roleValidation.getProject,
+  authenticationTokenMiddleware,
+  roleController.addNewRole,
+);
+// update role
+router.put(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.update,
+);
+// delete role
+router.delete(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.delete,
+);
+
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });

@@ -4,7 +4,6 @@ import { replaceId } from '../../services/replaceService';
 const { randomStringGenerator } = require('../../utils/randomStringGenerator');
 import { invite } from '../../utils/emailSender';
 const User = require('../../model/user');
-const Role = require('../../model/role');
 const Project = require('../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
@@ -21,10 +20,11 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
     const users = await User.getModel(req.dbConnection).find({ active: true });
     const projectMembersList = [];
     const projectId = req.params.id;
+
     for (const user of users) {
-      const projectRoles:any = user.projectsRoles;
-      for (const role of projectRoles) {
-        if (role?.projectId?.toString() === projectId) {
+      const projectRoles = user.projectsRoles;
+      for (const projectRole of projectRoles) {
+        if (projectRole?.projectId?.toString() === projectId) {
           projectMembersList.push(user);
         }
       }
@@ -73,16 +73,18 @@ exports.invite = async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  //check all user id correct or not
   const { projectId } = req.params;
   const { roleId, email } = req.body;
   const userModel = User.getModel(req.dbConnection);
-  const roleModel = Role.getModel(req.dbConnection);
+
   const projectModel = Project.getModel(req.dbConnection);
+
 
   try {
     const project = await projectModel.findById(projectId);
-    const role = await roleModel.findById(roleId);
+    const { name: roleName }: { name: string } = project.roles.find((role: any) => {
+      return role._id.toString() === roleId;
+    });
 
     let validationToken = '';
     let user = await userModel.findOne({ email });
@@ -112,7 +114,7 @@ exports.invite = async (req: Request, res: Response) => {
       validationToken = jwt.sign({ email, activeCode: user.activeCode }, process.env.EMAIL_SECRET);
 
     const name = user.active ? user.name : '';
-    invite(user.email, name, validationToken, role.name, project.name, req.headers.origin || '');
+    invite(user.email, name, validationToken, roleName, project.name, req.headers.origin || '');
     res.send(user);
   } catch (e: any) {
     logger.info('Cannot invite member', e.toString());
