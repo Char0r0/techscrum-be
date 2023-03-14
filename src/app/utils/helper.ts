@@ -29,14 +29,7 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
     //'http://localhost:3000',
   ];
 
-  // for (const domain in domains) {
-  //   if (host.includes(domain)) {
-  //     return true;
-  //   }
-  // }
-
   return domains.some((domain) => host.includes(domain));
-  // return false;
 };
 
 export function removeHttp(url: string | undefined) {
