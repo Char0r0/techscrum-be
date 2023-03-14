@@ -82,22 +82,35 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    // to be the object types id !!!!!!!!!! make sure its uniqueness!!!!!!!!!!!!
     paymentHistoryId: [
       {
         ref: 'paymentHistory',
         type: Types.ObjectId,
       },
     ],
-    // this is pointing to the current subscription plan.
+
+    subscriptionHistoryId: [
+      {
+        type: String,
+      },
+    ],
+
     stripePaymentIntentId: {  
       type: String,
+      default: null, 
     },
-    // point out current payment History (current invoice)!!!
+    
     currentInvoice: {
-      ref: 'paymentHistory',
+      ref: 'invoice',
       type: Types.ObjectId,
-    }
+    },
+
+    invoiceHistory: [
+      {
+        ref: 'invoice',
+        type: Types.ObjectId,
+      },
+    ],
 
     stripeProductId: {
       ref: 'product',
@@ -105,19 +118,19 @@ const userSchema = new mongoose.Schema(
     },
 
     freeTrialStartDate: {
-      type: Date,
+      type: String,
     },
 
     freeTrialEndDate: {
-      type: Date,
+      type: String,
     },
 
     currentChargeStartDate: {
-      type: Date,
+      type: String,
     }, 
 
     currentChargeEndDate: {
-      type: Date,
+      type: String,
     },
 
   },

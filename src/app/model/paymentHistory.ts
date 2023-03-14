@@ -11,27 +11,35 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
 
+    // not necessary
     subscriptionId: {
       type: String,
     },
 
     currentChargeStartDate: {
-      type: Date,
+      type: String,
     },
 
     currentChargeEndDate: {
-      type: Date,
+      type: String,
     },
 
-    currentChargeStatus: {
-      type: String,
+    // not necessary
+    amount: {
+      type: Number,
     },
 
     stripeProductId: {
       ref: 'product', 
       type: String,
     },
+
+    isRefund: {
+      type: Boolean, 
+      default: false,
+    },
   },
+
 );
 
 module.exports.getModel = (connection: any) => {
