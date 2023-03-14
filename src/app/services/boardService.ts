@@ -9,6 +9,7 @@ export const getBoardTasks = async (
   boardId: string,
   input: { title: RegExp } | {},
   users: { assignId: string[] } | {},
+  taskTypes: { typeId: string[] } | {},
   dbConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);
@@ -39,7 +40,7 @@ export const getBoardTasks = async (
         },
       ],
       match: {
-        $and: [users, input],
+        $and: [users, input, taskTypes],
       },
     },
   });

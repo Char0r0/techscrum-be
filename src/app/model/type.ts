@@ -15,7 +15,8 @@ const typeSchema = new Schema(
     },
     icon: {
       type: String,
-      required: true,
+      default:
+        'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10321?size=medium',
     },
   },
   { timestamps: true },

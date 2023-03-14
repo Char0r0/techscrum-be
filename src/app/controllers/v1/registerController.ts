@@ -32,7 +32,7 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
     const dataConnectionMongoose = new Mongoose();
     const tenantConnection  = await dataConnectionMongoose.connect(config.tenantConnection);
     const tenantModel = Tenant.getModel(tenantConnection);
-    const tenantOrigin =  `https://${appName.toLowerCase()}.${removeHttp(tenantUrl).replace('www.', '')}}`;
+    const tenantOrigin =  `https://${appName.toLowerCase()}.${removeHttp(tenantUrl).replace('www.', '')}`;
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
       res.sendStatus(409);

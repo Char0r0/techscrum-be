@@ -1,61 +1,105 @@
 import { Request, Response, NextFunction } from 'express';
-const Role = require('../../model/role');
+import { asyncHandler } from '../../utils/helper';
 const Permission = require('../../model/permission');
+const Project = require('../../model/project');
 const status = require('http-status');
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
-const mongoose = require('mongoose');
-//get
+const { Types } = require('mongoose');
+
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+
   try {
-    const roles = await Role.getModel(req.dbConnection)
-      .find()
-      .populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-    res.send(replaceId(roles));
+    const { projectId } = req.params;
+    const project = await Project.getModel(req.dbConnection)
+      .findById(projectId)
+      .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
+    const rolesArr = project.roles;
+    res.send(replaceId(rolesArr));
   } catch (e) {
     next(e);
   }
 };
 
-//put
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
-  const { id, permissionId } = req.params;
+exports.getRoleById = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+
   try {
-    const roles = await Role.getModel(req.dbConnection).find({
-      _id: id,
-      permission: mongoose.Types.ObjectId(permissionId),
-    });
-    if (roles.length !== 0) {
-      res.send(replaceId(roles[0]));
-      return;
-    }
-    const r = await Role.getModel(req.dbConnection).findById(id);
-    r.permission.push(mongoose.Types.ObjectId(permissionId));
-    r.save();
+    const { projectId, roleId } = req.params;
+    const project = await Project.getModel(req.dbConnection)
+      .findById(projectId)
+      .populate({ path: 'roles.permission', model: Permission.getModel(req.dbConnection) });
+
+    const rolesArr = project.roles.filter(
+      (element: { id: { toString: () => string } }) => element?.id?.toString() === roleId,
+    )[0];
+
+    res.send(replaceId(rolesArr));
   } catch (e) {
     next(e);
   }
 };
 
-exports.remove = async (req: Request, res: Response) => {
+exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  }
+  const { projectId } = req.params;
+  const { roleName, permissions } = req.body;
+  if (Types.ObjectId.isValid(projectId)) {
+    const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
+      Types.ObjectId(projectId),
+      {
+        $push: {
+          roles: [{ name: roleName, slug: roleName, permission: permissions }],
+        },
+      },
+      { new: true },
+    );
+    if (project) return res.send(replaceId(project));
+    return res.sendStatus(status.BAD_REQUEST);
+  }
+  res.sendStatus(status.UNPROCESSABLE_ENTITY);
+});
+
+exports.update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const { id, permissionId } = req.params;
-  const roleModel = Role.getModel(req.dbConnection);
-  const role = await roleModel.findById(id);
-  role.permission = await role.permission.filter((item: any) => {
-    return item._id.toString() !== permissionId;
+  const { roleId, projectId } = req.params;
+  const { permissions } = req.body;
+  const project = await Project.getModel(req.dbConnection).findById(projectId);
+
+  for (const element of project.roles) {
+    if (element?.id?.toString() === roleId) {
+      element.permission = permissions;
+    }
+  }
+
+  const updatedProject = await project.save();
+  res.send(replaceId(updatedProject));
+};
+
+exports.delete = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(status.UNPROCESSABLE_ENTITY).json({});
+  }
+  const { projectId, roleId } = req.params;
+  const project = await Project.getModel(req.dbConnection).findById(projectId);
+  const updatedProjectRoles = project.roles.filter((item: any) => {
+    return item._id?.toString() !== roleId;
   });
-  const result = await role.save();
-  return res.send(replaceId(result));
+  project.roles = updatedProjectRoles;
+  const updateProject = await project.save();
+  res.send(replaceId(updateProject));
 };

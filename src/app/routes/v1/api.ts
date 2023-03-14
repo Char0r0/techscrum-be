@@ -51,6 +51,8 @@ const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
+const paymentController = require('../../controllers/v1/paymentController');
+const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -311,17 +313,48 @@ router.post(
   memberController.invite,
 );
 
-router.get('/roles', roleController.index);
-router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
+// roleV2
 router.get('/permissions', permissionController.index);
-router.delete('/roles/:id/permissions/:permissionId', roleValidation.remove, roleController.remove);
+// get all roles from peoject
+router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
+router.get(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  roleController.getRoleById,
+);
+// add new role
+router.put(
+  '/projects/:projectId/roles',
+  roleValidation.getProject,
+  authenticationTokenMiddleware,
+  roleController.addNewRole,
+);
+// update role
+router.put(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.update,
+);
+// delete role
+router.delete(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.delete,
+);
+
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
 
 router.get('/types', typeController.index);
 
-router.get('/board/:id/:inputFilter/:userFilter', boardValidation.show, boardController.show);
+router.get(
+  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter',
+  boardValidation.show,
+  boardController.show,
+);
 
 router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
@@ -337,7 +370,10 @@ router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 // backlogs
 router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
-router.get('/projects/:projectId/backlogs/:inputCase/:userCase', backlogController.filter);
+router.get(
+  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase',
+  backlogController.filter,
+);
 
 // sprints
 router.get('/sprints', sprintController.show);
@@ -361,5 +397,9 @@ router.get(
 router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
 router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
 router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
+
+// payment
+router.post('/payment', paymentController.createPayment);
+router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
 
 module.exports = router;
