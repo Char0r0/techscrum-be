@@ -9,11 +9,10 @@ const logger = require('../../loaders/logger');
 
 const getTenant = async (host: string | undefined, req: Request) => {
   const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
-  // 只要是默认的domain就return true
   const excludeDomain = shouldExcludeDomainList(host);
   const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(userConnection).length !== 0;
-  //只要return true就连接公共数据库
+
   if (!host || excludeDomain || useDefaultConnection) {
     return defaultConnection;
   }

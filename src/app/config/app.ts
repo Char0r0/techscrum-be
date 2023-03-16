@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const stripeAPI = require('stripe');
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 dotenv.config();
 
@@ -31,6 +32,7 @@ module.exports = {
   defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION || 'devtechscrumapp',
   emailSecret: process.env.EMAIL_SECRET || '123456',
   forgotSecret: process.env.FORGET_SECRET || '321654',
+  stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
   //---------------------------v2--------------------------
   userConnection: process.env.USER_URL || DEFAULT_USER_CONNECTION,
   publicConnection: process.env.PUBLIC_URL || DEFAULT_PUBLIC_CONNECTION,

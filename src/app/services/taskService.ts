@@ -9,12 +9,14 @@ const Status = require('../model/status');
 /** Find tasks with given filter
  * @param queryFilter
  * @param userFilter
+ * @param typeFilter
  * @param dbConnection Mongoose
  * @returns Document result
  */
 export const findTasks = async (
   queryFilter: object,
   userFilter: object,
+  typeFilter: object,
   dbConnection: Mongoose,
 ) => {
   const taskModel = Task.getModel(dbConnection);
@@ -24,6 +26,7 @@ export const findTasks = async (
     const tasks = await taskModel
       .find(queryFilter)
       .find(userFilter)
+      .find(typeFilter)
       .populate({ path: 'typeId', model: Type.getModel(dbConnection) })
       .populate({
         path: 'tags',

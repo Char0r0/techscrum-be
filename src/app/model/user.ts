@@ -6,8 +6,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 const logger = require('../../loaders/logger');
-const DEFAULT_IMG_URL =
-  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
+const DEFAULT_IMG_URL = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -40,11 +39,11 @@ const userSchema = new mongoose.Schema(
     },
     projectsRoles: [
       {
-        projectId: {
+        projectId:{
           ref: 'projects',
           type: Types.ObjectId,
-        },
-        roleId: {
+        }, 
+        roleId:{
           ref: 'roles',
           type: Types.ObjectId,
         },
@@ -74,6 +73,43 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    userName: {
+      type: String,
+      trim: true,
+    },
+
+    customerId: {
+      type: String,
+    },
+
+    paymentHistoryId: [
+      {
+        ref: 'paymentHistory',
+        type: String,
+      },
+    ],
+
+    stripeProductId: {
+      ref: 'product',
+      type: String,
+    },
+
+    freeTrialStartDate: {
+      type: Date,
+    },
+
+    freeTrialEndDate: {
+      type: Date,
+    },
+
+    currentChargeStartDate: {
+      type: Date,
+    },
+
+    currentChargeEndDate: {
+      type: Date,
+    },
+
     tenants: [
       {
         ref: 'tenants',
