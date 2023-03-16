@@ -1,34 +1,39 @@
-export {};
-import { Types } from 'mongoose';
-const mongoose = require('mongoose');
+import mongoose, { Mongoose, Types } from 'mongoose';
 
-const roleSchema = new mongoose.Schema(
+export interface IRole {
+  name: string;
+  slug: string;
+  allowDelete: boolean;
+  permission: Types.ObjectId[];
+}
+
+const roleSchema = new mongoose.Schema<IRole>(
   {
     name: {
       type: String,
       required: true,
-      unique: true,
     },
     slug: {
       type: String,
       required: true,
-      unique: true,
     },
-    description: {
-      type: String,
-    },
+    allowDelete: { type: Boolean, required: true, default: false },
     permission: [
-      { 
-        ref: 'permissions',
+      {
         type: Types.ObjectId,
-        required: true, 
+        ref: 'permissions',
       },
     ],
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      versionKey: false,
+    },
+  },
 );
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: Mongoose) => {
   if (!connection) {
     throw new Error('No connection');
   }

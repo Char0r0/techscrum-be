@@ -15,7 +15,6 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
-
 module.exports = () => {
   const app = express();
 
