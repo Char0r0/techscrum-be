@@ -4,6 +4,7 @@ const Task = require('../model/task');
 const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
+const Project = require('../model/project');
 
 export const getBoardTasks = async (
   boardId: string,
@@ -17,6 +18,7 @@ export const getBoardTasks = async (
   const statusModel = Status.getModel(dbConnection);
   const userModel = User.getModel(dbConnection);
   const labelModel = Label.getModel(dbConnection);
+  const projectModel = Project.getModel(dbConnection);
 
   const boardTasks = await boardModel.find({ _id: boardId }).populate({
     path: 'taskStatus',
@@ -37,6 +39,11 @@ export const getBoardTasks = async (
           path: 'tags',
           model: labelModel,
           select: 'name',
+        },
+        {
+          path: 'projectId',
+          model: projectModel,
+          select: 'key',
         },
       ],
       match: {
