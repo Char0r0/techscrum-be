@@ -22,7 +22,7 @@ const boardId = '6350d443bddbe8fed0138ffd';
 const userId = '632fc37a89d19ed1f57c7ab1';
 const statusId = '6350d443bddbe8fed0138ff4';
 const taskId = '6350e579d6a0ceeb4fc89fd9';
-const typeId = '631d94d08a05945727602cd1';
+const typeId = '63fe01c8f5b40ad08cfac583';
 
 beforeAll(async () => {
   dbConnection = await dbHandler.connect();
@@ -49,6 +49,7 @@ beforeAll(async () => {
     _id: typeId,
     slug: 'story',
     name: 'Story',
+    icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
     createdAt: '2022-09-11T07:57:04.258Z',
     updatedAt: '2022-09-11T07:57:04.258Z',
   });
@@ -169,9 +170,10 @@ describe('Post Task Test', () => {
       typeId: {
         __v: 0,
         createdAt: expect.any(String),
-        id: '631d94d08a05945727602cd1',
+        id: '63fe01c8f5b40ad08cfac583',
         name: 'Story',
         slug: 'story',
+        icon: 'https://010001.atlassian.net/rest/api/2/univeedium',
         updatedAt: expect.any(String),
       },
       storyPoint: 0,
@@ -224,7 +226,11 @@ describe('Post Task Test', () => {
 
 describe('Update Task Test', () => {
   it('should update task', async () => {
-    const updatedField = { description: 'updated task', priority: 'Lowest' };
+    const updatedField = {
+      description: 'updated task',
+      priority: 'Lowest',
+      typeId: '63fe01c8f5b40ad08cfac583',
+    };
     const res = await request(application).put(`/api/v1/tasks/${taskId}`).send(updatedField);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
@@ -246,14 +252,6 @@ describe('Update Task Test', () => {
       sprintId: null,
       storyPoint: 0,
       tags: [],
-      typeId: {
-        __v: 0,
-        createdAt: '2022-09-11T07:57:04.258Z',
-        id: '631d94d08a05945727602cd1',
-        name: 'Story',
-        slug: 'story',
-        updatedAt: '2022-09-11T07:57:04.258Z',
-      },
       status: {
         id: '6350d443bddbe8fed0138ff4',
         name: 'to do',
