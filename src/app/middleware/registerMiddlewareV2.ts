@@ -35,11 +35,12 @@ const authenticationEmailTokenMiddlewareV2 = async (
     const resUserDbConnection = await connectUserDb();
     const userModel = await User.getModel(resUserDbConnection);
     const user = await userModel.findById(id);
+    // if user is not active, continue registration process
     if (user && !user.active) {
       req.verifyEmail = user.email;
       return next();
     }
-    // 如果用户已经active，添加tenants，再返回成功页面，跳过第三步
+    // if user is active, skip registration and active this tenant
     const activeTenant = user.tenants.at(-1);
     const tenantModel = await Tenant.getModel(resUserDbConnection);
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
