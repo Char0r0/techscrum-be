@@ -100,6 +100,7 @@ router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
 // router.all('*', saasMiddleware.saas);
 // router.all('*', saasMiddlewareV2.saas);
+
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
  * @swagger
@@ -429,6 +430,10 @@ router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.
 
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookController.stripeController,
+);
 
 module.exports = router;

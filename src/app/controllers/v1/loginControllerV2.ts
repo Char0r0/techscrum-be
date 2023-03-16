@@ -32,14 +32,13 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
   if (user === null) return res.status(status.UNAUTHORIZED).send();
   if (user === undefined) return res.status(403).send();
 
-  //检查登入时的域名是否在该user的tenants中
+  //check the if the domain is in user's tenants when user login
   const qualifiedTenants = await checkUserTenants(
     req.body.email,
     origin,
     userConnection.connection,
   );
 
-  //还需要判断登入www.techscrumapp.com的情况
   if (qualifiedTenants.length > 0) {
     const token = await user.generateAuthToken();
     return res.send({ user, ...token });
