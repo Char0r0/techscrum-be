@@ -1,6 +1,6 @@
 import express, { NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
-const apiRouter = require('../app/routes/v1/api');
+const apiRouter = require('../app/routes/v2/api');
 const config = require('../app/config/app');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -34,4 +34,3 @@ module.exports = () => {
 
   return app;
 };
-
