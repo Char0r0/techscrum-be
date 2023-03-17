@@ -27,10 +27,11 @@ describe('POST sprint', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body).toEqual({
       __v: 0,
-      _id: expect.any(String),
+      id: expect.any(String),
       boardId: '6350d443bddbe8fed0138ffd',
       createdAt: expect.any(String),
       endDate: null,
+      currentSprint: false,
       isComplete: false,
       name: 'joe sprint',
       projectId: '6350d443bddbe8fed0138ffe',
@@ -54,9 +55,10 @@ describe('POST sprint', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body).toEqual({
       __v: 0,
-      _id: expect.any(String),
+      id: expect.any(String),
       boardId: '6350d443bddbe8fed0138ffd',
       createdAt: expect.any(String),
+      currentSprint: false,
       endDate: endDate.toISOString(),
       isComplete: false,
       name: 'joe sprint',

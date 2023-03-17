@@ -17,6 +17,19 @@ const projectSchema = mongoose.Schema(
       type: Types.ObjectId,
       required: true,
     },
+    roles: [
+      {
+        name: { type: String, required: true, unique: true },
+        slug: { type: String, required: true, unique: true },
+        allowDelete: { type: Boolean, required: true, default: true },
+        permission: [
+          {
+            type: Types.ObjectId,
+            ref: 'permissions',
+          },
+        ],
+      },
+    ],
     ownerId: {
       ref: 'users',
       type: Types.ObjectId,
