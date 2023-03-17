@@ -9,7 +9,6 @@ const {
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
-const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
 const { authenticationEmailTokenMiddlewareV2 } = require('../../middleware/registerMiddlewareV2');
 const {
   authenticationForgetPasswordMiddleware,
@@ -36,7 +35,6 @@ const shortcutValidation = require('../../validations/shortcut');
 const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
 const multerMiddleware = require('../../middleware/multerMiddleware');
-// const saasMiddleware = require('../../middleware/saasMiddleware');
 const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
 const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
@@ -65,14 +63,14 @@ import * as statuseValidation from '../../validations/statusValidation';
 
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
-router.post('/registerV2', registerV2Controller.register);
+router.post('/register', registerV2Controller.register);
 
 //emailVerifyCheck-stepTwo-V2
-router.get('/registerV2/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
+router.get('/register/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
 
 //active account-stepThree-V2
 router.put(
-  '/registerV2/:token',
+  '/register/:token',
   registerValidation.store,
   authenticationEmailTokenMiddlewareV2,
   registerV2Controller.store,
@@ -95,11 +93,8 @@ router.post(
   registerController.adminRegister,
 );
 
-router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
-// router.all('*', saasMiddleware.saas);
-// router.all('*', saasMiddlewareV2.saas);
 
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
@@ -169,22 +164,9 @@ router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 // ----------------------- login -------------------------
-router.post('/login', loginValidation.login, loginController.login);
-router.post('/loginv2', loginValidation.login, loginControllerV2.login);
+router.post('/login', loginValidation.login, loginControllerV2.login);
 // ----------------------- login -------------------------
 
-//get email by token
-router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-
-//active account
-router.put(
-  '/register/:token',
-  registerValidation.store,
-  authenticationEmailTokenMiddleware,
-  registerController.store,
-);
-
-// ----------------------- register -------------------------
 router.post(
   '/reset-password',
   forgetPasswordValidation.forgetPasswordApplication,
