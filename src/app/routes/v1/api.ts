@@ -224,7 +224,12 @@ router.delete('/comments/:id', commentValidation.remove, commentControllers.dest
 
 router.delete('/comments/:id', commentControllers.destroy);
 
-router.get('/tasks/project/:id', projectValidation.show, taskController.tasksByProject);
+router.get(
+  '/tasks/project/:id',
+  projectValidation.show,
+  authenticationTokenMiddleware,
+  taskController.tasksByProject,
+);
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
@@ -401,6 +406,10 @@ router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.
 
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookController.stripeController,
+);
 
 module.exports = router;
