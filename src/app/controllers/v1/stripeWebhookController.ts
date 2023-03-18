@@ -37,7 +37,6 @@ exports.stripeController = async (req: Request, res: Response) => {
           { new: true },
           (err: any) => {
             if (err) {
-              // TODO document why this block is empty
             }
           },
         );
@@ -141,7 +140,6 @@ exports.stripeController = async (req: Request, res: Response) => {
         { new: true },
         (err: any) => {
           if (err) {
-            // TODO document why this block is empty
           }
         },
       );
