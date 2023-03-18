@@ -16,7 +16,7 @@ const tenantSchema = new Schema(
     },
     plan: {
       type: String,
-      enum: ['Free', 'Advanced', 'Most Popular', 'Enterprise'],
+      enum: ['Free', 'Advanced', 'Ultra', 'Enterprise'],
       default: 'Free',
       required: true,
     },

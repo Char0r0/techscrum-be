@@ -41,7 +41,10 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   const domain = req.headers.origin;
   const tenantId = await getTenant(domain, req);
   let url = config.publicConnection;
-  if (req.body.plan !== 'Free') {
+  enum Plans {
+    Free = 'Free',
+  }
+  if (req.body.plan !== Plans.Free) {
     url = config.publicConnection.replace('publicdb', tenantId);
   }
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {

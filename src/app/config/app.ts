@@ -36,5 +36,5 @@ module.exports = {
   //---------------------------v2--------------------------
   userConnection: process.env.USER_URL || DEFAULT_USER_CONNECTION,
   publicConnection: process.env.PUBLIC_URL || DEFAULT_PUBLIC_CONNECTION,
-  authenticationConnection: process.env.AUTH_OLD_DB || DEFAULT_USER_CONNECTION,
+  authenticationConnection: process.env.DB_V1 || DEFAULT_USER_CONNECTION,
 };

@@ -1,6 +1,7 @@
 import express, { NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
-const apiRouter = require('../app/routes/v2/api');
+const apiRouterV1 = require('../app/routes/v1/api');
+const apiRouterV2 = require('../app/routes/v2/api');
 const config = require('../app/config/app');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -24,7 +25,8 @@ module.exports = () => {
   app.use(express.json());
   app.use(limiter);
   app.use(helmet());
-  app.use(config.api.prefix, apiRouter);
+  app.use(`${config.api.prefix}/v1`, apiRouterV1);
+  app.use(`${config.api.prefix}/v2`, apiRouterV2);
   swagger(app);
   app.use((err: Error, req: express.Request, res: express.Response, next: NextFunction) => {
     errorHandler.handleError(err, res);

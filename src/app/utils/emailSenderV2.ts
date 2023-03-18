@@ -48,7 +48,6 @@ const emailSenderTemplate = (
 export const emailSender = (
   email: string,
   validationCode: string,
-
   domain: string = config.frontEndAddress,
 ) => {
   // Create sendEmail params
