@@ -15,7 +15,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   // Sprint tasks are task whose sprintId is not null
   const backlogTasksFilter = { sprintId: null, projectId };
   const sprintFilter = { projectId };
-  const backlogTasks = await findTasks(backlogTasksFilter, {}, req.dbConnection);
+  const backlogTasks = await findTasks(backlogTasksFilter, {}, {}, req.dbConnection);
   const sprints = await findSprints(sprintFilter, {}, req.dbConnection);
 
   const result = {
@@ -41,7 +41,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 
   const regex = new RegExp(escapeRegex);
   const fuzzySearchFilter = { title: regex, projectId };
-  const tasks = await findTasks(fuzzySearchFilter, {}, req.dbConnection);
+  const tasks = await findTasks(fuzzySearchFilter, {}, {}, req.dbConnection);
 
   return res.status(httpStatus.OK).json(tasks);
 });
@@ -52,15 +52,20 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({});
   }
-  const { projectId, inputCase, userCase } = req.params;
+  const { projectId, inputCase, userCase, typeCase } = req.params;
 
   if (!projectId) throw new Error('no projectId provided');
 
   let inputFilter;
   let fuzzySearchFilter: any;
   let userFilter: any;
+  let typeFilter: object | string;
 
-  if (inputCase === 'all') {
+  enum Cases {
+    searchAll = 'all',
+  }
+
+  if (inputCase === Cases.searchAll) {
     fuzzySearchFilter = { projectId };
   } else {
     inputFilter = inputCase;
@@ -69,7 +74,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     fuzzySearchFilter = { title: regex, projectId };
   }
 
-  if (userCase === 'all') {
+  if (userCase === Cases.searchAll) {
     userFilter = { projectId };
   } else {
     userFilter = userCase;
@@ -77,11 +82,20 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     userFilter = { assignId: { $in: userIds }, projectId };
   }
 
+  if (typeCase === Cases.searchAll) {
+    typeFilter = { projectId };
+  } else {
+    typeFilter = typeCase;
+    const taskTypeIds = typeFilter.split('-');
+    typeFilter = { typeId: { $in: taskTypeIds }, projectId };
+  }
+
   const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection);
   for (const sprint of sprints) {
     sprint.taskId = await findTasks(
       { ...fuzzySearchFilter, sprintId: sprint.id },
       { ...userFilter, sprintId: sprint.id },
+      { ...typeFilter, sprintId: sprint.id },
       req.dbConnection,
     );
   }
@@ -89,6 +103,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   const tasks = await findTasks(
     { ...fuzzySearchFilter, sprintId: null },
     { ...userFilter, sprintId: null },
+    { ...typeFilter, sprintId: null },
     req.dbConnection,
   );
 
@@ -99,5 +114,5 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     sprints: sprints,
   };
 
-  return res.status(httpStatus.OK).json(result);
+  return res.status(httpStatus.OK).json(replaceId(result));
 });

@@ -21,7 +21,8 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
         Body: {
           Html: {
             Charset: 'UTF-8',
-            Data: '<p>Someone has send you a email.</p>' +
+            Data:
+              '<p>Someone has send you a email.</p>' +
               `<p>FullName: ${req.body.fullName} Company: ${req.body.company} Email: ${req.body.email} Number: ${req.body.number}</p>
               <p>Techscrum Team</p>`,
           },
@@ -29,7 +30,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
       },
       Source: 'admin@techscrumapp.com',
     };
-    
+
     // Create the promise and SES service object
     new aws.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
     return res.sendStatus(200);
