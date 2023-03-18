@@ -227,12 +227,12 @@ router.delete('/comments/:id', commentControllers.destroy);
 router.get(
   '/tasks/project/:id',
   projectValidation.show,
-  authenticationTokenMiddleware,
   taskController.tasksByProject,
 );
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
+router.put('/tasks/:id/toggleActive', taskValidation.update, taskController.toggleActivate);
 router.delete('/tasks/:id', taskValidation.remove, taskController.delete);
 
 router.put(

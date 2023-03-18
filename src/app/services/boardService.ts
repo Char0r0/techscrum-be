@@ -48,6 +48,7 @@ export const getBoardTasks = async (
       ],
       match: {
         $and: [users, input, taskTypes],
+        $or: [{ isActive: { $exists: false } }, { isActive: true }],
       },
     },
   });

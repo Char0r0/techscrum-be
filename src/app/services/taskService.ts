@@ -52,7 +52,10 @@ export const findTasks = async (
         model: Comment.getModel(dbConnection),
       })
       .sort({ createdAt: 1 });
-    return tasks;
+
+    const activeTasks = tasks.filter((e:any) => e.isActive === true);
+
+    return activeTasks;
   } catch (error: any) {
     return error;
   }

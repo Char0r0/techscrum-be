@@ -139,7 +139,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
   return res.status(httpStatus.OK).json(replaceId(result[0]));
 });
 
-// //DELETE
+// DELETE HARD
 exports.delete = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -163,4 +163,26 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
   });
 
   return res.status(httpStatus.NO_CONTENT).send();
+});
+
+// DELETE SOFT, TOGGLE isActive
+exports.toggleActivate = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  const { id } = req.params;
+
+  const task = await Task.getModel(req.dbConnection).findOne({ _id: id });
+  if (!task) {
+    return res.status(httpStatus.NOT_FOUND).send();
+  }
+  const isActive = !task.isActive;
+  const taskNew = await Task.getModel(req.dbConnection).findOneAndUpdate(
+    { _id: id },
+    { isActive: isActive },
+    { new: true },
+  );
+  return res.status(httpStatus.OK).json(replaceId(taskNew));
 });
