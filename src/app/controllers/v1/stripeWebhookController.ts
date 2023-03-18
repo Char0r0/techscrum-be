@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { TrialDate } from '../../utils/TrialDate';
 import { addPaymentHistory } from '../../utils/addPaymentHistory';
+import { subscriptionSender } from '../../utils/emailSender';
+const { randomStringGenerator } = require('../../utils/randomStringGenerator');
+const jwt = require('jsonwebtoken');
+
 
 const User = require('../../model/user');
 const Invoice = require('../../model/invoice');
 const config = require('../../config/app');
-
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event;
@@ -23,7 +26,6 @@ exports.stripeController = async (req: Request, res: Response) => {
   }
 
   switch (event.type) {
-
     case 'checkout.session.completed':
       try {
         const userModel2 = User.getModel(req.dbConnection);
@@ -34,49 +36,16 @@ exports.stripeController = async (req: Request, res: Response) => {
           },
           { new: true },
         );
-
       } catch (e: any) {
       }
       break; 
       
-    case 'customer.subscription.created':
-
-      if (!event.data.object.customer) {
-        return ;
-      }
-
-      const freeTrialStartDate = event.data.object.trial_start;
-      const formattedFreeTrialStartDate = TrialDate(freeTrialStartDate);
-
-      const freeTrialEndDate = event.data.object.trial_start;
-      const formattedFreeTrialEndDate = TrialDate(freeTrialEndDate);
-
-      const productId = event.data.object.metadata.productId;
-
-      const paymentIntent = await config.stripe.paymentIntents.create({
-        amount: event.data.object.plan.amount,
-        currency: 'aud',
-        payment_method_types: ['card'],
-      });
-
-      const userModel = await User.getModel(req.dbConnection);
-      userModel.findOneAndUpdate(
-        { customerId: event.data.object.customer },
-        {
-          stripeProductId: productId,
-          stripePaymentIntentId: paymentIntent.id, 
-          freeTrialStartDate: formattedFreeTrialStartDate,
-          freeTrialEndDate: formattedFreeTrialEndDate,
-          $addToSet: { subscriptionHistoryId: paymentIntent.id }, 
-        },
-        { new: true },
-      );
-      break;
 
     case 'invoice.payment_succeeded':
       try {
         const userModel3 = User.getModel(req.dbConnection);
         const userInfo = await userModel3.findOne({ customerId: event.data.object.customer }).exec();
+
         if (!userInfo) {
           return ;
         }
@@ -101,7 +70,7 @@ exports.stripeController = async (req: Request, res: Response) => {
         const intent = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId);
 
         const PaymentHistoryInformation = await addPaymentHistory(req, {
-          subscriptionId: event.data.object.id, 
+          subscriptionId: event.data.object.id, // not necessary i think.
           currentChargeStartDate: formattedPlanStartDate,
           currentChargeEndDate: formattedPlanEndDate,
           stripeProductId: stripeProductId,
@@ -123,6 +92,49 @@ exports.stripeController = async (req: Request, res: Response) => {
       } catch (e) {
       }
 
+      const customerEmail = event.data.object.customer_email;
+      const activeCode = randomStringGenerator(16);
+      const validationToken = jwt.sign({ customerEmail, activeCode }, config.emailSecret);
+      subscriptionSender(customerEmail, `token=${validationToken}`, '');
+      break;
+
+    case 'customer.subscription.created':
+
+      if (!event.data.object.customer) {
+        return ;
+      }
+
+      const freeTrialStartDate = event.data.object.trial_start;
+      const formattedFreeTrialStartDate = TrialDate(freeTrialStartDate);
+
+      const freeTrialEndDate = event.data.object.trial_start;
+      const formattedFreeTrialEndDate = TrialDate(freeTrialEndDate);
+
+      const productId = event.data.object.metadata.productId;
+      
+      // get intent here when each subscription created
+      const paymentIntent = await config.stripe.paymentIntents.create({
+        amount: event.data.object.plan.amount,
+        currency: 'aud',
+        payment_method_types: ['card'],
+        receipt_email: 'wei19970101@gmail.com',
+        description: '3% of your purchase goes toward our ocean cleanup effort!',
+      });
+
+      // insert paymentIntentId and productId into the userModel
+      const userModel = await User.getModel(req.dbConnection);
+      userModel.findOneAndUpdate(
+        { customerId: event.data.object.customer },
+        {
+          stripeProductId: productId,
+          stripePaymentIntentId: paymentIntent.id, 
+          freeTrialStartDate: formattedFreeTrialStartDate,
+          freeTrialEndDate: formattedFreeTrialEndDate,
+          $addToSet: { subscriptionHistoryId: paymentIntent.id }, 
+        },
+        { new: true },
+      );
+
       break;
     
     case 'invoice.paid':
@@ -143,6 +155,7 @@ exports.stripeController = async (req: Request, res: Response) => {
     case 'payment_intent.payment_failed':
       break;
 
+
     case 'charge.refunded':
       let stripePaymentIntentId2;
       let stripeProductId2;
@@ -158,7 +171,9 @@ exports.stripeController = async (req: Request, res: Response) => {
 
       const intent2 = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId2);
 
+      // will change another name later. 
       const PaymentHistoryInformation3 = await addPaymentHistory(req, {
+        //subscriptionId: event.data.object.id,
         currentChargeStartDate: formattedRefundStartDate,
         stripeProductId: stripeProductId2,
         stripePaymentIntentId: intent2.id,
@@ -166,12 +181,11 @@ exports.stripeController = async (req: Request, res: Response) => {
         amount: event.data.object.amount,
         isRefund: true,
       });
-      
+
 
       const InvoiceModal2 = Invoice.getModel(req.dbConnection);
       const InvoiceFinalized2 = new InvoiceModal2({
-        // change into: stripeInvoiceId: event.data.object.invoice,
-        stripeInvoiceId: PaymentHistoryInformation3._id,
+        stripeInvoiceId: event.data.object.invoice,
         invoiceNumber: event.data.object.number,
         invoiceURL: event.data.object.receipt_url,
         isRefund: true,

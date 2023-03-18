@@ -95,11 +95,13 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
+    // this is pointing to the current subscription plan. 
     stripePaymentIntentId: {  
       type: String,
       default: null, 
     },
     
+    // point out current payment History (current invoice)
     currentInvoice: {
       ref: 'invoice',
       type: Types.ObjectId,
@@ -111,6 +113,9 @@ const userSchema = new mongoose.Schema(
         type: Types.ObjectId,
       },
     ],
+
+    // If user subscribed one plan before, they don't have any chance to start a new free trial. 
+    // There must be a way can check whether the user subscribe this plan before or not????
 
     stripeProductId: {
       ref: 'product',

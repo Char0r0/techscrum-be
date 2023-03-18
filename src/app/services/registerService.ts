@@ -13,7 +13,7 @@ const emailRegister = async (email: string, dbConnection: any, domain:string) =>
       { email, activeCode, isAdmin: 1 },
       { new: true, upsert: true },
     );
- 
+
     if (!config || !config.emailSecret) {
       logger.error('Missing email secret in env');
       return null;
