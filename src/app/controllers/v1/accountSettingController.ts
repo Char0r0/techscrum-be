@@ -4,11 +4,20 @@ const Users = require('../../model/user');
 const status = require('http-status');
 const { passwordAuth } = require('../../services/passwordAuthService');
 const { encryption } = require('../../services/encryptionService');
+const { Mongoose } = require('mongoose');
+const config = require('../../config/app');
 
 interface User {
   _id?: Object;
   password?: string;
 }
+
+const creatUserModel = async () => {
+  const connectUserDb = new Mongoose();
+  const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
+  const userModel = await Users.getModel(resConnectUserDb);
+  return userModel;
+};
 
 exports.updatePassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -17,7 +26,8 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   }
   const { newPassword, oldPassword } = req.body;
   const userId = req.body.userInfo.id;
-  const user = await Users.getModel(req.dbConnection).findOne({ _id: userId });
+  const userModel = await creatUserModel();
+  const user = await userModel.findOne({ _id: userId });
   try {
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
     if (!checkPasswordFlag) {
@@ -57,7 +67,8 @@ exports.update = async (req: Request, res: Response) => {
     return;
   }
 
-  const updateUser = await Users.getModel(req.dbConnection).findOneAndUpdate(
+  const userModel = await creatUserModel();
+  const updateUser = await userModel.findOneAndUpdate(
     { _id: user._id },
     {
       name,
@@ -90,7 +101,8 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      await Users.getModel(req.dbConnection).deleteOne({ _id: user._id });
+      const userModel = await creatUserModel();
+      await userModel.deleteOne({ _id: user._id });
       return res.sendStatus(status.NOTCONNECTED);
     } catch (e) {
       next(e);
