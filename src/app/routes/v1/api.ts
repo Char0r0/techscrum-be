@@ -227,6 +227,7 @@ router.delete('/comments/:id', commentControllers.destroy);
 router.get(
   '/tasks/project/:id',
   projectValidation.show,
+  authenticationTokenMiddleware,
   taskController.tasksByProject,
 );
 router.get('/tasks/:id', taskValidation.show, taskController.show);
