@@ -9,8 +9,7 @@ const config = require('../../config/app');
 const connectUserDb = async () => {
   const userDConnection = new Mongoose();
   const resUserDbConnection = await userDConnection.connect(config.authenticationConnection);
-  const userModel = User.getModel(resUserDbConnection);
-  return userModel;
+  return User.getModel(resUserDbConnection);
 };
 
 exports.index = async (req: Request, res: Response) => {

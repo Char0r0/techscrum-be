@@ -35,15 +35,14 @@ export const initProject = async (
     // init project
     const project = await projectModel.create({
       ...body,
-      roles:
-        initRoles,
+      roles: initRoles,
       boardId: board._id,
       ownerId,
     });
     // binding refs
     board.taskStatus = statuses.map((doc) => doc._id);
     await board.save();
-    
+
     return project;
   } catch (error: any) {
     throw new Error(error);
