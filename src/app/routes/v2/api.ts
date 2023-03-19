@@ -327,6 +327,7 @@ router.post(
 
 // roleV2
 router.get('/permissions', permissionController.index);
+router.get('/roles', roleController.getDefaultRoles);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
 router.get(

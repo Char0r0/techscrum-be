@@ -3,9 +3,15 @@ import { DEFAULT_STATUS } from '../constants/defaultStatus';
 const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-
+const config = require('../config/app');
 const Role = require('../model/role');
-const Permission = require('../model/permission');
+
+const createRoleModel = async () => {
+  const connection = new Mongoose();
+  const resConnection = await connection.connect(config.authenticationConnection);
+  const role = await Role.getModel(resConnection);
+  return role;
+};
 
 export const initProject = async (
   body: any,
@@ -22,9 +28,12 @@ export const initProject = async (
     throw new Error('Project Leader is not selected');
   }
 
-  let initRoles = await Role.getModel(dbConnection)
-    .find({}, { name: 1, slug: 1, permission: 1, allowDelete: 1, _id: 0 })
-    .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
+  //use cache after all features move to v2
+  const roleModel = await createRoleModel();
+  let initRoles = await roleModel.find(
+    {},
+    { name: 1, slug: 1, permission: 1, allowDelete: 1, _id: 0 },
+  );
 
   try {
     // init statuses;
