@@ -114,5 +114,5 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     sprints: sprints,
   };
 
-  return res.status(httpStatus.OK).json(result);
+  return res.status(httpStatus.OK).json(replaceId(result));
 });

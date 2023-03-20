@@ -78,6 +78,39 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    customerId: {
+      type: String,
+    },
+
+    paymentHistoryId: [
+      {
+        ref: 'paymentHistory',
+        type: String,
+      },
+    ],
+
+    stripeProductId: {
+      ref: 'product',
+      type: String,
+    },
+
+    freeTrialStartDate: {
+      type: Date,
+    },
+
+    freeTrialEndDate: {
+      type: Date,
+    },
+
+    currentChargeStartDate: {
+      type: Date,
+    }, 
+
+    currentChargeEndDate: {
+      type: Date,
+    },
+
   },
   { timestamps: true },
 );

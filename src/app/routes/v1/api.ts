@@ -46,11 +46,14 @@ const permissionController = require('../../controllers/v1/permissionController'
 const typeController = require('../../controllers/v1/typeController');
 const contactController = require('../../controllers/v1/contactController');
 const contactValidation = require('../../validations/contact');
+const emailUsController = require('../../controllers/v1/emailUsController');
 const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
 const dailyScrumValidations = require('../../validations/dailyScrum');
+const paymentController = require('../../controllers/v1/paymentController');
+const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -75,6 +78,7 @@ router.post(
 
 router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
+router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
 router.all('*', saasMiddleware.saas);
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
@@ -311,10 +315,37 @@ router.post(
   memberController.invite,
 );
 
-router.get('/roles', roleController.index);
-router.put('/roles/:id/permissions/:permissionId', roleValidation.update, roleController.update);
+// roleV2
 router.get('/permissions', permissionController.index);
-router.delete('/roles/:id/permissions/:permissionId', roleValidation.remove, roleController.remove);
+// get all roles from peoject
+router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
+router.get(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  roleController.getRoleById,
+);
+// add new role
+router.put(
+  '/projects/:projectId/roles',
+  roleValidation.getProject,
+  authenticationTokenMiddleware,
+  roleController.addNewRole,
+);
+// update role
+router.put(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.update,
+);
+// delete role
+router.delete(
+  '/projects/:projectId/roles/:roleId',
+  roleValidation.projectAndRole,
+  authenticationTokenMiddleware,
+  roleController.delete,
+);
+
 router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
@@ -380,6 +411,14 @@ router.delete(
   '/projects/:projectId/dailyScrums',
   dailyScrumValidations.destroy,
   dailyScrumControllers.destroy,
+);
+
+// payment
+router.post('/payment', paymentController.createPayment);
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookController.stripeController,
 );
 
 module.exports = router;

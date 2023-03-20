@@ -45,6 +45,26 @@ const emailSenderTemplate = (
   });
 };
 
+export const emailRecipientTemplate = (
+  emailFrom: string,
+  emailTo: string[],
+  data: {},
+  templateName: string,
+) => {
+  const ses = new aws.SES();
+
+  let params = {
+    Source: emailFrom,
+    Destination: {
+      ToAddresses: emailTo,
+    },
+    Template: templateName,
+    TemplateData: JSON.stringify(data),
+  };
+
+  return ses.sendTemplatedEmail(params).promise();
+};
+
 export const emailSender = (
   email: string,
   validationCode: string,
@@ -90,12 +110,7 @@ export const invite = (
   emailSenderTemplate(email, templateData, 'Access', cb);
 };
 
-export const forgetPassword = (
-  email: string,
-  name: string,
-  token: string,
-  domain: string,
-) => {
+export const forgetPassword = (email: string, name: string, token: string, domain: string) => {
   const templateData = {
     name: name ?? email,
     appName: 'TECHSCRUMAPP',

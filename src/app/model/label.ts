@@ -23,6 +23,7 @@ labelSchema.methods.toJSON = function () {
 };
 
 module.exports.getModel = (connection: any) => {
+
   if (!connection) {
     throw new Error('No connection');
   }
