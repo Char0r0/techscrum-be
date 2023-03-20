@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 const logger = require('../../loaders/logger');
-const DEFAULT_IMG_URL = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
+const DEFAULT_IMG_URL =
+  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -39,11 +40,11 @@ const userSchema = new mongoose.Schema(
     },
     projectsRoles: [
       {
-        projectId:{
+        projectId: {
           ref: 'projects',
           type: Types.ObjectId,
-        }, 
-        roleId:{
+        },
+        roleId: {
           ref: 'roles',
           type: Types.ObjectId,
         },
@@ -80,7 +81,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-//limitation for 16MB //AWS 16KB 
+//limitation for 16MB //AWS 16KB
 userSchema.statics.findByCredentials = async function (email: string, password: string) {
   const user = await this.findOne({ email }).exec();
   if (!user) {
@@ -90,7 +91,7 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
     logger.info('User has not active account:' + email);
     return undefined;
   }
- 
+
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) {
     return null;
@@ -101,7 +102,7 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
 userSchema.statics.saveInfo = async function (email: string, name: string, password: string) {
   const user = await this.findOneAndUpdate(
     { email },
-    { password: await bcrypt.hash(password, 8), name, activeCode:'' },
+    { password: await bcrypt.hash(password, 8), name, activeCode: '' },
     { new: true },
   ).exec();
   if (!user) throw new Error('Cannot find user');
@@ -138,16 +139,24 @@ userSchema.methods.generateAuthToken = async function () {
   });
   if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
     const randomeString = randomStringGenerator(10);
-    const refreshToken = jwt.sign({ id: user._id, refreshToken: randomeString }, process.env.ACCESS_SECRET, {
-      expiresIn: '360h',
-    });
+    const refreshToken = jwt.sign(
+      { id: user._id, refreshToken: randomeString },
+      process.env.ACCESS_SECRET,
+      {
+        expiresIn: '360h',
+      },
+    );
     user.refreshToken = randomeString;
     await user.save();
     return { token, refreshToken: refreshToken };
   }
-  const refreshToken = jwt.sign({ id: user._id, refreshToken: user.refreshToken }, process.env.ACCESS_SECRET, {
-    expiresIn: '360h',
-  });
+  const refreshToken = jwt.sign(
+    { id: user._id, refreshToken: user.refreshToken },
+    process.env.ACCESS_SECRET,
+    {
+      expiresIn: '360h',
+    },
+  );
   return { token, refreshToken };
 };
 
@@ -156,7 +165,6 @@ userSchema.methods.activeAccount = function () {
   user.active = true;
   user.save();
 };
-
 
 module.exports.getModel = (connection: any) => {
   if (!connection) {
