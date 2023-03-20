@@ -351,7 +351,7 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
 router.get('/types', typeController.index);
 
 router.get(
-  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter',
+  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter/:labelFilter',
   boardValidation.show,
   boardController.show,
 );
@@ -360,6 +360,7 @@ router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
 });
 
+router.get('/labels', labelController.index);
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelValidation.store, labelController.store);
@@ -371,7 +372,7 @@ router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 router.get(
-  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase',
+  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase/:labelCase',
   backlogController.filter,
 );
 

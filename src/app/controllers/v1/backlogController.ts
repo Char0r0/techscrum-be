@@ -15,7 +15,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
   // Sprint tasks are task whose sprintId is not null
   const backlogTasksFilter = { sprintId: null, projectId };
   const sprintFilter = { projectId };
-  const backlogTasks = await findTasks(backlogTasksFilter, {}, {}, req.dbConnection);
+  const backlogTasks = await findTasks(backlogTasksFilter, {}, {}, {}, req.dbConnection);
   const sprints = await findSprints(sprintFilter, {}, req.dbConnection);
 
   const result = {
@@ -41,7 +41,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
 
   const regex = new RegExp(escapeRegex);
   const fuzzySearchFilter = { title: regex, projectId };
-  const tasks = await findTasks(fuzzySearchFilter, {}, {}, req.dbConnection);
+  const tasks = await findTasks(fuzzySearchFilter, {}, {}, {}, req.dbConnection);
 
   return res.status(httpStatus.OK).json(tasks);
 });
@@ -52,7 +52,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(httpStatus.UNPROCESSABLE_ENTITY).json({});
   }
-  const { projectId, inputCase, userCase, typeCase } = req.params;
+  const { projectId, inputCase, userCase, typeCase, labelCase } = req.params;
 
   if (!projectId) throw new Error('no projectId provided');
 
@@ -60,6 +60,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
   let fuzzySearchFilter: any;
   let userFilter: any;
   let typeFilter: object | string;
+  let labelFilter: object | string;
 
   enum Cases {
     searchAll = 'all',
@@ -90,12 +91,21 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     typeFilter = { typeId: { $in: taskTypeIds }, projectId };
   }
 
+  if (labelCase === Cases.searchAll) {
+    labelFilter = { projectId };
+  } else {
+    labelFilter = labelCase;
+    const labelIds = labelFilter.split('-');
+    labelFilter = { tags: { $all: labelIds }, projectId };
+  }
+
   const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection);
   for (const sprint of sprints) {
     sprint.taskId = await findTasks(
       { ...fuzzySearchFilter, sprintId: sprint.id },
       { ...userFilter, sprintId: sprint.id },
       { ...typeFilter, sprintId: sprint.id },
+      { ...labelFilter, sprintId: sprint.id },
       req.dbConnection,
     );
   }
@@ -104,6 +114,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     { ...fuzzySearchFilter, sprintId: null },
     { ...userFilter, sprintId: null },
     { ...typeFilter, sprintId: null },
+    { ...labelFilter, sprintId: null },
     req.dbConnection,
   );
 
