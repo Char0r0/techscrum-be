@@ -27,7 +27,7 @@ const BOARD_BY_LABELS = {
       order: 0,
       taskList: [
         {
-          title: '测试',
+          title: 'test one',
           tags: [
             { id: '6340129a5eb06d386302b22b', name: 'Backend' },
             { id: '6381d2cfa6c3f10a7e8ae07e', name: 'Frontend' },
