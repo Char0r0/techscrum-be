@@ -11,6 +11,7 @@ export const getBoardTasks = async (
   input: { title: RegExp } | {},
   users: { assignId: string[] } | {},
   taskTypes: { typeId: string[] } | {},
+  labels: { tags: string[] } | {},
   dbConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);
@@ -47,7 +48,7 @@ export const getBoardTasks = async (
         },
       ],
       match: {
-        $and: [users, input, taskTypes],
+        $and: [users, input, taskTypes, labels],
         $or: [{ isActive: { $exists: false } }, { isActive: true }],
       },
     },

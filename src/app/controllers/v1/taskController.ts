@@ -22,7 +22,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
-  const tasks = await findTasks({ _id: req.params.id }, {}, {}, req.dbConnection);
+  const tasks = await findTasks({ _id: req.params.id }, {}, {}, {}, req.dbConnection);
   res.status(200).send(replaceId(tasks[0]));
 });
 
@@ -84,7 +84,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     // bind task ref to status
     await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
     // return task
-    const result = await findTasks({ _id: task._id }, {}, {}, req.dbConnection);
+    const result = await findTasks({ _id: task._id }, {}, {}, {}, req.dbConnection);
     res.status(httpStatus.CREATED).json(replaceId(result[0]));
   }
 });
@@ -134,7 +134,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
-  const result = await findTasks({ _id: id }, {}, {}, req.dbConnection);
+  const result = await findTasks({ _id: id }, {}, {}, {}, req.dbConnection);
 
   return res.status(httpStatus.OK).json(replaceId(result[0]));
 });

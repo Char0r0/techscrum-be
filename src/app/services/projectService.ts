@@ -1,5 +1,4 @@
 import { Mongoose } from 'mongoose';
-import { DEFAULT_STATUS } from '../constants/defaultStatus';
 const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
@@ -27,23 +26,51 @@ export const initProject = async (
     .populate({ path: 'permission', Model: Permission.getModel(dbConnection) });
 
   try {
-    // init statuses;
-    const statuses = await statusModel.create(DEFAULT_STATUS);
     // init board
     const board = new boardModel({ title: body.name });
 
     // init project
     const project = await projectModel.create({
       ...body,
-      roles:
-        initRoles,
+      roles: initRoles,
       boardId: board._id,
       ownerId,
     });
+
+    const DEFAULT_STATUS = [
+      {
+        name: 'to do',
+        slug: 'to-do',
+        order: 0,
+        board: board._id,
+      },
+      {
+        name: 'in progress',
+        slug: 'in-progress',
+        order: 1,
+        board: board._id,
+      },
+      {
+        name: 'review',
+        slug: 'review',
+        order: 2,
+        board: board._id,
+      },
+      {
+        name: 'done',
+        slug: 'done',
+        order: 3,
+        board: board._id,
+      },
+    ];
+
+    // init statuses;
+    const statuses = await statusModel.create(DEFAULT_STATUS);
+
     // binding refs
     board.taskStatus = statuses.map((doc) => doc._id);
     await board.save();
-    
+
     return project;
   } catch (error: any) {
     throw new Error(error);
