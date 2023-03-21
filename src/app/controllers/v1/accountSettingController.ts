@@ -1,23 +1,15 @@
 import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import { createUserModel } from '../../utils/helper';
 const Users = require('../../model/user');
 const status = require('http-status');
 const { passwordAuth } = require('../../services/passwordAuthService');
 const { encryption } = require('../../services/encryptionService');
-const { Mongoose } = require('mongoose');
-const config = require('../../config/app');
 
 interface User {
   _id?: Object;
   password?: string;
 }
-
-const creatUserModel = async () => {
-  const connectUserDb = new Mongoose();
-  const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
-  const userModel = await Users.getModel(resConnectUserDb);
-  return userModel;
-};
 
 exports.updatePassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -26,7 +18,7 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   }
   const { newPassword, oldPassword } = req.body;
   const userId = req.body.userInfo.id;
-  const userModel = await creatUserModel();
+  const userModel = await createUserModel();
   const user = await userModel.findOne({ _id: userId });
   try {
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
@@ -67,7 +59,7 @@ exports.update = async (req: Request, res: Response) => {
     return;
   }
 
-  const userModel = await creatUserModel();
+  const userModel = await createUserModel();
   const updateUser = await userModel.findOneAndUpdate(
     { _id: user._id },
     {
@@ -101,7 +93,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      const userModel = await creatUserModel();
+      const userModel = await createUserModel();
       await userModel.deleteOne({ _id: user._id });
       return res.sendStatus(status.NOTCONNECTED);
     } catch (e) {
