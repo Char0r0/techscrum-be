@@ -4,6 +4,7 @@ const Task = require('../model/task');
 const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
+const config = require('../config/app');
 
 export const getBoardTasks = async (
   boardId: string,
@@ -13,10 +14,17 @@ export const getBoardTasks = async (
   labels: { tags: string[] } | {},
   dbConnection: Mongoose,
 ) => {
+  const createUserModel = async () => {
+    const connectUserDb = new Mongoose();
+    const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
+    const userModel = await User.getModel(resConnectUserDb);
+    return userModel;
+  };
+
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
-  const userModel = User.getModel(dbConnection);
+  const userModel = await createUserModel();
   const labelModel = Label.getModel(dbConnection);
 
   const boardTasks = await boardModel.find({ _id: boardId }).populate({

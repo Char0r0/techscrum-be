@@ -1,4 +1,5 @@
 import { Mongoose } from 'mongoose';
+const config = require('../config/app');
 const Task = require('../model/task');
 const Type = require('../model/type');
 const User = require('../model/user');
@@ -24,6 +25,15 @@ export const findTasks = async (
   const taskModel = Task.getModel(dbConnection);
 
   const UserFields = 'avatarIcon name email';
+
+  const createUserModel = async () => {
+    const connectUserDb = new Mongoose();
+    const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
+    const userModel = await User.getModel(resConnectUserDb);
+    return userModel;
+  };
+  const userModel = await createUserModel();
+
   try {
     const tasks = await taskModel
       .find(queryFilter)
@@ -38,12 +48,12 @@ export const findTasks = async (
       })
       .populate({
         path: 'reporterId',
-        model: User.getModel(dbConnection),
+        model: userModel,
         select: UserFields,
       })
       .populate({
         path: 'assignId',
-        model: User.getModel(dbConnection),
+        model: userModel,
         select: UserFields,
       })
       .populate({

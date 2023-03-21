@@ -364,7 +364,7 @@ router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) =
 router.get('/types', typeController.index);
 
 router.get(
-  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter',
+  '/board/:id/:inputFilter/:userFilter/:taskTypeFilter/:labelFilter',
   boardValidation.show,
   boardController.show,
 );
@@ -373,6 +373,7 @@ router.get('/abc', async (req: any) => {
   database.init(req.dbConnection);
 });
 
+router.get('/labels', labelController.index);
 router.get('/labels/:projectId', labelController.index);
 router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelValidation.store, labelController.store);
