@@ -385,7 +385,7 @@ router.delete('/labels/:id', labelValidation.remove, labelController.delete);
 router.get('/projects/:projectId/backlogs', backlogController.index);
 router.get('/projects/:projectId/backlogs/search', backlogController.searchBacklogTasks);
 router.get(
-  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase',
+  '/projects/:projectId/backlogs/:inputCase/:userCase/:typeCase/:labelCase',
   backlogController.filter,
 );
 
