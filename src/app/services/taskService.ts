@@ -1,8 +1,7 @@
 import { Mongoose } from 'mongoose';
-const config = require('../config/app');
+import { createUserModel } from '../utils/helper';
 const Task = require('../model/task');
 const Type = require('../model/type');
-const User = require('../model/user');
 const Comment = require('../model/comment');
 const Label = require('../model/label');
 const Status = require('../model/status');
@@ -26,12 +25,6 @@ export const findTasks = async (
 
   const UserFields = 'avatarIcon name email';
 
-  const createUserModel = async () => {
-    const connectUserDb = new Mongoose();
-    const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
-    const userModel = await User.getModel(resConnectUserDb);
-    return userModel;
-  };
   const userModel = await createUserModel();
 
   try {
