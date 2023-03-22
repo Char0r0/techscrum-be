@@ -130,10 +130,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       projectId: projectId,
       task: taskId,
     });
-    // const deletedDailyScrums = await DailyScrum.getModel(req.dbConnection).find({
-    //   projectId: projectId,
-    //   task: taskId,
-    // });
+
     return res.sendStatus(204);
   } catch (e) {
     next(e);
