@@ -117,6 +117,12 @@ const update = [
           );
         }
 
+        if (supportType === 4 && value.length === 0 ) {
+          throw new Error(
+            `Express-validator: dailyScrumId: ${dailyScrumId} otherSupportDesc MUST not be an empty string when supportType is 4 (other support)`,
+          );
+        }
+
         return true;
       },
     ),
