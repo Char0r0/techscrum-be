@@ -15,7 +15,16 @@ const generateIdValidationRule = (
   key: string,
   isRequired: boolean = false,
 ) => {
-  const validator = reqType === 'param' ? param : reqType === 'body' ? body : query;
+  let validator;
+
+  if (reqType === 'param') {
+    validator = param;
+  } else if (reqType === 'body') {
+    validator = body;
+  } else {
+    validator = query;
+  }
+
   let validationChain = validator(key);
 
   if (isRequired) {
