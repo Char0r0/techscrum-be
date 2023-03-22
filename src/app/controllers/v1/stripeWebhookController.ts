@@ -30,14 +30,10 @@ exports.stripeController = async (req: Request, res: Response) => {
   switch (event.type) {
     case 'checkout.session.completed':
       try {
-        console.log('CHECKOUT_RES', event.data.object);
-        // based on the userId, check if customerId exists already,
-        // the customerId should not be inserted again!
         if (!userModel) {
           userModel = User.getModel(req.dbConnection);
         }        
         const userInfo = await userModel.findOne({ _id: event.data.object.metadata.userId }).exec();
-        console.log(userInfo);
         if (!userInfo.customerId) {
           userModel.findOneAndUpdate(
             { _id: event.data.object.metadata.userId },
@@ -46,28 +42,21 @@ exports.stripeController = async (req: Request, res: Response) => {
               currentProduct: event.data.object.metadata.productId,
             },
             { new: true },
-            (err: any, answer: any) => {
+            (err: any) => {
               if (err) {
-                // TODO document why this block is empty
-              } else {
-                console.log('ANSWER', answer);
               }
             },
           );
         } else {
-          console.log('ARE YOU SURE????');
           userModel.findOneAndUpdate(
             { _id: event.data.object.metadata.userId },
             {
               currentProduct: event.data.object.metadata.productId,
             },
             { new: true },
-            (err: any, pro: any) => {
+            (err: any) => {
               if (err) {
-                // TODO document why this block is empty
-              } else {
-                console.log('PRO!!!!', pro);
-              }
+              } 
             },
           );
         }
@@ -77,20 +66,15 @@ exports.stripeController = async (req: Request, res: Response) => {
 
     case 'customer.subscription.created':
       try {
-        console.log('what????', event.data.object.plan.product);
         if (!userModel) {
           userModel = User.getModel(req.dbConnection);
         }
 
         const userInfo = await userModel.findOne({ currentProduct: event.data.object.plan.product }).exec();
 
-        console.log(userInfo.customerId);
-
         if (!userInfo.customerId) {
           return ;
         }
-        console.log('SUBSCRIPTION.RES', event.data.object);
-
   
         const freeTrialStartDate = event.data.object.trial_start;
         const formattedFreeTrialStartDate = TrialDate(freeTrialStartDate);
@@ -108,12 +92,7 @@ exports.stripeController = async (req: Request, res: Response) => {
           receipt_email: 'wei19970101@gmail.com',
           description: '',
         });
-  
-        console.log(paymentIntent);
-        
-        // insert paymentIntentId and productId into the userModel
 
-        console.log('TRYYYY', event.data.object.plan.product);
         userModel.findOneAndUpdate(
           { customerId: userInfo.customerId },
           {
@@ -124,16 +103,12 @@ exports.stripeController = async (req: Request, res: Response) => {
             $addToSet: { productHistory: event.data.object.plan.product, subscriptionHistoryId: paymentIntent.id }, 
           },
           { new: true },
-          (err: any, ress: any) => {
+          (err: any) => {
             if (err) {
-              console.log(err);
-            } else {
-              console.log('User updated after subsribe', ress);
             }
           },
         );
       } catch (e) {
-        console.log('error in customer subscribe', e);
       }
 
       break;
@@ -144,42 +119,29 @@ exports.stripeController = async (req: Request, res: Response) => {
           if (!userModel) {
             userModel = User.getModel(req.dbConnection);
           }   
-          console.log('INVOICE_PAYMENT.RES', event.data.object);
           const userInfo = await userModel.findOne({ email: event.data.object.customer_email }).exec();
 
-          console.log('USERINFO IN INVOICE PAYMENT SUCCEED', userInfo);
-          
           if (!userInfo) {
-            console.log('000000000000');
             return ;
           }
-          console.log('11111111111');
           const PlanStartDate = event.data.object.period_start;
           const formattedPlanStartDate = TrialDate(PlanStartDate);
 
           const PlanEndDate = event.data.object.period_end;
           const formattedPlanEndDate = TrialDate(PlanEndDate);
-
-          console.log('TRYYYYYYYYYYYYYY', event.data.object);
           
           let stripePaymentIntentId;
           let stripeProductId;
           if (userInfo) {
-            console.log('enenennenen');
             stripePaymentIntentId = userInfo.stripePaymentIntentId;
             stripeProductId = userInfo.currentProduct;
           }
 
-          console.log('thanks', stripeProductId);
-
-          console.log('222222222222');
           if (!stripePaymentIntentId) {
-            console.log('33333333333333333');
             return ;
           }
           
           const intent = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId);
-          console.log('666666666666');
           const PaymentHistoryInformation = await addPaymentHistory(req, {
             subscriptionId: event.data.object.id, // not necessary i think.
             currentChargeStartDate: formattedPlanStartDate,
@@ -189,10 +151,6 @@ exports.stripeController = async (req: Request, res: Response) => {
             paymentIntentStatus: intent.status,
             amount: event.data.object.amount_paid,
           });
-          console.log('9999999999999');
-
-          console.log('Payment-succeed-productId', stripeProductId);
-
 
           userModel.findOneAndUpdate(
             { customerId: userInfo.customerId },
@@ -203,15 +161,12 @@ exports.stripeController = async (req: Request, res: Response) => {
               $addToSet: { paymentHistoryId: PaymentHistoryInformation._id }, 
             },
             { new: true },
-            (err: any, resss: any) => {
+            (err: any) => {
               if (err) {
-              } else {
-                console.log('user update after invoice.payment_succeeded', resss);
               }
             },
           );
         } catch (e) {
-          console.log('error in invoice_payment_succeed', e);
         }
 
         const customerEmail = event.data.object.customer_email;
@@ -245,11 +200,10 @@ exports.stripeController = async (req: Request, res: Response) => {
       const RefundStartDate = event.data.object.created;
       const formattedRefundStartDate = TrialDate(RefundStartDate);
       
-      // these name will change later...
       if (!userModel) {
         userModel = await User.getModel(req.dbConnection);
       }        
-      // should change this customerId..........!!!!
+
       const userInfo2 = await userModel.findOne({ customerId: event.data.object.customer }).exec();
       if (userInfo2) {
         stripePaymentIntentId2 = userInfo2.stripePaymentIntentId;
@@ -258,7 +212,6 @@ exports.stripeController = async (req: Request, res: Response) => {
 
       const intent2 = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId2);
 
-      // these name will change later...
       await addPaymentHistory(req, {
         currentChargeStartDate: formattedRefundStartDate,
         currentProduct: stripeProductId2,
@@ -293,7 +246,7 @@ exports.stripeController = async (req: Request, res: Response) => {
       if (!userModel) {
         userModel = await User.getModel(req.dbConnection);
       }        
-      // should change this customerId........!!!!!!
+
       userModel.findOneAndUpdate(
         { customerId: event.data.object.customer },
         {

@@ -46,13 +46,6 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
     freeTrial = FREE_TRIAL;
 
-    console.log('currentProduct', productId);
-    // in webhook, it is important to make sure insert the
-    // the paymentIntentId in the product you chosed,
-    // so when you check if paymentIntentId already exists,
-    // it means this user already subscribed this plan before.
-    // so it should pay directly, (with no free);
-
     const userModel = User.getModel(req.dbConnection);
     const userInfo = await userModel.findOne({ _id: userId }).exec();
     if (userInfo.productHistory.includes(productId)) {
@@ -60,12 +53,6 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
     const payment = await subscribe(productId, priceId, userId, freeTrial, freeTrialCheck, req.dbConnection);
 
-    /*
-      const a = billOverviewService.getOverview();
-      const b = billOverviewService.getDetails(); 
-      const c = .....
-      const d = .....
-    */
     res.send(payment);
   } catch (e) {
     next(e);
