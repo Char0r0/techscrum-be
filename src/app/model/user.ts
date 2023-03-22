@@ -89,6 +89,11 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
+    currentPaymentHistoryId: {
+      ref: 'paymentHistory',
+      type: Types.ObjectId,
+    },
+
     subscriptionHistoryId: [
       {
         type: String,
@@ -116,11 +121,18 @@ const userSchema = new mongoose.Schema(
 
     // If user subscribed one plan before, they don't have any chance to start a new free trial. 
     // There must be a way can check whether the user subscribe this plan before or not????
-
-    stripeProductId: {
+    
+    currentProduct: {
       ref: 'product',
       type: String,
     },
+
+    productHistory: [
+      {
+        ref: 'product',
+        type: String,
+      },
+    ],
 
     freeTrialStartDate: {
       type: String,

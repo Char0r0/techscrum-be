@@ -5,7 +5,7 @@ interface PaymentHistoryProps {
   subscriptionId?: string | null;
   currentChargeStartDate: string;
   currentChargeEndDate?: string;
-  stripeProductId?: string | null;
+  currentProduct?: string | null;
   stripePaymentIntentId?: string | null;
   paymentIntentStatus?: string | null;
   amount?: number;
@@ -18,13 +18,13 @@ const addPaymentHistory = async (req: Request, params: PaymentHistoryProps) => {
     subscriptionId: params.subscriptionId,
     currentChargeStartDate: params.currentChargeStartDate,
     currentChargeEndDate: params.currentChargeEndDate,
-    stripeProductId: params.stripeProductId,
+    currentProduct: params.currentProduct,
     stripePaymentIntentId: params.stripePaymentIntentId,
     paymentIntentStatus: params.paymentIntentStatus,
     amount: params.amount,
     isRefund: params.isRefund,
   });
-  PaymentHistoryInformation.save();
+  await PaymentHistoryInformation.save();
   return PaymentHistoryInformation;
 };
 

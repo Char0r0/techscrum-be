@@ -24,6 +24,10 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
 
+    currentProduct: {
+      type: String,
+    },
+    
     // not necessary
     amount: {
       type: Number,
