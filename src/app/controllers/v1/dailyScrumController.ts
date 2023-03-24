@@ -86,7 +86,6 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     logger.error(errors);
     return res.status(status.UNPROCESSABLE_ENTITY).json({
       errors,
-      id: req?.params?.dailyScrumId,
     });
   }
   try {
