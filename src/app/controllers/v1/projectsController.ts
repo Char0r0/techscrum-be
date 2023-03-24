@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 const Project = require('../../model/project');
-const User = require('../../model/user');
 const status = require('http-status');
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
-import { asyncHandler } from '../../utils/helper';
+import { asyncHandler, createUserModel } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
 //get
 exports.index = asyncHandler(async (req: any, res: Response) => {
@@ -13,10 +12,11 @@ exports.index = asyncHandler(async (req: any, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+  const userModel = await createUserModel();
   const projects = await Project.getModel(req.dbConnection)
     .find({ isDelete: false })
-    .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
-    .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
   res.send(replaceId(projects));
 });
 
@@ -26,11 +26,11 @@ exports.show = asyncHandler(async (req: any, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-
+  const userModel = await createUserModel();
   const project = await Project.getModel(req.dbConnection)
     .findOne({ _id: req.params.id, isDelete: false })
-    .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
-    .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
   res.status(200).send(replaceId(project));
 });
 
