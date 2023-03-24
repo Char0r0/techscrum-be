@@ -11,7 +11,7 @@ const status = require('http-status');
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    logger.log(errors);
+    logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
@@ -20,7 +20,6 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
 
   try {
-    // .populate('user') or .populate('users') not working - why???
     const results = await DailyScrumModel.find({ project: projectId, user: userId })
       .populate({
         path: 'user',
@@ -47,11 +46,10 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    logger.log(errors);
+    logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  // be very careful that the data from FE are all {attr}Id, but they will be saved as {attr}
   try {
     const { projectId } = req.params;
     const newData = {
@@ -62,12 +60,6 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     };
     const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
 
-    // if dailyScrum with this task(id) already exists, update it (userId)
-    // projectId from params is not changed
-    // req body has title - not changed
-    // taskId - must not changed; otherwise will not find
-    // userId - changed when changing assignee
-    // Maybe we can use 'upsert'???
     const updatedDailyScrum = await DailyScrumModel.findOneAndUpdate(
       { task: req.body.taskId },
       newData,
@@ -75,7 +67,6 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
         new: true,
       },
     ).exec();
-    // else, create one dailyScrum (happens when assigning task to someone at the 1st time)
     if (!updatedDailyScrum) {
       const newDailyScrum = new DailyScrumModel(newData);
       await newDailyScrum.save();
@@ -92,8 +83,11 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 exports.update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    logger.log(errors);
-    return res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    logger.error(errors);
+    return res.status(status.UNPROCESSABLE_ENTITY).json({
+      errors,
+      id: req?.params?.dailyScrumId,
+    });
   }
   try {
     const { dailyScrumId } = req.params;
@@ -110,6 +104,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     if (!newDailyScrum) {
       return res.sendStatus(status.NOT_FOUND);
     }
+
     return res.send(replaceId(newDailyScrum));
   } catch (e) {
     next(e);
@@ -119,7 +114,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    logger.log(errors);
+    logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   try {

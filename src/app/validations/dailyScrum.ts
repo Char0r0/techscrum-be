@@ -34,7 +34,6 @@ const generateIdValidationRule = (
       .bail();
   } else {
     validationChain = validationChain.optional();
-    // this can also work: validationChain.optional(); // without re-assigning to the validatonChain
   }
 
   return validationChain
@@ -53,8 +52,6 @@ const show = [
   generateIdValidationRule('query', 'taskId', false),
 ];
 
-// when dailyScrum of the task exists, update dailyScrum's user(id)
-// else create a new dailyScrum document
 const store = [
   generateIdValidationRule('param', 'projectId', true),
   body('title').notEmpty().isString().isLength({ max: 20 }),
@@ -88,7 +85,7 @@ const update = [
         const { dailyScrumId } = req.params;
         if (isCanFinish && value === true) {
           throw new Error(
-            `Express-validator: dailyScrumId: ${dailyScrumId} when isCanFinish is true, isNeedSupport must be false.`,
+            `[EV001]Express-validator: dailyScrumId: ${dailyScrumId} when "isCanFinish" is true, "isNeedSupport" must be false.`,
           );
         }
 
@@ -106,7 +103,7 @@ const update = [
       return [1, 2, 3, 4].includes(value);
     })
     .withMessage(
-      'Express-validator: supportType Must be 0 when isNeedSupport is false AND Must be 1-4 when isNeedSupport is true',
+      '[EV002]Express-validator: "supportType" Must be 0 when "isNeedSupport" is false AND Must be 1-4 when "isNeedSupport" is true',
     ),
   body('otherSupportDesc')
     .optional()
@@ -122,13 +119,13 @@ const update = [
 
         if ((!isNeedSupport || supportType !== 4) && value) {
           throw new Error(
-            `Express-validator: dailyScrumId: ${dailyScrumId} otherSupportDesc MUST be empty string when isNeedSupport is false OR supportType is not 4 (other support)`,
+            `[EV003]Express-validator: dailyScrumId: ${dailyScrumId} "otherSupportDesc" MUST be empty string when "isNeedSupport" is false OR "supportType" is not 4 (other support)`,
           );
         }
 
         if (supportType === 4 && value.length === 0) {
           throw new Error(
-            `Express-validator: dailyScrumId: ${dailyScrumId} otherSupportDesc MUST not be an empty string when supportType is 4 (other support)`,
+            `[EV004]Express-validator: dailyScrumId: ${dailyScrumId} "otherSupportDesc" MUST not be an empty string when "supportType" is 4 (other support)`,
           );
         }
 
