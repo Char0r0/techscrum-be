@@ -105,12 +105,18 @@ const userSchema = new mongoose.Schema(
 
     currentChargeStartDate: {
       type: Date,
-    }, 
+    },
 
     currentChargeEndDate: {
       type: Date,
     },
 
+    tenants: [
+      {
+        ref: 'tenants',
+        type: Types.ObjectId,
+      },
+    ],
   },
   { timestamps: true },
 );

@@ -8,14 +8,13 @@ const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
 const database = require('../../database/init');
 const User = require('../../model/user');
-const Tenant = require('../../model/tenant');
+const Tenant = require('../../model/tenants');
 const config = require('../../config/app');
 declare module 'express-serve-static-core' {
   interface Request {
     verifyEmail?: string;
   }
 }
-
 
 exports.register = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -36,9 +35,9 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
     const result = await tenantModel.find({ origin: tenantOrigin });
     if (result.length !== 0) {
       res.sendStatus(409);
-      return; 
+      return;
     }
-    const tenant = new tenantModel({ origin: tenantOrigin } );
+    const tenant = new tenantModel({ origin: tenantOrigin });
     tenant.save();
     tenantId = tenant._id;
     tenantUrl = tenantOrigin;
@@ -56,7 +55,6 @@ exports.register = asyncHandler(async (req: Request, res: Response) => {
   }
   res.status(status.FOUND).send();
 });
-
 
 exports.adminRegister = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
