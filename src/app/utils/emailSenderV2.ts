@@ -45,26 +45,6 @@ const emailSenderTemplate = (
   });
 };
 
-export const emailRecipientTemplate = (
-  emailFrom: string,
-  emailTo: string[],
-  data: {},
-  templateName: string,
-) => {
-  const ses = new aws.SES();
-
-  let params = {
-    Source: emailFrom,
-    Destination: {
-      ToAddresses: emailTo,
-    },
-    Template: templateName,
-    TemplateData: JSON.stringify(data),
-  };
-
-  return ses.sendTemplatedEmail(params).promise();
-};
-
 export const emailSender = (
   email: string,
   validationCode: string,
@@ -75,7 +55,7 @@ export const emailSender = (
     name: email,
     appName: 'TECHSCRUMAPP',
     domain,
-    url: 'verify',
+    url: 'verify-v2',
     token: validationCode,
     color: '#7291F7',
     border: '5px solid #7291F7',

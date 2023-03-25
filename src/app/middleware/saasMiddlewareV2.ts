@@ -4,50 +4,57 @@ import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
 const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenants');
 const config = require('../../app/config/app');
-const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
+const { dataConnectionPool, userConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 
-const getTenantId = async (host: string | undefined) => {
+const getTenant = async (host: string | undefined, req: Request) => {
   const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
-  const excludeDomain = await shouldExcludeDomainList(host);
+  const excludeDomain = shouldExcludeDomainList(host);
   const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
-  const haveConnection = Object.keys(tenantConnection).length !== 0;
+  const haveConnection = Object.keys(userConnection).length !== 0;
 
   if (!host || excludeDomain || useDefaultConnection) {
     return defaultConnection;
   }
 
   if (!haveConnection) {
-    const tenantConnectionMongoose = new Mongoose();
-    tenantConnection.connection = await tenantConnectionMongoose.connect(config.tenantConnection);
+    const userConnectionMongoose = new Mongoose();
+    userConnection.connection = await userConnectionMongoose.connect(config.userConnection);
+    req.body.userDbConnection = userConnection.connection;
   }
 
-  const tenantModel = Tenant.getModel(tenantConnection.connection);
-  const result = await tenantModel.findOne({ origin: host });
+  const tenantModel = Tenant.getModel(userConnection.connection);
+  const tenant = await tenantModel.findOne({ origin: host });
+  req.body.plan = tenant.plan;
   if (!config || !config.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');
   }
-  if (!result) {
+  if (!tenant) {
     logger.error('Cannot find tanant result');
     throw new Error('Cannot find tanant result');
   }
-  return result._id?.toString();
+  return tenant.id.toString();
 };
 
 const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const domain = req.headers.origin;
-  const tenantId: string = await getTenantId(domain);
-  const url = config.db.replace('techscrumapp', tenantId);
+  const tenantId = await getTenant(domain, req);
+  let url = config.publicConnection;
+  enum Plans {
+    Free = 'Free',
+  }
+  if (req.body.plan !== Plans.Free) {
+    url = config.publicConnection.replace('publicdb', tenantId);
+  }
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
     const dataConnectionMongoose = new Mongoose();
-    dataConnectionMongoose.connect(url).then(() => {
-      dataConnectionPool[tenantId] = dataConnectionMongoose;
-      req.dataConnectionPool = dataConnectionPool;
-      req.dbConnection = dataConnectionPool[tenantId];
-      req.tenantId = tenantId;
-      return next();
-    });
+    await dataConnectionMongoose.connect(url);
+    dataConnectionPool[tenantId] = dataConnectionMongoose;
+    req.dataConnectionPool = dataConnectionPool;
+    req.dbConnection = dataConnectionPool[tenantId];
+    req.tenantId = tenantId;
+    return next();
   } else {
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
