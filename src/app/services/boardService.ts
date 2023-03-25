@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
+import { createUserModel } from '../utils/helper';
 const Board = require('../model/board');
 const Task = require('../model/task');
-const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
 const Project = require('../model/project');
@@ -17,7 +17,7 @@ export const getBoardTasks = async (
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
-  const userModel = User.getModel(dbConnection);
+  const userModel = await createUserModel();
   const labelModel = Label.getModel(dbConnection);
   const projectModel = Project.getModel(dbConnection);
 
