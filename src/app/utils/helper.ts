@@ -1,33 +1,24 @@
 import { NextFunction } from 'express';
 import { Mongoose } from 'mongoose';
-const { domainConnection } = require('../utils/dbContext');
-const Domain = require('../model/domain');
-const config = require('../../app/config/app');
+const config = require('../config/app');
+const User = require('../model/user');
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
 };
 
-export const getDomains = async () => {
-  const haveDomainConnection = Object.keys(domainConnection).length !== 0;
-  if (!haveDomainConnection) {
-    const dataConnectionMongoose = new Mongoose();
-    domainConnection.connection = await dataConnectionMongoose.connect(config.domainConnection);
-  }
-  return Domain.getModel(domainConnection.connection).find({});
-};
-
-export const shouldExcludeDomainList = async (host: string | undefined) => {
+export const shouldExcludeDomainList = (host: string | undefined) => {
   if (!host) {
     return false;
   }
-  const domains: any = await getDomains();
 
-  for (const domain in domains) {
-    if (host.includes(domains[domain].url)) {
-      return true;
-    }
-  }
-  return false;
+  const domains = [
+    'https://www.techscrumapp.com',
+    'https://dev.techscrumapp.com',
+    'https://staging.techscrumapp.com',
+    // 'http://localhost:3000',
+  ];
+
+  return domains.some((domain) => host.includes(domain));
 };
 
 export function removeHttp(url: string | undefined) {
@@ -36,3 +27,10 @@ export function removeHttp(url: string | undefined) {
   }
   return url.replace(/^https?:\/\//, '');
 }
+
+export const createUserModel = async () => {
+  const connectUserDb = new Mongoose();
+  const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
+  const userModel = await User.getModel(resConnectUserDb);
+  return userModel;
+};
