@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose';
 
 export interface DailyScrumDocument extends mongoose.Document {
   title: string;
-  progress: number;
+  progress: { timeStamp: string; value: number }[];
   isCanFinish: boolean;
   isNeedSupport: boolean;
   supportType: number;
@@ -15,7 +15,9 @@ export interface DailyScrumDocument extends mongoose.Document {
 const dailyScrumSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    progress: { type: Number, default: 0 },
+    progress: [
+      { timeStamp: { type: String, default: Date.now }, value: { type: Number, default: 0 } },
+    ],
     isCanFinish: { type: Boolean, default: true },
     isNeedSupport: { type: Boolean, default: false },
     supportType: {

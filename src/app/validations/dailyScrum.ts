@@ -62,7 +62,24 @@ const store = [
 const update = [
   generateIdValidationRule('param', 'projectId', true),
   generateIdValidationRule('param', 'dailyScrumId', true),
-  body('progress').optional().isInt({ min: 0, max: 100 }),
+  body('progress')
+    .optional()
+    .isObject()
+    .withMessage('progress must be an object')
+    .bail()
+    .custom(
+      (
+        progress: { timeStamp: string; value: number },
+        { req }: { req: { body: Partial<DailyScrumDocument>; params: { dailyScrumId: string } } },
+      ) => {
+        const { dailyScrumId } = req.params;
+        if (!progress.hasOwnProperty('timeStamp') || !progress.hasOwnProperty('value')) {
+          throw new Error(
+            `[EV005]Express-validator: dailyScrumId: ${dailyScrumId} progress must have 2 properties: timeStamp and value`,
+          );
+        }
+      },
+    ),
   body('isCanFinish').optional().isBoolean(),
   body('isNeedSupport')
     .optional()
