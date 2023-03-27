@@ -5,6 +5,7 @@ const Type = require('../model/type');
 const Comment = require('../model/comment');
 const Label = require('../model/label');
 const Status = require('../model/status');
+import { ITask } from '../types';
 
 /** Find tasks with given filter
  * @param queryFilter
@@ -60,7 +61,7 @@ export const findTasks = async (
       })
       .sort({ createdAt: 1 });
 
-    const activeTasks = tasks.filter((e:any) => e.isActive === true);
+    const activeTasks = tasks.filter((e: ITask) => e.isActive === true);
 
     return activeTasks;
   } catch (error: any) {
