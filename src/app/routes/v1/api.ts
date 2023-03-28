@@ -51,6 +51,7 @@ const database = require('../../database/init');
 const domainController = require('../../controllers/v1/domainsController');
 const activityControllers = require('../../controllers/v1/activityController');
 const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
+const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 import * as sprintController from '../../controllers/v1/sprintController';
@@ -58,6 +59,7 @@ import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
+
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
@@ -399,12 +401,25 @@ router.delete('/activities/:id', activityControllers.destroy);
 
 //dailyScrums
 router.get(
-  '/projects/:projectId/dailyScrums/:userId/:taskId/:date/:searchCase',
+  '/projects/:projectId/dailyScrums',
+  dailyScrumValidations.show,
   dailyScrumControllers.show,
 );
-router.post('/projects/:projectId/dailyScrums', dailyScrumControllers.store);
-router.patch('/projects/:projectId/dailyScrums/:userId/:taskId', dailyScrumControllers.update);
-router.delete('/projects/:projectId/dailyScrums/:taskId', dailyScrumControllers.destroy);
+router.post(
+  '/projects/:projectId/dailyScrums',
+  dailyScrumValidations.store,
+  dailyScrumControllers.store,
+);
+router.patch(
+  '/projects/:projectId/dailyScrums/:dailyScrumId',
+  dailyScrumValidations.update,
+  dailyScrumControllers.update,
+);
+router.delete(
+  '/projects/:projectId/dailyScrums',
+  dailyScrumValidations.destroy,
+  dailyScrumControllers.destroy,
+);
 
 // payment
 router.post('/payment', paymentController.createPayment);
