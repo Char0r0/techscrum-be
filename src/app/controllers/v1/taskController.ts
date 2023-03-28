@@ -179,10 +179,10 @@ exports.toggleActivate = asyncHandler(async (req: Request, res: Response) => {
     return res.status(httpStatus.NOT_FOUND).send();
   }
   const isActive = !task.isActive;
-  const taskNew = await Task.getModel(req.dbConnection).findOneAndUpdate(
+  const updatedTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
     { _id: id },
     { isActive: isActive },
     { new: true },
   );
-  return res.status(httpStatus.OK).json(replaceId(taskNew));
+  return res.status(httpStatus.OK).json(replaceId(updatedTask));
 });
