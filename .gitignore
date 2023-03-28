@@ -30,5 +30,5 @@ yarn-error.log*
 
 /.artilleryio
 
-/test/__test__/storage/logs
+/test/__tests__/storage/logs
 

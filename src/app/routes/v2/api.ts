@@ -9,11 +9,12 @@ const {
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
-const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
+const { authenticationEmailTokenMiddlewareV2 } = require('../../middleware/registerMiddlewareV2');
 const {
   authenticationForgetPasswordMiddleware,
 } = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
+const loginControllerV2 = require('../../controllers/v1/loginControllerV2');
 const loginValidation = require('../../validations/login');
 const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
@@ -34,7 +35,7 @@ const shortcutValidation = require('../../validations/shortcut');
 const labelController = require('../../controllers/v1/labelController');
 const labelValidation = require('../../validations/label');
 const multerMiddleware = require('../../middleware/multerMiddleware');
-const saasMiddleware = require('../../middleware/saasMiddleware');
+const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
 const userPageControllers = require('../../controllers/v1/userPageController');
 const userPageValidation = require('../../validations/userPage');
 const permissionMiddleware = require('../../middleware/permissionMiddleware');
@@ -54,14 +55,31 @@ const dailyScrumControllers = require('../../controllers/v1/dailyScrumController
 const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
-const billOverviewController = require('../../controllers/v1/billingOverviewController');
-const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
+const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
 
+// ----------------------- register -------------------------
+//apply tenant and register-stepOne-V2
+router.post('/register', registerV2Controller.register);
+
+//emailVerifyCheck-stepTwo-V2
+router.get('/register/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
+
+//active account-stepThree-V2
+router.put(
+  '/register/:token',
+  registerValidation.store,
+  authenticationEmailTokenMiddlewareV2,
+  registerV2Controller.store,
+);
+// ----------------------- register -------------------------
+
+router.use(saasMiddlewareV2.saas);
+router.get('/domains', domainController.index);
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
@@ -70,18 +88,15 @@ router.get('/healthcheck', (req: any, res: any) => {
   res.sendStatus(200);
 });
 
-router.get('/domains', domainController.index);
-
 router.post(
   '/admin-register/:email',
   registerValidation.register,
   registerController.adminRegister,
 );
 
-router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
-router.all('*', saasMiddleware.saas);
+
 /* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
 /**
  * @swagger
@@ -149,15 +164,9 @@ router.all('*', saasMiddleware.saas);
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
-router.post('/login', loginValidation.login, loginController.login);
-
-router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.put(
-  '/register/:token',
-  registerValidation.store,
-  authenticationEmailTokenMiddleware,
-  registerController.store,
-);
+// ----------------------- login -------------------------
+router.post('/login', loginValidation.login, loginControllerV2.login);
+// ----------------------- login -------------------------
 
 router.post(
   '/reset-password',
@@ -319,6 +328,7 @@ router.post(
 
 // roleV2
 router.get('/permissions', permissionController.index);
+router.get('/roles', roleController.getDefaultRoles);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
 router.get(
@@ -418,9 +428,10 @@ router.delete(
 
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
-router.post('/billingOverview', billOverviewController.getBillingOverviewInfo);
-router.post('/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
-
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookController.stripeController,
+);
 
 module.exports = router;

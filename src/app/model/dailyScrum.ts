@@ -1,21 +1,47 @@
 import mongoose, { Types } from 'mongoose';
 
+export interface DailyScrumDocument extends mongoose.Document {
+  title: string;
+  progress: number;
+  isCanFinish: boolean;
+  isNeedSupport: boolean;
+  supportType: number;
+  user: Types.ObjectId;
+  project: Types.ObjectId;
+  task: Types.ObjectId;
+  otherSupportDesc: string;
+}
+
 const dailyScrumSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    progress: { type: Number, required: true, default: 0 },
-    isFinished: { type: Boolean, required: true, default: false },
-    hasReason: { type: Boolean, required: true, default: false },
-    reason: { type: String },
-    isNeedSupport: { type: Boolean, required: true, default: false },
-    userId: { type: Types.ObjectId, ref: 'user' },
-    projectId: { type: Types.ObjectId, ref: 'project' },
-    taskId: { type: Types.ObjectId, ref: 'task' },
-    createdDate: { type: String },
-    finishValidation: { type: Boolean, default: false },
-    supportValidation: { type: Boolean, default: false },
+    progress: { type: Number, default: 0 },
+    isCanFinish: { type: Boolean, default: true },
+    isNeedSupport: { type: Boolean, default: false },
+    supportType: {
+      type: Number,
+      default: 0,
+      validate: [
+        {
+          validator: function (type: number) {
+            if (!(this as DailyScrumDocument).isNeedSupport) {
+              return type === 0;
+            }
+
+            return [1, 2, 3, 4].includes(type);
+          },
+          msg: 'supportType Must be 0 when no support needed AND Must be 1-4 when support is needed',
+        },
+      ],
+    },
+    user: { type: Types.ObjectId, ref: 'user' },
+    project: { type: Types.ObjectId, ref: 'project' },
+    task: { type: Types.ObjectId, ref: 'task', unique: true },
+    otherSupportDesc: { type: String },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
 dailyScrumSchema.methods.toJSON = function () {
@@ -23,8 +49,7 @@ dailyScrumSchema.methods.toJSON = function () {
   const dailyScrumObject = dailyScrum.toObject();
   const id = dailyScrumObject._id;
   dailyScrumObject.id = id;
-  delete dailyScrumObject._id;
-  delete dailyScrumObject.__v;
+  dailyScrumObject._id = undefined;
   return dailyScrumObject;
 };
 
