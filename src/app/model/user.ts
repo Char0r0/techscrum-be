@@ -115,7 +115,7 @@ const userSchema = new mongoose.Schema(
     invoiceHistory: [
       {
         ref: 'invoice',
-        type: Types.ObjectId,
+        type: String,
       },
     ],
 
