@@ -5,7 +5,7 @@ const PaymentHistory = require('../model/paymentHistory');
 const Product = require('../model/product');
 
 
-const checkCurrentPlan = async (req: Request, userId: String) => {
+const checkCurrentPlan = async (req: Request, userId: string) => {
   let productType: string | undefined;
 
   const userModel = await User.getModel(req.dbConnection);

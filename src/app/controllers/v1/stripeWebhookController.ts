@@ -42,10 +42,6 @@ exports.stripeController = async (req: Request, res: Response) => {
               currentProduct: event.data.object.metadata.productId,
             },
             { new: true },
-            (err: any) => {
-              if (err) {
-              }
-            },
           );
         } else {
           userModel.findOneAndUpdate(
@@ -54,10 +50,6 @@ exports.stripeController = async (req: Request, res: Response) => {
               currentProduct: event.data.object.metadata.productId,
             },
             { new: true },
-            (err: any) => {
-              if (err) {
-              } 
-            },
           );
         }
       } catch (e: any) {
@@ -103,10 +95,6 @@ exports.stripeController = async (req: Request, res: Response) => {
             $addToSet: { productHistory: event.data.object.plan.product, subscriptionHistoryId: paymentIntent.id }, 
           },
           { new: true },
-          (err: any) => {
-            if (err) {
-            }
-          },
         );
       } catch (e) {
       }
@@ -161,10 +149,6 @@ exports.stripeController = async (req: Request, res: Response) => {
               $addToSet: { paymentHistoryId: PaymentHistoryInformation._id }, 
             },
             { new: true },
-            (err: any) => {
-              if (err) {
-              }
-            },
           );
         } catch (e) {
         }
@@ -254,10 +238,6 @@ exports.stripeController = async (req: Request, res: Response) => {
           $addToSet: { invoiceHistory: event.data.object.hosted_invoice_url },
         },
         { new: true },
-        (err: any) => {
-          if (err) {
-          }
-        },
       );
       break;
     

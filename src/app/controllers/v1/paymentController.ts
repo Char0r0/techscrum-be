@@ -17,10 +17,10 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
   let freeTrialCheck: boolean = isFreeTrial;
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
-      FREE_TRIAL = 7;
+      FREE_TRIAL = 1;
       planName = 'Advanced monthly plan';
     } else {
-      FREE_TRIAL = 30;
+      FREE_TRIAL = 1;
       planName = 'Advanced yearly plan';
     }
   } else {

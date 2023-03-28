@@ -4,7 +4,7 @@ const User = require('../model/user');
 const PaymentHistory = require('../model/paymentHistory');
 
 
-const getBillingOverviewInformation = async (req: Request, userId: String) => {
+const getBillingOverviewInformation = async (req: Request, userId: string) => {
   const userModel = await User.getModel(req.dbConnection);
   const userInfo = await userModel.findOne({ _id: userId });
 
