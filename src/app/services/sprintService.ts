@@ -32,6 +32,9 @@ export const findSprints = async (
         path: 'taskId',
         model: Task.getModel(dbConnection),
         populate: populateTasks(dbConnection),
+        match: {
+          $or: [{ isActive: { $exists: false } }, { isActive: true }],
+        },
       })
       .sort({ currentSprint: -1 });
     return sprints;
