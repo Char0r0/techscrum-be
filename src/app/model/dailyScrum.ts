@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose';
 
 export interface DailyScrumDocument extends mongoose.Document {
   title: string;
-  progress: { timeStamp: string; value: number }[];
+  progresses: { timeStamp: number; value: number }[];
   isCanFinish: boolean;
   isNeedSupport: boolean;
   supportType: number;
@@ -12,12 +12,25 @@ export interface DailyScrumDocument extends mongoose.Document {
   otherSupportDesc: string;
 }
 
+// defaultProgress has 2 fields: timeStamp: Date.now(), value: 0
+
 const dailyScrumSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    progress: [
-      { timeStamp: { type: String, default: Date.now }, value: { type: Number, default: 0 } },
-    ],
+    progresses: {
+      type: [
+        {
+          timeStamp: { type: Number, default: Date.now() },
+          value: { type: Number, default: 0 },
+        },
+      ],
+      default: [
+        {
+          timeStamp: Date.now(),
+          value: 0,
+        },
+      ],
+    },
     isCanFinish: { type: Boolean, default: true },
     isNeedSupport: { type: Boolean, default: false },
     supportType: {
@@ -39,7 +52,7 @@ const dailyScrumSchema = new mongoose.Schema(
     user: { type: Types.ObjectId, ref: 'user' },
     project: { type: Types.ObjectId, ref: 'project' },
     task: { type: Types.ObjectId, ref: 'task', unique: true },
-    otherSupportDesc: { type: String },
+    otherSupportDesc: { type: String, default: '' },
   },
   {
     timestamps: true,
@@ -52,6 +65,22 @@ dailyScrumSchema.methods.toJSON = function () {
   const id = dailyScrumObject._id;
   dailyScrumObject.id = id;
   dailyScrumObject._id = undefined;
+
+  if (dailyScrumObject.progresses.length > 0) {
+    dailyScrumObject.progresses.sort(
+      (a: { timeStamp: number; value: number }, b: { timeStamp: number; value: number }) =>
+        b.timeStamp - a.timeStamp,
+    );
+
+    dailyScrumObject.progress = dailyScrumObject.progresses[0];
+
+    dailyScrumObject.progresses = undefined;
+  } else {
+    // nullish guard for empty array
+    dailyScrumObject.progress = { timeStamp: Date.now(), value: 0 };
+    dailyScrumObject.progresses = undefined;
+  }
+
   return dailyScrumObject;
 };
 
