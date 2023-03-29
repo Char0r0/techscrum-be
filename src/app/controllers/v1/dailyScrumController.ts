@@ -37,6 +37,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
         select: 'title',
       })
       .exec();
+
     res.send(replaceId(results));
   } catch (e) {
     next(e);
@@ -90,11 +91,13 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     const { dailyScrumId } = req.params;
+    const { progress, ...rest } = req.body;
 
     const newDailyScrum = await DailyScrum.getModel(req.dbConnection).findByIdAndUpdate(
       dailyScrumId,
       {
-        ...req.body,
+        ...rest,
+        $addToSet: { progresses: progress },
       },
       {
         new: true,

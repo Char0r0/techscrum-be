@@ -62,11 +62,42 @@ const store = [
 const update = [
   generateIdValidationRule('param', 'projectId', true),
   generateIdValidationRule('param', 'dailyScrumId', true),
-  body('progress').optional().isInt({ min: 0, max: 100 }),
-  body('isCanFinish').optional().isBoolean(),
-  body('isNeedSupport')
-    .optional()
+  body('progress')
+    .notEmpty()
+    .withMessage('progress is required')
+    .bail()
+    .isObject()
+    .withMessage('progress must be an object')
+    .bail()
+    .custom(
+      (
+        progress: { timeStamp: number; value: number },
+        { req }: { req: { body: Partial<DailyScrumDocument>; params: { dailyScrumId: string } } },
+      ) => {
+        const { dailyScrumId } = req.params;
+
+        if (!progress.hasOwnProperty('timeStamp') || !progress.hasOwnProperty('value')) {
+          throw new Error(
+            `[EV005]Express-validator: dailyScrumId: ${dailyScrumId} progress must have 2 properties: timeStamp and value`,
+          );
+        }
+
+        return true;
+      },
+    ),
+  body('isCanFinish')
+    .notEmpty()
+    .withMessage('isCanFinish is required')
+    .bail()
     .isBoolean()
+    .withMessage('isCanFinish must be a boolean'),
+  body('isNeedSupport')
+    .notEmpty()
+    .withMessage('isNeedSupport is required')
+    .bail()
+    .isBoolean()
+    .withMessage('isNeedSupport must be a boolean')
+    .bail()
     .custom(
       (
         value: boolean,
@@ -93,8 +124,12 @@ const update = [
       },
     ),
   body('supportType')
-    .optional()
+    .notEmpty()
+    .withMessage('supportType is required')
+    .bail()
     .isInt({ min: 0, max: 4 })
+    .withMessage('supportType must be an integar between 0 to 4')
+    .bail()
     .custom((value: number, { req }: { req: { body: Partial<DailyScrumDocument> } }) => {
       const { isNeedSupport } = req.body;
       if (!isNeedSupport) {
@@ -108,7 +143,11 @@ const update = [
   body('otherSupportDesc')
     .optional()
     .isString()
+    .withMessage('otherSupportDesc must be a string')
+    .bail()
     .isLength({ max: 40 })
+    .withMessage('otherSupportDesc must not be more than 40 characters')
+    .bail()
     .custom(
       (
         value: string,

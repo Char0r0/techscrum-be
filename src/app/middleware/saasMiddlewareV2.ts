@@ -20,7 +20,7 @@ const getTenant = async (host: string | undefined, req: Request) => {
   if (!haveConnection) {
     const userConnectionMongoose = new Mongoose();
     userConnection.connection = await userConnectionMongoose.connect(config.userConnection);
-    req.body.userDbConnection = userConnection.connection;
+    req.userConnection = userConnection.connection;
   }
 
   const tenantModel = Tenant.getModel(userConnection.connection);
@@ -47,18 +47,23 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   if (req.body.plan !== Plans.Free) {
     url = config.publicConnection.replace('publicdb', tenantId);
   }
-  if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
+  if (!dataConnectionPool || !dataConnectionPool[tenantId]! || !userConnection) {
     const dataConnectionMongoose = new Mongoose();
     await dataConnectionMongoose.connect(url);
+    const userDbConnectionMongoose = new Mongoose();
+    await userDbConnectionMongoose.connect(config.authenticationConnection);
     dataConnectionPool[tenantId] = dataConnectionMongoose;
+    userConnection.connection = userDbConnectionMongoose;
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
     req.tenantId = tenantId;
+    req.userConnection = userConnection.connection;
     return next();
   } else {
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
     req.tenantId = tenantId;
+    req.userConnection = userConnection.connection;
     return next();
   }
 });
