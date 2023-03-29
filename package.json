@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "test": "jest --runInBand",
     "coverage": "nyc --reporter=text npm test",
