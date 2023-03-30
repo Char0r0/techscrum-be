@@ -2,12 +2,10 @@ import { Request, Response } from 'express';
 import { TrialDate } from '../../utils/TrialDate';
 import { addPaymentHistory } from '../../utils/addPaymentHistory';
 import { checkoutSessionCompleted, invoiceFinalized, invoicePaymentSucceed, subscriptionCreateCompleted } from '../../services/stripeWebhookService';
+import { createUserModel } from '../../utils/helper';
 
-
-const User = require('../../model/user');
 const Invoice = require('../../model/invoice');
 const config = require('../../config/app');
-
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event: any;
@@ -28,11 +26,11 @@ exports.stripeController = async (req: Request, res: Response) => {
 
   switch (event.type) {
     case 'checkout.session.completed':
-      await checkoutSessionCompleted(event, req);
+      await checkoutSessionCompleted(event);
       break; 
 
     case 'customer.subscription.created':
-      await subscriptionCreateCompleted(event, req);
+      await subscriptionCreateCompleted(event);
       break;
     
     case 'invoice.payment_succeeded':
@@ -64,7 +62,7 @@ exports.stripeController = async (req: Request, res: Response) => {
       const formattedRefundStartDate = TrialDate(RefundStartDate);
       
       if (!userModel) {
-        userModel = await User.getModel(req.dbConnection);
+        userModel = await createUserModel();
       }        
 
       const userInfo2 = await userModel.findOne({ customerId: event.data.object.customer }).exec();
@@ -98,7 +96,7 @@ exports.stripeController = async (req: Request, res: Response) => {
       break;
 
     case 'invoice.finalized':
-      await invoiceFinalized(event, req);
+      await invoiceFinalized(event);
       break;
     
     case 'invoice.updated':

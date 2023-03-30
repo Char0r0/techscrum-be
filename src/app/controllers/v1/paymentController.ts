@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
+import { createProductModel, createTenantsModel } from '../../utils/helper';
 const { createPrice, subscribe } = require('../../services/paymentService');
-const Product = require('../../model/product');
-const User = require('../../model/user');
 
 let recurringPrice: Stripe.Price;
 let priceId: string;
@@ -13,7 +12,9 @@ const ADVANCED_PLAN = 0;
 let FREE_TRIAL: number;
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
-  const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+  const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+
+  console.log('DOMAIN!!!!!!', domainURL);
   let freeTrialCheck: boolean = isFreeTrial;
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
@@ -33,7 +34,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
   }
   try {
-    const productModel = Product.getModel(req.dbConnection);
+    const productModel = await createProductModel();
     const isProductExist = await productModel.findOne({ productName: planName }).exec();
     if (!isProductExist) {
       recurringPrice = await createPrice(req, planIdentifier, planName, paymentMode);
@@ -46,15 +47,18 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
     freeTrial = FREE_TRIAL;
 
-    const userModel = User.getModel(req.dbConnection);
-    const userInfo = await userModel.findOne({ _id: userId }).exec();
-    if (userInfo.productHistory.includes(productId)) {
+    const tenantModel = await createTenantsModel();
+    const tenantInfo = await tenantModel.findOne({ owner: userId }).exec();
+
+    if (tenantInfo.productHistory.includes(productId)) {
       freeTrialCheck = false;
     }
-    const payment = await subscribe(productId, priceId, userId, freeTrial, freeTrialCheck, req.dbConnection);
+
+    const payment = await subscribe(domainURL, productId, priceId, userId, freeTrial, freeTrialCheck, req.dbConnection);
 
     res.send(payment);
   } catch (e) {
+    console.log(e);
     next(e);
   }
 };

@@ -1,35 +1,36 @@
 import { Request } from 'express';
 import { addPaymentHistory } from '../utils/addPaymentHistory';
 import { subscriptionSender } from '../utils/emailSender';
+import { createInvoiceModel, createTenantsModel, createUserModel } from '../utils/helper';
 import { randomStringGenerator } from '../utils/randomStringGenerator';
 import { TrialDate } from '../utils/TrialDate';
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/app');
-const User = require('../model/user');
-const Invoice = require('../model/invoice');
 
+let tenantModel: any;
 
-let userModel: any;
-
-const checkoutSessionCompleted = async (event: any, req: Request) => {
+const checkoutSessionCompleted = async (event: any) => {
   try {
-    if (!userModel) {
-      userModel = User.getModel(req.dbConnection);
+    if (!tenantModel) {
+      tenantModel = await createTenantsModel();
     }        
-    const userInfo = await userModel.findOne({ _id: event.data.object.metadata.userId }).exec();
-    if (!userInfo.customerId) {
-      userModel.findOneAndUpdate(
-        { _id: event.data.object.metadata.userId },
+
+    const tenantInfo = await tenantModel.findOne({ origin: event.data.object.metadata.domainURL }).exec();
+
+    if (!tenantInfo.customerId) {
+      tenantModel.findOneAndUpdate(
+        { origin: event.data.object.metadata.domainURL },
         {
           customerId: event.data.object.customer,
           currentProduct: event.data.object.metadata.productId,
+          email: event.data.object.customer_details.email,
         },
         { new: true },
       ).exec();
     } else {
-      userModel.findOneAndUpdate(
-        { _id: event.data.object.metadata.userId },
+      tenantModel.findOneAndUpdate(
+        { origin: event.data.object.metadata.domainURL },
         {
           currentProduct: event.data.object.metadata.productId,
         },
@@ -41,14 +42,15 @@ const checkoutSessionCompleted = async (event: any, req: Request) => {
 };
 
 
-const subscriptionCreateCompleted = async (event: any, req: Request) => {
+const subscriptionCreateCompleted = async (event: any) => {
   try {
-    if (!userModel) {
-      userModel = User.getModel(req.dbConnection);
+
+    if (!tenantModel) {
+      tenantModel = await createTenantsModel();
     }
 
-    const userInfo = await userModel.findOne({ currentProduct: event.data.object.plan.product }).exec();
-    if (!userInfo.customerId) {
+    const tenantInfo = await tenantModel.findOne({ currentProduct: event.data.object.plan.product }).exec();
+    if (!tenantInfo.customerId) {
       return ;
     }
 
@@ -69,8 +71,8 @@ const subscriptionCreateCompleted = async (event: any, req: Request) => {
       description: '',
     });
 
-    userModel.findOneAndUpdate(
-      { customerId: userInfo.customerId },
+    tenantModel.findOneAndUpdate(
+      { customerId: tenantInfo.customerId },
       {
         stripeProductId: productId,
         stripePaymentIntentId: paymentIntent.id, 
@@ -80,6 +82,7 @@ const subscriptionCreateCompleted = async (event: any, req: Request) => {
       },
       { new: true },
     ).exec();
+
   } catch (e) {
   }
 };
@@ -87,12 +90,12 @@ const subscriptionCreateCompleted = async (event: any, req: Request) => {
 const invoicePaymentSucceed = async (event: any, req: Request) => {
   setTimeout(async () => {  
     try {
-      if (!userModel) {
-        userModel = User.getModel(req.dbConnection);
+      if (!tenantModel) {
+        tenantModel = await createTenantsModel();
       }   
-      const userInfo = await userModel.findOne({ email: event.data.object.customer_email }).exec();
-
-      if (!userInfo) {
+      const tenantInfo = await tenantModel.findOne({ email: event.data.object.customer_email }).exec();
+      
+      if (!tenantInfo) {
         return ;
       }
       const PlanStartDate = event.data.object.period_start;
@@ -103,9 +106,11 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
       
       let stripePaymentIntentId;
       let stripeProductId;
-      if (userInfo) {
-        stripePaymentIntentId = userInfo.stripePaymentIntentId;
-        stripeProductId = userInfo.currentProduct;
+      
+
+      if (tenantInfo) {
+        stripePaymentIntentId = tenantInfo.stripePaymentIntentId;
+        stripeProductId = tenantInfo.currentProduct;
       }
 
       if (!stripePaymentIntentId) {
@@ -123,8 +128,9 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
         amount: event.data.object.amount_paid,
       });
 
-      userModel.findOneAndUpdate(
-        { customerId: userInfo.customerId },
+
+      tenantModel.findOneAndUpdate(
+        { customerId: tenantInfo.customerId },
         {
           currentChargeStartDate: formattedPlanStartDate,
           currentChargeEndDate: formattedPlanEndDate,
@@ -136,6 +142,8 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
     } catch (e) {
     }
 
+    // update the 'plan' under the specific tenant. 
+
     const customerEmail = event.data.object.customer_email;
     const activeCode = randomStringGenerator(16);
     const validationToken = jwt.sign({ customerEmail, activeCode }, config.emailSecret);
@@ -144,8 +152,9 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
 };
 
 
-const invoiceFinalized = async (event: any, req: Request) => {
-  const InvoiceModal = Invoice.getModel(req.dbConnection);
+const invoiceFinalized = async (event: any) => {
+
+  const InvoiceModal = await createInvoiceModel();
   const InvoiceFinalized = new InvoiceModal({
     stripeInvoiceId: event.data.object.id,
     invoiceNumber: event.data.object.number,
@@ -153,11 +162,11 @@ const invoiceFinalized = async (event: any, req: Request) => {
   });
   await InvoiceFinalized.save();
 
-  if (!userModel) {
-    userModel = await User.getModel(req.dbConnection);
+  if (!tenantModel) {
+    tenantModel = await createUserModel();
   }        
 
-  userModel.findOneAndUpdate(
+  tenantModel.findOneAndUpdate(
     { customerId: event.data.object.customer },
     {
       currentInvoice: InvoiceFinalized._id,

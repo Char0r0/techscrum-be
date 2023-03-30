@@ -56,6 +56,9 @@ const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
+const billOverviewController = require('../../controllers/v1/billingOverviewController');
+const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
+
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -80,6 +83,8 @@ router.put(
 
 router.use(saasMiddlewareV2.saas);
 router.get('/domains', domainController.index);
+router.post('/domains/owner', domainController.getOwnerDomain);
+
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
@@ -433,12 +438,12 @@ router.delete(
   dailyScrumControllers.destroy,
 );
 
+
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post(
-  '/webhook',
-  express.raw({ type: 'application/json' }),
-  stripeWebhookController.stripeController,
-);
+router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
+router.post('/billingOverview', billOverviewController.getBillingOverviewInfo);
+router.post('/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
+
 
 module.exports = router;

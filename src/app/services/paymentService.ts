@@ -1,7 +1,7 @@
-const Product = require('../model/product');
 const config = require('../config/app');
 import { Request } from 'express';
 import Stripe from 'stripe';
+import { createProductModel } from '../utils/helper';
 
 let session : Stripe.Checkout.Session;
 let productPrice: Stripe.Price;
@@ -45,7 +45,7 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
       recurring: { interval: interval },
     });
 
-    const productModel = Product.getModel(req.dbConnection);
+    const productModel = await createProductModel();
     const productInformation = new productModel({ stripeProductId: product.id, productName: productName, productPrice: productPrice.id });
     await productInformation.save();
 
@@ -54,7 +54,7 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
   return productPrice;
 };
 
-const subscribe = async (productId: string, priceId: string, userId: string, freeTrial: number, isFreeTrial: boolean) => {
+const subscribe = async (domainURL: string, productId: string, priceId: string, userId: string, freeTrial: number, isFreeTrial: boolean) => {
   try {
     let subscriptionData = {};
     if (isFreeTrial) {
@@ -73,6 +73,7 @@ const subscribe = async (productId: string, priceId: string, userId: string, fre
       metadata: {
         userId: userId,
         productId: productId,
+        domainURL: domainURL,
       },
       subscription_data: subscriptionData,
       mode: 'subscription',

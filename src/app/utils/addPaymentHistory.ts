@@ -1,5 +1,5 @@
 import { Request } from 'express';
-const PaymentHistory = require('../model/paymentHistory');
+import { createPaymentHistoryModel } from './helper';
 
 interface PaymentHistoryProps {
   subscriptionId?: string | null;
@@ -13,7 +13,7 @@ interface PaymentHistoryProps {
 }
 
 const addPaymentHistory = async (req: Request, params: PaymentHistoryProps) => {
-  const PaymentHistoryModal = PaymentHistory.getModel(req.dbConnection);
+  const PaymentHistoryModal = await createPaymentHistoryModel();
   const PaymentHistoryInformation = new PaymentHistoryModal({
     subscriptionId: params.subscriptionId,
     currentChargeStartDate: params.currentChargeStartDate,

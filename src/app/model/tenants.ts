@@ -22,6 +22,81 @@ const tenantSchema = new Schema(
     },
     owner: { type: Types.ObjectId, ref: 'users' },
     active: { type: Boolean, default: false },
+
+    customerId: {
+      type: String,
+    },
+
+    email: {
+      type: String,
+    },
+
+    paymentHistoryId: [
+      {
+        ref: 'paymentHistory',
+        type: Types.ObjectId,
+      },
+    ],
+
+    currentPaymentHistoryId: {
+      ref: 'paymentHistory',
+      type: Types.ObjectId,
+    },
+
+    subscriptionHistoryId: [
+      {
+        type: String,
+      },
+    ],
+
+    // this is pointing to the current subscription plan. 
+    stripePaymentIntentId: {  
+      type: String,
+      default: null, 
+    },
+    
+    // point out current payment History (current invoice)
+    currentInvoice: {
+      ref: 'invoice',
+      type: Types.ObjectId,
+    },
+
+    invoiceHistory: [
+      {
+        ref: 'invoice',
+        type: String,
+      },
+    ],
+
+    currentProduct: {
+      ref: 'product',
+      type: String,
+    },
+
+    productHistory: [
+      {
+        ref: 'product',
+        type: String,
+      },
+    ],
+
+    freeTrialStartDate: {
+      type: String,
+    },
+
+    freeTrialEndDate: {
+      type: String,
+    },
+
+    currentChargeStartDate: {
+      type: String,
+    }, 
+
+    currentChargeEndDate: {
+      type: String,
+    },
+
+
   },
   { timestamps: true },
 );

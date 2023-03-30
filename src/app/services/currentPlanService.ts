@@ -1,6 +1,6 @@
 import { Request } from 'express';
+import { createUserModel } from '../utils/helper';
 
-const User = require('../model/user');
 const PaymentHistory = require('../model/paymentHistory');
 const Product = require('../model/product');
 
@@ -8,7 +8,7 @@ const Product = require('../model/product');
 const checkCurrentPlan = async (req: Request, userId: string) => {
   let productType: string | undefined;
 
-  const userModel = await User.getModel(req.dbConnection);
+  const userModel = await createUserModel();
   const userInfo = await userModel.findOne({ _id: userId });
 
   const paymentModel = await PaymentHistory.getModel(req.dbConnection);
