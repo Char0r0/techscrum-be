@@ -70,6 +70,10 @@ const taskSchema = new mongoose.Schema(
       ref: 'types',
       require: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     attachmentUrls: [
       {
         type: String,

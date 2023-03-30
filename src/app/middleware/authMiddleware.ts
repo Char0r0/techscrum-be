@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
 const status = require('http-status');
+
 declare module 'express-serve-static-core' {
   interface Request {
     userId?: string;
@@ -24,7 +25,8 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return res.status(status.FORBIDDEN).send();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const user = await User.getModel(req.dbConnection).findOne({ _id: verifyUser.id });
+      const userDb = await User.getModel(req.userConnection);
+      const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
         res.status(status.FORBIDDEN).send();
         return;
@@ -39,7 +41,11 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
   res.status(status.FORBIDDEN).send();
 };
 
-const authenticationTokenValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const authenticationTokenValidationMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const authHeader = req.headers.authorization;
 
   const authType = authHeader && authHeader.split(' ')[0];
@@ -51,7 +57,8 @@ const authenticationTokenValidationMiddleware = (req: Request, res: Response, ne
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const user = await User.getModel(req.dbConnection).findOne({ _id: verifyUser.id });
+      const userDb = await User.getModel(req.userConnection);
+      const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
         res.status(status.FORBIDDEN).send();
         return;
@@ -66,7 +73,11 @@ const authenticationTokenValidationMiddleware = (req: Request, res: Response, ne
   res.status(status.FORBIDDEN).send();
 };
 
-const authenticationRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authenticationRefreshTokenMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (Object.keys(req.user ?? {}).length !== 0) return next();
   const authHeader = req.headers.authorization;
 
@@ -79,7 +90,8 @@ const authenticationRefreshTokenMiddleware = async (req: Request, res: Response,
     jwt.verify(authRefreshToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authRefreshToken, process.env.ACCESS_SECRET);
-      const user = await User.getModel(req.dbConnection).findOne({
+      const userDb = await User.getModel(req.userConnection);
+      const user = await userDb.findOne({
         _id: verifyUser.id,
         refreshToken: verifyUser.refreshToken,
       });
@@ -103,4 +115,8 @@ const authenticationRefreshTokenMiddleware = async (req: Request, res: Response,
   res.status(status.FORBIDDEN).send();
 };
 
-module.exports = { authenticationTokenMiddleware, authenticationTokenValidationMiddleware, authenticationRefreshTokenMiddleware };
+module.exports = {
+  authenticationTokenMiddleware,
+  authenticationTokenValidationMiddleware,
+  authenticationRefreshTokenMiddleware,
+};

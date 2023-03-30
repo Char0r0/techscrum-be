@@ -6,6 +6,7 @@ const Task = require('../../model/task');
 const mongoose = require('mongoose');
 const Status = require('../../model/status');
 const Sprint = require('../../model/sprint');
+const Project = require('../../model/project');
 const httpStatus = require('http-status');
 const { validationResult } = require('express-validator');
 
@@ -21,8 +22,27 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
-  const tasks = await findTasks({ _id: req.params.id }, {}, {}, req.dbConnection);
+  const tasks = await findTasks({ _id: req.params.id }, {}, {}, {}, req.dbConnection);
   res.status(200).send(replaceId(tasks[0]));
+});
+
+// GET TASKS BY PROJECT
+exports.tasksByProject = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
+  }
+  const { id: projectId } = req.params;
+  const tasks = await Task.getModel(req.dbConnection)
+    .find({ projectId: projectId })
+    .populate({
+      path: 'projectId',
+      model: Project.getModel(req.dbConnection),
+      select: 'key',
+    })
+    .sort({ createdAt: 1 })
+    .exec();
+  res.status(200).send(replaceId(tasks));
 });
 
 //POST
@@ -64,7 +84,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     // bind task ref to status
     await statusModel.findByIdAndUpdate(taskStatus._id, { $addToSet: { taskList: task._id } });
     // return task
-    const result = await findTasks({ _id: task._id }, {}, {}, req.dbConnection);
+    const result = await findTasks({ _id: task._id }, {}, {}, {}, req.dbConnection);
     res.status(httpStatus.CREATED).json(replaceId(result[0]));
   }
 });
@@ -114,12 +134,12 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
-  const result = await findTasks({ _id: id }, {}, {}, req.dbConnection);
+  const result = await findTasks({ _id: id }, {}, {}, {}, req.dbConnection);
 
   return res.status(httpStatus.OK).json(replaceId(result[0]));
 });
 
-// //DELETE
+// DELETE HARD
 exports.delete = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -143,4 +163,26 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
   });
 
   return res.status(httpStatus.NO_CONTENT).send();
+});
+
+// DELETE SOFT, TOGGLE isActive
+exports.toggleActivate = asyncHandler(async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
+  }
+
+  const { id } = req.params;
+
+  const task = await Task.getModel(req.dbConnection).findOne({ _id: id });
+  if (!task) {
+    return res.status(httpStatus.NOT_FOUND).send();
+  }
+  const isActive = !task.isActive;
+  const updatedTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
+    { _id: id },
+    { isActive: isActive },
+    { new: true },
+  );
+  return res.status(httpStatus.OK).json(replaceId(updatedTask));
 });

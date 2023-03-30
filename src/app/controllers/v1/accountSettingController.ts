@@ -17,7 +17,8 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   }
   const { newPassword, oldPassword } = req.body;
   const userId = req.body.userInfo.id;
-  const user = await Users.getModel(req.dbConnection).findOne({ _id: userId });
+  const userModel = await Users.getModel(req.userConnection);
+  const user = await userModel.findOne({ _id: userId });
   try {
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
     if (!checkPasswordFlag) {
@@ -57,7 +58,8 @@ exports.update = async (req: Request, res: Response) => {
     return;
   }
 
-  const updateUser = await Users.getModel(req.dbConnection).findOneAndUpdate(
+  const userModel = await Users.getModel(req.userConnection);
+  const updateUser = await userModel.findOneAndUpdate(
     { _id: user._id },
     {
       name,
@@ -90,7 +92,8 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      await Users.getModel(req.dbConnection).deleteOne({ _id: user._id });
+      const userModel = await Users.getModel(req.userConnection);
+      await userModel.deleteOne({ _id: user._id });
       return res.sendStatus(status.NOTCONNECTED);
     } catch (e) {
       next(e);

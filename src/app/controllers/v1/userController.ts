@@ -5,7 +5,8 @@ const User = require('../../model/user');
 const status = require('http-status');
 
 exports.index = async (req: Request, res: Response) => {
-  const users = await User.getModel(req.dbConnection).find({ active:true });
+  const userModel = await User.getModel(req.userConnection);
+  const users = await userModel.find({ active: true });
   res.send(replaceId(users));
 };
 
@@ -16,6 +17,7 @@ exports.show = async (req: Request, res: Response) => {
   }
 
   const { id } = req.params;
-  const user = await User.getModel(req.dbConnection).findById(id);
+  const userModel = await User.getModel(req.userConnection);
+  const user = await userModel.findById(id);
   return res.status(200).send(user);
 };

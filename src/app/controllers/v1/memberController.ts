@@ -17,7 +17,8 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const users = await User.getModel(req.dbConnection).find({ active: true });
+    const userModel = await User.getModel(req.userConnection);
+    const users = await userModel.find({ active: true });
     const projectMembersList = [];
     const projectId = req.params.id;
 
@@ -42,7 +43,8 @@ exports.update = async (req: Request, res: Response) => {
   }
   const { userId, projectId } = req.params;
   const { roleId } = req.body;
-  const user = await User.getModel(req.dbConnection).findById(userId);
+  const userModel = await User.getModel(req.userConnection);
+  const user = await userModel.findById(userId);
 
   for (const element of user.projectsRoles) {
     if (element?.projectId?.toString() === projectId) {
@@ -59,7 +61,8 @@ exports.delete = async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   const { userId, projectId } = req.params;
-  const user = await User.getModel(req.dbConnection).findById(userId);
+  const userModel = await User.getModel(req.userConnection);
+  const user = await userModel.findById(userId);
   const updatedProjectRoles = user.projectsRoles.filter((item: any) => {
     return item.projectId?.toString() !== projectId;
   });
@@ -75,10 +78,9 @@ exports.invite = async (req: Request, res: Response) => {
   }
   const { projectId } = req.params;
   const { roleId, email } = req.body;
-  const userModel = User.getModel(req.dbConnection);
+  const userModel = await User.getModel(req.userConnection);
 
   const projectModel = Project.getModel(req.dbConnection);
-
 
   try {
     const project = await projectModel.findById(projectId);

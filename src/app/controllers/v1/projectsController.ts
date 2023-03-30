@@ -7,16 +7,18 @@ const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
+const logger = require('../../../loaders/logger');
 //get
 exports.index = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
+  const userModel = await User.getModel(req.userConnection);
   const projects = await Project.getModel(req.dbConnection)
     .find({ isDelete: false })
-    .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
-    .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
   res.send(replaceId(projects));
 });
 
@@ -26,11 +28,11 @@ exports.show = asyncHandler(async (req: any, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-
+  const userModel = await User.getModel(req.userConnection);
   const project = await Project.getModel(req.dbConnection)
     .findOne({ _id: req.params.id, isDelete: false })
-    .populate({ path: 'projectLeadId', Model: User.getModel(req.dbConnection) })
-    .populate({ path: 'ownerId', Model: User.getModel(req.dbConnection) });
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
   res.status(200).send(replaceId(project));
 });
 
@@ -46,7 +48,8 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     const project = await initProject(body, userId, dbConnection);
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    logger.error(e);
+    res.sendStatus(status.SERVER_ERROR);
   }
 });
 

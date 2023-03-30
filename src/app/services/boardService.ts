@@ -1,22 +1,25 @@
 import { Mongoose } from 'mongoose';
+import { createUserModel } from '../utils/helper';
 const Board = require('../model/board');
 const Task = require('../model/task');
-const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
+const Project = require('../model/project');
 
 export const getBoardTasks = async (
   boardId: string,
   input: { title: RegExp } | {},
   users: { assignId: string[] } | {},
   taskTypes: { typeId: string[] } | {},
+  labels: { tags: string[] } | {},
   dbConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
-  const userModel = User.getModel(dbConnection);
+  const userModel = await createUserModel();
   const labelModel = Label.getModel(dbConnection);
+  const projectModel = Project.getModel(dbConnection);
 
   const boardTasks = await boardModel.find({ _id: boardId }).populate({
     path: 'taskStatus',
@@ -38,9 +41,15 @@ export const getBoardTasks = async (
           model: labelModel,
           select: 'name',
         },
+        {
+          path: 'projectId',
+          model: projectModel,
+          select: 'key',
+        },
       ],
       match: {
-        $and: [users, input, taskTypes],
+        $and: [users, input, taskTypes, labels],
+        $or: [{ isActive: { $exists: false } }, { isActive: true }],
       },
     },
   });

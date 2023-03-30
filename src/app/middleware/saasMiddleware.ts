@@ -2,16 +2,15 @@ export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
 const { Mongoose } = require('mongoose');
-const Tenant = require('../model/tenant');
+const Tenant = require('../model/tenants');
 const config = require('../../app/config/app');
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 
-
-const getTenantId = async (host:string | undefined) => {
+const getTenantId = async (host: string | undefined) => {
   const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
   const excludeDomain = await shouldExcludeDomainList(host);
-  const useDefaultConnection  = config.useDefaultDatabase.toString() === true.toString();
+  const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(tenantConnection).length !== 0;
 
   if (!host || excludeDomain || useDefaultConnection) {
@@ -24,20 +23,20 @@ const getTenantId = async (host:string | undefined) => {
   }
 
   const tenantModel = Tenant.getModel(tenantConnection.connection);
-  const result = await tenantModel.findOne({ origin: host } );
+  const result = await tenantModel.findOne({ origin: host });
   if (!config || !config.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');
   }
   if (!result) {
-    logger.error('Cannot find tanant result');   
+    logger.error('Cannot find tanant result');
     throw new Error('Cannot find tanant result');
   }
   return result._id?.toString();
 };
 
 const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const domain  = req.headers.origin;
+  const domain = req.headers.origin;
   const tenantId: string = await getTenantId(domain);
   const url = config.db.replace('techscrumapp', tenantId);
   if (!dataConnectionPool || !dataConnectionPool[tenantId]) {
