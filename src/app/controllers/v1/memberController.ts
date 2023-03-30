@@ -3,20 +3,12 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 const { randomStringGenerator } = require('../../utils/randomStringGenerator');
 import { invite } from '../../utils/emailSender';
-import { Mongoose } from 'mongoose';
-const config = require('../../config/app');
 const User = require('../../model/user');
 const Project = require('../../model/project');
 const status = require('http-status');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const logger = require('../../../loaders/logger');
-
-const connectUserDb = async () => {
-  const userDConnection = new Mongoose();
-  const resUserDbConnection = await userDConnection.connect(config.authenticationConnection);
-  return User.getModel(resUserDbConnection);
-};
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -25,7 +17,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const userModel = await connectUserDb();
+    const userModel = await User.getModel(req.userConnection);
     const users = await userModel.find({ active: true });
     const projectMembersList = [];
     const projectId = req.params.id;
@@ -51,7 +43,7 @@ exports.update = async (req: Request, res: Response) => {
   }
   const { userId, projectId } = req.params;
   const { roleId } = req.body;
-  const userModel = await connectUserDb();
+  const userModel = await User.getModel(req.userConnection);
   const user = await userModel.findById(userId);
 
   for (const element of user.projectsRoles) {
@@ -69,7 +61,7 @@ exports.delete = async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   const { userId, projectId } = req.params;
-  const userModel = await connectUserDb();
+  const userModel = await User.getModel(req.userConnection);
   const user = await userModel.findById(userId);
   const updatedProjectRoles = user.projectsRoles.filter((item: any) => {
     return item.projectId?.toString() !== projectId;
@@ -86,7 +78,7 @@ exports.invite = async (req: Request, res: Response) => {
   }
   const { projectId } = req.params;
   const { roleId, email } = req.body;
-  const userModel = await connectUserDb();
+  const userModel = await User.getModel(req.userConnection);
 
   const projectModel = Project.getModel(req.dbConnection);
 
