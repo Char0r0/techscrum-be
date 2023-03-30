@@ -1,6 +1,5 @@
 import { NextFunction } from 'express';
-import { Mongoose } from 'mongoose';
-const config = require('../config/app');
+const { userConnection } = require('../utils/dbContext');
 const User = require('../model/user');
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
@@ -29,8 +28,6 @@ export function removeHttp(url: string | undefined) {
 }
 
 export const createUserModel = async () => {
-  const connectUserDb = new Mongoose();
-  const resConnectUserDb = await connectUserDb.connect(config.authenticationConnection);
-  const userModel = await User.getModel(resConnectUserDb);
+  const userModel = await User.getModel(userConnection.connection);
   return userModel;
 };
