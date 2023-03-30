@@ -1,7 +1,6 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
-const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenants');
 const config = require('../../app/config/app');
 const { dataConnectionPool, userConnection } = require('../utils/dbContext');
@@ -52,19 +51,18 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   }
 
   if (!dataConnectionPool || !dataConnectionPool[tenantId]!) {
-    const dataConnectionMongoose = new Mongoose();
-    await mongoose.createConnection(url, options);
-    // const userDbConnectionMongoose = new Mongoose();
-    // await userDbConnectionMongoose.connect(config.authenticationConnection);
+    const dataConnectionMongoose = await mongoose.createConnection(url, options);
     dataConnectionPool[tenantId] = dataConnectionMongoose;
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
     req.tenantId = tenantId;
+    req.userConnection = userConnection.connection;
     return next();
   } else {
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
     req.tenantId = tenantId;
+    req.userConnection = userConnection.connection;
     return next();
   }
 });

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+const { createUserModel } = require('../../utils/helper');
 const activity = require('../../model/activity');
-const user = require('../../model/user');
 const status = require('http-status');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,11 +10,12 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const { tid } = req.params;
+  const userModel = await createUserModel();
   try {
     const result = await activity
       .getModel(req.dbConnection)
       .find({ taskId: tid })
-      .populate({ path: 'userId', model: user.getModel(req.dbConnection) });
+      .populate({ path: 'userId', model: userModel });
     res.send(result);
   } catch (e) {
     res.send(e);
