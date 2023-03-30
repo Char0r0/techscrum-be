@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { Mongoose } from 'mongoose';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
 const Tenant = require('../model/tenants');
@@ -11,12 +10,6 @@ declare module 'express-serve-static-core' {
     verifyEmail?: string;
   }
 }
-
-const connectUserDb = async () => {
-  const userDbConnection = new Mongoose();
-  const resUserDbConnection = await userDbConnection.connect(config.userConnection);
-  return resUserDbConnection;
-};
 
 const authenticationEmailTokenMiddlewareV2 = async (
   req: Request,
@@ -32,7 +25,7 @@ const authenticationEmailTokenMiddlewareV2 = async (
   jwt.verify(token, config.emailSecret, async (err: Error) => {
     if (err) return res.status(status.FORBIDDEN).send();
     const { id } = jwt.verify(token, config.emailSecret);
-    const resUserDbConnection = await connectUserDb();
+    const resUserDbConnection = req.userConnection;
     const userModel = await User.getModel(resUserDbConnection);
     const user = await userModel.findById(id);
     // if user is not active, continue registration process

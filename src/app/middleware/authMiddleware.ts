@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
 const status = require('http-status');
-const config = require('../../app/config/app');
-const { Mongoose } = require('mongoose');
+
 declare module 'express-serve-static-core' {
   interface Request {
     userId?: string;
@@ -13,13 +12,6 @@ declare module 'express-serve-static-core' {
     refreshToken?: string;
   }
 }
-
-const connectUserDb = async () => {
-  const userDbconnection = new Mongoose();
-  const resUserDbconnection = await userDbconnection.connect(config.authenticationConnection);
-  const userDb = await User.getModel(resUserDbconnection);
-  return userDb;
-};
 
 const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -33,7 +25,7 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return res.status(status.FORBIDDEN).send();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const userDb = await connectUserDb();
+      const userDb = await User.getModel(req.userConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
         res.status(status.FORBIDDEN).send();
@@ -65,7 +57,7 @@ const authenticationTokenValidationMiddleware = (
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const userDb = await connectUserDb();
+      const userDb = await User.getModel(req.userConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
         res.status(status.FORBIDDEN).send();
@@ -98,7 +90,7 @@ const authenticationRefreshTokenMiddleware = async (
     jwt.verify(authRefreshToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return next();
       const verifyUser = jwt.verify(authRefreshToken, process.env.ACCESS_SECRET);
-      const userDb = await connectUserDb();
+      const userDb = await User.getModel(req.userConnection);
       const user = await userDb.findOne({
         _id: verifyUser.id,
         refreshToken: verifyUser.refreshToken,
