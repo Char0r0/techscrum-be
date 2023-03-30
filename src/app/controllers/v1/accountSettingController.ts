@@ -1,6 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { createUserModel } from '../../utils/helper';
 const Users = require('../../model/user');
 const status = require('http-status');
 const { passwordAuth } = require('../../services/passwordAuthService');
@@ -18,7 +17,7 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   }
   const { newPassword, oldPassword } = req.body;
   const userId = req.body.userInfo.id;
-  const userModel = await createUserModel();
+  const userModel = await Users.getModel(req.userConnection);
   const user = await userModel.findOne({ _id: userId });
   try {
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
@@ -59,7 +58,7 @@ exports.update = async (req: Request, res: Response) => {
     return;
   }
 
-  const userModel = await createUserModel();
+  const userModel = await Users.getModel(req.userConnection);
   const updateUser = await userModel.findOneAndUpdate(
     { _id: user._id },
     {
@@ -93,7 +92,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      const userModel = await createUserModel();
+      const userModel = await Users.getModel(req.userConnection);
       await userModel.deleteOne({ _id: user._id });
       return res.sendStatus(status.NOTCONNECTED);
     } catch (e) {
