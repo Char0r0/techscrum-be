@@ -1,27 +1,29 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
-const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenants');
 const config = require('../../app/config/app');
 const { dataConnectionPool, userConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
+const mongoose = require('mongoose');
+
+const options = {
+  useNewURLParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 10,
+  socketTimeoutMS: 30000,
+};
 
 const getTenant = async (host: string | undefined, req: Request) => {
   const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
   const excludeDomain = shouldExcludeDomainList(host);
   const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
-  const haveConnection = Object.keys(userConnection).length !== 0;
-
   if (!host || excludeDomain || useDefaultConnection) {
     return defaultConnection;
   }
 
-  if (!haveConnection) {
-    const userConnectionMongoose = new Mongoose();
-    userConnection.connection = await userConnectionMongoose.connect(config.userConnection);
-    req.userConnection = userConnection.connection;
-  }
+  userConnection.connection = await mongoose.createConnection(config.userConnection, options);
+  req.userConnection = userConnection.connection;
 
   const tenantModel = Tenant.getModel(userConnection.connection);
   const tenant = await tenantModel.findOne({ origin: host });
@@ -47,13 +49,10 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   if (req.body.plan !== Plans.Free) {
     url = config.publicConnection.replace('publicdb', tenantId);
   }
-  if (!dataConnectionPool || !dataConnectionPool[tenantId]! || !userConnection) {
-    const dataConnectionMongoose = new Mongoose();
-    await dataConnectionMongoose.connect(url);
-    const userDbConnectionMongoose = new Mongoose();
-    await userDbConnectionMongoose.connect(config.authenticationConnection);
+
+  if (!dataConnectionPool || !dataConnectionPool[tenantId]!) {
+    const dataConnectionMongoose = await mongoose.createConnection(url, options);
     dataConnectionPool[tenantId] = dataConnectionMongoose;
-    userConnection.connection = userDbConnectionMongoose;
     req.dataConnectionPool = dataConnectionPool;
     req.dbConnection = dataConnectionPool[tenantId];
     req.tenantId = tenantId;
