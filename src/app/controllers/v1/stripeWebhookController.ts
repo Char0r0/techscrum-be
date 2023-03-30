@@ -13,7 +13,7 @@ exports.stripeController = async (req: Request, res: Response) => {
   let event: any;
   let userModel: any;
 
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = config.stripeSecret;
   const payloadString = Buffer.from(JSON.stringify(req.body)).toString();
   const header = config.stripe.webhooks.generateTestHeaderString({
     payload: payloadString,

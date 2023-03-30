@@ -24,4 +24,5 @@ module.exports = {
   emailSecret: process.env.EMAIL_SECRET || '123456',
   forgotSecret: process.env.FORGET_SECRET || '321654',
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
+  stripeSecret: process.env.STRIPE_WEBHOOK_SECRET,
 };

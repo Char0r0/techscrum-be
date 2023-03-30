@@ -14,7 +14,7 @@ let FREE_TRIAL: number;
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
   const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
-  let freeTrialCheck: boolean = isFreeTrial;
+  let isFreeTrialExist: boolean = isFreeTrial;
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
       FREE_TRIAL = 1;
@@ -49,9 +49,9 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     const userModel = User.getModel(req.dbConnection);
     const userInfo = await userModel.findOne({ _id: userId }).exec();
     if (userInfo.productHistory.includes(productId)) {
-      freeTrialCheck = false;
+      isFreeTrialExist = false;
     }
-    const payment = await subscribe(productId, priceId, userId, freeTrial, freeTrialCheck, req.dbConnection);
+    const payment = await subscribe(productId, priceId, userId, freeTrial, isFreeTrialExist, req.dbConnection);
 
     res.send(payment);
   } catch (e) {
