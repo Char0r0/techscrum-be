@@ -6,6 +6,7 @@ const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
 import { asyncHandler, createUserModel } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
+const logger = require('../../../loaders/logger');
 //get
 exports.index = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);
@@ -46,7 +47,8 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     const project = await initProject(body, userId, dbConnection);
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
-    res.sendStatus(status.UNPROCESSABLE_ENTITY);
+    logger.error(e);
+    res.sendStatus(status.SERVER_ERROR);
   }
 });
 
