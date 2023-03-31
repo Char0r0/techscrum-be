@@ -58,7 +58,6 @@ const stripeWebhookController = require('../../controllers/v1/stripeWebhookContr
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 const billOverviewController = require('../../controllers/v1/billingOverviewController');
 const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
-
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';

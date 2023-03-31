@@ -8,6 +8,7 @@ import { TrialDate } from '../utils/TrialDate';
 const jwt = require('jsonwebtoken');
 const config = require('../config/app');
 
+let userModel: any;
 let tenantModel: any;
 
 const checkoutSessionCompleted = async (event: any) => {
@@ -16,6 +17,10 @@ const checkoutSessionCompleted = async (event: any) => {
       tenantModel = await createTenantsModel();
     }        
 
+    if (!userModel) {
+      userModel = await createUserModel();
+    }
+ 
     const tenantInfo = await tenantModel.findOne({ origin: event.data.object.metadata.domainURL }).exec();
 
     console.log('CUSTOMER_ID_CHECKOUT', event.data.object.customer);
@@ -29,6 +34,20 @@ const checkoutSessionCompleted = async (event: any) => {
         },
         { new: true },
       ).exec();
+      
+      //////
+      //////
+      console.log('User email', event.data.object.metadata.customer_details.email);
+      userModel.findOneAndUpdate(
+        { email: event.data.object.metadata.customer_details.email },
+        {
+          customerId: event.data.object.customer,
+        },
+        { new: true },
+      ).exec();
+      //////
+      //////
+
     } else {
       tenantModel.findOneAndUpdate(
         { origin: event.data.object.metadata.domainURL },
@@ -51,7 +70,11 @@ const subscriptionCreateCompleted = async (event: any) => {
     if (!tenantModel) {
       tenantModel = await createTenantsModel();
     }
-
+    if (!userModel) {
+      userModel = await createUserModel();
+    }
+    // through email, find the customerId of this admin.
+    // and then put admin here to find the specific tenantInfo.
     const tenantInfo = await tenantModel.findOne({ customerId: event.data.object.customer }).exec();
     if (!tenantInfo.customerId) {
       console.log('0000000000000');
