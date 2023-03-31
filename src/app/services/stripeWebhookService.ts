@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { addPaymentHistory } from '../utils/addPaymentHistory';
 import { subscriptionSender } from '../utils/emailSender';
-import { createInvoiceModel, createTenantsModel, createUserModel } from '../utils/helper';
+import { createInvoiceModel, createPaymentHistoryModel, createTenantsModel, createUserModel } from '../utils/helper';
 import { randomStringGenerator } from '../utils/randomStringGenerator';
 import { TrialDate } from '../utils/TrialDate';
 
@@ -18,6 +18,7 @@ const checkoutSessionCompleted = async (event: any) => {
 
     const tenantInfo = await tenantModel.findOne({ origin: event.data.object.metadata.domainURL }).exec();
 
+    console.log('CUSTOMER_ID_CHECKOUT', event.data.object.customer);
     if (!tenantInfo.customerId) {
       tenantModel.findOneAndUpdate(
         { origin: event.data.object.metadata.domainURL },
@@ -38,6 +39,7 @@ const checkoutSessionCompleted = async (event: any) => {
       ).exec();
     }
   } catch (e: any) {
+    console.log('CHECKOUT_ERROR', e);
   }
 };
 
@@ -45,20 +47,30 @@ const checkoutSessionCompleted = async (event: any) => {
 const subscriptionCreateCompleted = async (event: any) => {
   try {
 
+    console.log('SUBSCRIPTION_DATA', event.data.object);
     if (!tenantModel) {
       tenantModel = await createTenantsModel();
     }
 
-    const tenantInfo = await tenantModel.findOne({ currentProduct: event.data.object.plan.product }).exec();
+    const tenantInfo = await tenantModel.findOne({ customerId: event.data.object.customer }).exec();
     if (!tenantInfo.customerId) {
+      console.log('0000000000000');
       return ;
     }
+
+    console.log('TENANTINFO_CUSTOMERID', tenantInfo.customerId);
 
     const freeTrialStartDate = event.data.object.trial_start;
     const formattedFreeTrialStartDate = TrialDate(freeTrialStartDate);
 
     const freeTrialEndDate = event.data.object.trial_end;
     const formattedFreeTrialEndDate = TrialDate(freeTrialEndDate);
+
+    const PlanStartDate = event.data.object.current_period_start;
+    const formattedPlanStartDate = TrialDate(PlanStartDate);
+
+    const PlanEndDate = event.data.object.current_period_end;
+    const formattedPlanEndDate = TrialDate(PlanEndDate);
 
     const productId = event.data.object.metadata.productId;
     
@@ -70,7 +82,7 @@ const subscriptionCreateCompleted = async (event: any) => {
       receipt_email: 'wei19970101@gmail.com',
       description: '',
     });
-
+  
     tenantModel.findOneAndUpdate(
       { customerId: tenantInfo.customerId },
       {
@@ -78,12 +90,15 @@ const subscriptionCreateCompleted = async (event: any) => {
         stripePaymentIntentId: paymentIntent.id, 
         freeTrialStartDate: formattedFreeTrialStartDate,
         freeTrialEndDate: formattedFreeTrialEndDate,
+        currentChargeStartDate: formattedPlanStartDate,
+        currentChargeEndDate: formattedPlanEndDate,
         $addToSet: { productHistory: event.data.object.plan.product, subscriptionHistoryId: paymentIntent.id }, 
       },
       { new: true },
     ).exec();
 
   } catch (e) {
+    console.log('subscription_Create_Completed_ERROR', e);
   }
 };
 
@@ -96,53 +111,63 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
       const tenantInfo = await tenantModel.findOne({ email: event.data.object.customer_email }).exec();
       
       if (!tenantInfo) {
+        console.log('11111111111111');
         return ;
       }
-      const PlanStartDate = event.data.object.period_start;
-      const formattedPlanStartDate = TrialDate(PlanStartDate);
-
-      const PlanEndDate = event.data.object.period_end;
-      const formattedPlanEndDate = TrialDate(PlanEndDate);
+      //console.log('Invoice_succeed_data', event.data.object);
       
       let stripePaymentIntentId;
       let stripeProductId;
+      let currentChargeStartDate;
+      let currentChargeEndDate;
       
 
       if (tenantInfo) {
         stripePaymentIntentId = tenantInfo.stripePaymentIntentId;
         stripeProductId = tenantInfo.currentProduct;
+        currentChargeStartDate = tenantInfo.currentChargeStartDate;
+        currentChargeEndDate = tenantInfo.currentChargeEndDate;
       }
 
       if (!stripePaymentIntentId) {
+        console.log('22222222222222');
         return ;
       }
       
       const intent = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId);
       const PaymentHistoryInformation = await addPaymentHistory(req, {
         subscriptionId: event.data.object.id, // not necessary i think.
-        currentChargeStartDate: formattedPlanStartDate,
-        currentChargeEndDate: formattedPlanEndDate,
         currentProduct: stripeProductId,
         stripePaymentIntentId: intent.id,
         paymentIntentStatus: intent.status,
         amount: event.data.object.amount_paid,
       });
 
-
       tenantModel.findOneAndUpdate(
         { customerId: tenantInfo.customerId },
         {
-          currentChargeStartDate: formattedPlanStartDate,
-          currentChargeEndDate: formattedPlanEndDate,
           currentPaymentHistoryId: PaymentHistoryInformation._id,
           $addToSet: { paymentHistoryId: PaymentHistoryInformation._id }, 
+          plan: 'Advanced',
         },
         { new: true },
       ).exec();
-    } catch (e) {
-    }
 
-    // update the 'plan' under the specific tenant. 
+      const PaymentHistoryModal = await createPaymentHistoryModel();
+      PaymentHistoryModal.findOneAndUpdate(
+        { _id: PaymentHistoryInformation._id },
+        {
+          currentChargeStartDate: currentChargeStartDate,
+          currentChargeEndDate: currentChargeEndDate,
+        },
+        { new: true },
+      ).exec();
+      
+
+    } catch (e) {
+      console.log('Invoice_payment_ERROR', e);
+    }
+    
 
     const customerEmail = event.data.object.customer_email;
     const activeCode = randomStringGenerator(16);

@@ -3,7 +3,7 @@ import { createPaymentHistoryModel } from './helper';
 
 interface PaymentHistoryProps {
   subscriptionId?: string | null;
-  currentChargeStartDate: string;
+  currentChargeStartDate?: string;
   currentChargeEndDate?: string;
   currentProduct?: string | null;
   stripePaymentIntentId?: string | null;
@@ -16,8 +16,6 @@ const addPaymentHistory = async (req: Request, params: PaymentHistoryProps) => {
   const PaymentHistoryModal = await createPaymentHistoryModel();
   const PaymentHistoryInformation = new PaymentHistoryModal({
     subscriptionId: params.subscriptionId,
-    currentChargeStartDate: params.currentChargeStartDate,
-    currentChargeEndDate: params.currentChargeEndDate,
     currentProduct: params.currentProduct,
     stripePaymentIntentId: params.stripePaymentIntentId,
     paymentIntentStatus: params.paymentIntentStatus,
