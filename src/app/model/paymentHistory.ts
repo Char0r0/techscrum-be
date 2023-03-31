@@ -11,7 +11,6 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
 
-    // not necessary
     subscriptionId: {
       type: String,
     },
@@ -28,7 +27,6 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
     
-    // not necessary
     amount: {
       type: Number,
     },
