@@ -33,8 +33,10 @@ module.exports = {
   emailSecret: process.env.EMAIL_SECRET || '123456',
   forgotSecret: process.env.FORGET_SECRET || '321654',
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
+  stripeSecret: process.env.STRIPE_WEBHOOK_SECRET,
   //---------------------------v2--------------------------
   userConnection: process.env.USER_URL || DEFAULT_USER_CONNECTION,
   publicConnection: process.env.PUBLIC_URL || DEFAULT_PUBLIC_CONNECTION,
   authenticationConnection: process.env.DB_V1 || DEFAULT_USER_CONNECTION,
 };
+

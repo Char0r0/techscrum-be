@@ -44,16 +44,26 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
       currency: 'aud',
       recurring: { interval: interval },
     });
+
     const productModel = Product.getModel(req.dbConnection);
     const productInformation = new productModel({ stripeProductId: product.id, productName: productName, productPrice: productPrice.id });
     await productInformation.save();
+
   } catch (e) {
   }
   return productPrice;
 };
 
-const subscribe = async (productId: string, priceId: string, userId: string, freeTrial: number) => {
+const subscribe = async (productId: string, priceId: string, userId: string, freeTrial: number, isFreeTrial: boolean) => {
   try {
+    let subscriptionData = {};
+    if (isFreeTrial) {
+      subscriptionData = {
+        trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
+        trial_period_days: freeTrial,
+      };
+    }
+
     session = await config.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
@@ -64,10 +74,7 @@ const subscribe = async (productId: string, priceId: string, userId: string, fre
         userId: userId,
         productId: productId,
       },
-      subscription_data: {
-        trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
-        trial_period_days: freeTrial,
-      },
+      subscription_data: subscriptionData,
       mode: 'subscription',
       success_url: 'https://www.techscrumapp.com/price',
       cancel_url: 'https://www.techscrumapp.com/price',

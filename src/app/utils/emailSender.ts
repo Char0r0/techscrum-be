@@ -45,6 +45,26 @@ const emailSenderTemplate = (
   });
 };
 
+export const subscriptionSender = (
+  email: string,
+  validationCode: string,
+  domain: string = config.frontEndAddress,
+) => {
+  const templateData = {
+    name: email,
+    appName: 'TECHSCRUMAPP',
+    domain,
+    url: 'verify',
+    token: validationCode,
+    color: '#7291F7',
+    border: '5px solid #7291F7',
+    year: '2023',
+    project: 'abc',
+  };
+  // change to 'Subscription'.
+  emailSenderTemplate(email, templateData, 'CustomEmailVerify', cb);
+};
+
 export const emailRecipientTemplate = (
   emailFrom: string,
   emailTo: string[],
