@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
 const { createPrice, subscribe } = require('../../services/paymentService');
 const Product = require('../../model/product');
+const User = require('../../model/user');
 
 let recurringPrice: Stripe.Price;
 let priceId: string;
@@ -9,21 +10,30 @@ let productId: string | Stripe.Product | Stripe.DeletedProduct;
 let freeTrial: number;
 let planName: string;
 const ADVANCED_PLAN = 0;
-const FREE_TRIAL = 3;
+let FREE_TRIAL: number;
+
+enum FreeTrialLengths {
+  ONE_WEEK = 7,
+  ONE_MONTH = 30,
+}
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
-  const { planIdentifier, userId, paymentMode } = req.body;
-
+  const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+  let isFreeTrialExist: boolean = isFreeTrial;
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
+      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
       planName = 'Advanced monthly plan';
     } else {
+      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
       planName = 'Advanced yearly plan';
     }
   } else {
     if (paymentMode) {
+      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
       planName = 'Ultra monthly plan';
     } else {
+      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
       planName = 'Ultra yearly plan';
     }
   }
@@ -40,7 +50,14 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
       priceId = isProductExist.productPrice;
     }
     freeTrial = FREE_TRIAL;
-    const payment = await subscribe(productId, priceId, userId, freeTrial, req.dbConnection);
+
+    const userModel = User.getModel(req.dbConnection);
+    const userInfo = await userModel.findOne({ _id: userId }).exec();
+    if (userInfo.productHistory.includes(productId)) {
+      isFreeTrialExist = false;
+    }
+    const payment = await subscribe(productId, priceId, userId, freeTrial, isFreeTrialExist, req.dbConnection);
+
     res.send(payment);
   } catch (e) {
     next(e);

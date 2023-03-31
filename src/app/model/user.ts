@@ -86,29 +86,69 @@ const userSchema = new mongoose.Schema(
     paymentHistoryId: [
       {
         ref: 'paymentHistory',
+        type: Types.ObjectId,
+      },
+    ],
+
+    currentPaymentHistoryId: {
+      ref: 'paymentHistory',
+      type: Types.ObjectId,
+    },
+
+    subscriptionHistoryId: [
+      {
         type: String,
       },
     ],
 
-    stripeProductId: {
+    // this is pointing to the current subscription plan. 
+    stripePaymentIntentId: {  
+      type: String,
+      default: null, 
+    },
+    
+    // point out current payment History (current invoice)
+    currentInvoice: {
+      ref: 'invoice',
+      type: Types.ObjectId,
+    },
+
+    invoiceHistory: [
+      {
+        ref: 'invoice',
+        type: String,
+      },
+    ],
+
+    // If user subscribed one plan before, they don't have any chance to start a new free trial. 
+    // There must be a way can check whether the user subscribe this plan before or not????
+    
+    currentProduct: {
       ref: 'product',
       type: String,
     },
 
+    productHistory: [
+      {
+        ref: 'product',
+        type: String,
+      },
+    ],
+
     freeTrialStartDate: {
-      type: Date,
+      type: String,
     },
 
     freeTrialEndDate: {
-      type: Date,
+      type: String,
     },
 
     currentChargeStartDate: {
-      type: Date,
-    },
+      type: String,
+    }, 
 
     currentChargeEndDate: {
-      type: Date,
+      type: String,
     },
 
     tenants: [
