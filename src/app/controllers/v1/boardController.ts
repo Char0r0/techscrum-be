@@ -52,7 +52,15 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     labels = { tags: { $all: labelIds } };
   }
 
-  let boardTasks = await getBoardTasks(boardId, input, users, taskTypes, labels, req.dbConnection);
+  let boardTasks = await getBoardTasks(
+    boardId,
+    input,
+    users,
+    taskTypes,
+    labels,
+    req.dbConnection,
+    req.userConnection,
+  );
 
   const result = replaceId(boardTasks);
 

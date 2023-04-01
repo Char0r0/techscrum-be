@@ -1,4 +1,5 @@
 import { NextFunction } from 'express';
+
 const { userConnection } = require('../utils/dbContext');
 const User = require('../model/user');
 const Tenant = require('../model/tenants');
@@ -6,7 +7,6 @@ const Product = require('../model/product');
 const PaymentHistory = require('../model/paymentHistory');
 const Invoice = require('../model/invoice');
 import { Response, Request } from 'express';
-
 
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
@@ -61,3 +61,4 @@ export const createInvoiceModel = async () => {
   const invoiceModel = await Invoice.getModel(userConnection.connection);
   return invoiceModel;
 };
+

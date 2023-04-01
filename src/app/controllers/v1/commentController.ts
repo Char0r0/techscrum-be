@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 const comment = require('../../model/comment');
-const { createUserModel } = require('../../utils/helper');
+const User = require('../../model/user');
 const status = require('http-status');
 const { replaceId } = require('../../services/replaceService');
 
@@ -11,7 +11,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const userModel = await createUserModel();
+  const userModel = await User.getModel(req.userConnection);
 
   try {
     const result = await comment

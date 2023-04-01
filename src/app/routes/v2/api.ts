@@ -68,8 +68,10 @@ import * as statuseValidation from '../../validations/statusValidation';
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
 
+router.use(saasMiddlewareV2.saas);
+
 //emailVerifyCheck-stepTwo-V2
-router.get('/register/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.get);
+router.get('/register/:token', authenticationEmailTokenMiddlewareV2, registerV2Controller.verify);
 
 //active account-stepThree-V2
 router.put(
@@ -78,9 +80,7 @@ router.put(
   authenticationEmailTokenMiddlewareV2,
   registerV2Controller.store,
 );
-// ----------------------- register -------------------------
 
-router.use(saasMiddlewareV2.saas);
 router.get('/domains', domainController.index);
 router.post('/domains/owner', domainController.getOwnerDomain);
 

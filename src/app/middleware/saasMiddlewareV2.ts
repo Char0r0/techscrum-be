@@ -20,6 +20,8 @@ enum Plans {
   Free = 'Free',
 }
 
+const PUBLIC_DB = 'publicdb';
+
 const getTenant = async (host: string | undefined, req: Request) => {
   tenantConnection.connection = await mongoose.createConnection(config.userConnection, options);
   req.userConnection = tenantConnection.connection;
@@ -40,12 +42,12 @@ const getTenant = async (host: string | undefined, req: Request) => {
 
 const getConnectDatabase = (tenant: any) => {
   //TODO: Fix this code
-  return tenant || tenant?.plan !== Plans.Free ? tenant.id.toString() : 'public';
+  return tenant || tenant?.plan !== Plans.Free ? tenant.id.toString() : PUBLIC_DB;
 };
 
 const connectTenantDB = async (tenant: string) => {
   if (!dataConnectionPool || !dataConnectionPool[tenant]!) {
-    const url = config.publicConnection.replace('publicdb', tenant);
+    const url = config.publicConnection.replace(PUBLIC_DB, tenant);
     const dataConnectionMongoose = await mongoose.createConnection(url, options);
     dataConnectionPool[tenant] = dataConnectionMongoose;
   }
@@ -57,8 +59,9 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   const domain = !connectTenant ? req.headers.origin : connectTenant;
 
   if (connectTenant) {
-    if (connectTenant === 'public' || connectTenant === 'devtechscrumapp') {
+    if (connectTenant === PUBLIC_DB || connectTenant === 'devtechscrumapp') {
       await connectTenantDB(connectTenant);
+      req.userConnection = await mongoose.createConnection(config.userConnection, options);
       req.dataConnectionPool = dataConnectionPool;
       req.dbConnection = dataConnectionPool[connectTenant];
       req.tenantId = null;
