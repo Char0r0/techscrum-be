@@ -4,7 +4,6 @@ import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { checkUserTenants } from '../../services/loginService';
 const status = require('http-status');
-const { userConnection } = require('../../utils/dbContext');
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -24,21 +23,16 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
 
   const origin = req.get('origin');
 
-  const user = await User.getModel(userConnection.connection).findByCredentials(
+  const user = await User.getModel(req.userConnection).findByCredentials(
     req.body.email,
     req.body.password,
   );
 
   if (user === null) return res.status(status.UNAUTHORIZED).send();
-  if (user === undefined) return res.status(403).send();
+  if (user === undefined) return res.status(status.UNAUTHORIZED).send();
 
   //check the if the domain is in user's tenants when user login
-  const qualifiedTenants = await checkUserTenants(
-    req.body.email,
-    origin,
-    userConnection.connection,
-  );
-
+  const qualifiedTenants = await checkUserTenants(req.body.email, origin, req.userConnection);
   if (qualifiedTenants.length > 0) {
     const token = await user.generateAuthToken();
     return res.send({ user, ...token });

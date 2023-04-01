@@ -128,8 +128,8 @@ exports.getDefaultRoles = async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  //use cache after all features moved to v2
+  //use cache after all features moved to v2 ????
   const connection = await permissionConnection();
   const roles = await Role.getModel(connection).find({});
-  return res.status(status.OK).json({ roles });
+  return res.status(status.OK).json(replaceId(roles));
 };

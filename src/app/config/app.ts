@@ -4,16 +4,16 @@ const stripeAPI = require('stripe');
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 dotenv.config();
 
-const DEFAULT_MONGODB_URL = `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/techscrumapp?retryWrites=true&w=majority`;
-const DEFAULT_TANANT_CONNECTION = `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/tenant?retryWrites=true&w=majority`;
-const DEFAULT_DOMAIN_CONNECTION = `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/domain?retryWrites=true&w=majority`;
+const DEFAULT_MONGODB_URL = `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/techscrumapp?retryWrites=true&w=majority`;
+const DEFAULT_TANANT_CONNECTION = `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/tenant?retryWrites=true&w=majority`;
+const DEFAULT_DOMAIN_CONNECTION = `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/domain?retryWrites=true&w=majority`;
 //---------------------------v2--------------------------
 const DEFAULT_USER_CONNECTION =
   // eslint-disable-next-line no-secrets/no-secrets
-  `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/users?retryWrites=true&w=majority`;
+  `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/users?retryWrites=true&w=majority`;
 const DEFAULT_PUBLIC_CONNECTION =
   // eslint-disable-next-line no-secrets/no-secrets
-  `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/publicdb?retryWrites=true&w=majority`;
+  `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/publicdb?retryWrites=true&w=majority`;
 
 module.exports = {
   name: process.env.NAME || 'techscrumapp',
