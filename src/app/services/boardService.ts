@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
-import { createUserModel } from '../utils/helper';
 const Board = require('../model/board');
 const Task = require('../model/task');
+const User = require('../model/task');
 const Status = require('../model/status');
 const Label = require('../model/label');
 const Project = require('../model/project');
@@ -13,11 +13,13 @@ export const getBoardTasks = async (
   taskTypes: { typeId: string[] } | {},
   labels: { tags: string[] } | {},
   dbConnection: Mongoose,
+  tenantConnection: Mongoose,
 ) => {
+  //console.log('user', tenantConnection);
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
-  const userModel = await createUserModel();
+  const userModel = User.getModel(tenantConnection);
   const labelModel = Label.getModel(dbConnection);
   const projectModel = Project.getModel(dbConnection);
 

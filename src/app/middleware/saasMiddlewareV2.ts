@@ -59,6 +59,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   if (connectTenant) {
     if (connectTenant === 'public' || connectTenant === 'devtechscrumapp') {
       await connectTenantDB(connectTenant);
+      req.userConnection = await mongoose.createConnection(config.userConnection, options);
       req.dataConnectionPool = dataConnectionPool;
       req.dbConnection = dataConnectionPool[connectTenant];
       req.tenantId = null;
