@@ -11,25 +11,32 @@ let planName: string;
 const ADVANCED_PLAN = 0;
 let FREE_TRIAL: number;
 
+enum FreeTrialLengths {
+  ONE_WEEK = 7,
+  ONE_MONTH = 30,
+}
+
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
+
   const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
 
   console.log('DOMAIN!!!!!!', domainURL);
   let freeTrialCheck: boolean = isFreeTrial;
+
   if (planIdentifier === ADVANCED_PLAN) {
     if (paymentMode) {
-      FREE_TRIAL = 1;
+      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
       planName = 'Advanced monthly plan';
     } else {
-      FREE_TRIAL = 1;
+      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
       planName = 'Advanced yearly plan';
     }
   } else {
     if (paymentMode) {
-      FREE_TRIAL = 7;
+      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
       planName = 'Ultra monthly plan';
     } else {
-      FREE_TRIAL = 30;
+      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
       planName = 'Ultra yearly plan';
     }
   }
@@ -55,6 +62,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
 
     const payment = await subscribe(domainURL, productId, priceId, userId, freeTrial, freeTrialCheck, req.dbConnection);
+
 
     res.send(payment);
   } catch (e) {

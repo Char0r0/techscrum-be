@@ -21,7 +21,6 @@ const statusSchema = new Schema<IStatus>(
       required: true,
     },
     order: {
-      unique: true,
       type: Schema.Types.Number,
     },
     board: {
