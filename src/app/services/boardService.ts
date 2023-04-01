@@ -15,7 +15,6 @@ export const getBoardTasks = async (
   dbConnection: Mongoose,
   tenantConnection: Mongoose,
 ) => {
-  //console.log('user', tenantConnection);
   const boardModel = Board.getModel(dbConnection);
   const taskModel = Task.getModel(dbConnection);
   const statusModel = Status.getModel(dbConnection);
