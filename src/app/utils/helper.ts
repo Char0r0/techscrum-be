@@ -14,7 +14,6 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
     'https://www.techscrumapp.com',
     'https://dev.techscrumapp.com',
     'https://staging.techscrumapp.com',
-    // 'http://localhost:3000',
   ];
 
   return domains.some((domain) => host.includes(domain));
