@@ -22,11 +22,16 @@ enum Plans {
 
 const PUBLIC_DB = 'publicdb';
 
-const getTenant = async (host: string | undefined, req: Request) => {
-  tenantConnection.connection = await mongoose.createConnection(config.userConnection, options);
-  req.userConnection = tenantConnection.connection;
+const connectMainTenant = async () => {
+  if (!tenantConnection || !tenantConnection.connection) {
+    tenantConnection.connection = await mongoose.createConnection(config.userConnection, options);
+  }
+  return tenantConnection.connection;
+};
 
-  const tenantModel = Tenant.getModel(tenantConnection.connection);
+const getTenant = async (host: string | undefined, req: Request) => {
+  req.userConnection = connectMainTenant();
+  const tenantModel = Tenant.getModel(req.userConnection);
   const tenant = await tenantModel.findOne({ origin: host });
 
   if (!config || !config.emailSecret) {
@@ -61,7 +66,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   if (connectTenant) {
     if (connectTenant === PUBLIC_DB || connectTenant === 'devtechscrumapp') {
       await connectTenantDB(connectTenant);
-      req.userConnection = await mongoose.createConnection(config.userConnection, options);
+      req.userConnection = connectMainTenant();
       req.dataConnectionPool = dataConnectionPool;
       req.dbConnection = dataConnectionPool[connectTenant];
       req.tenantId = null;

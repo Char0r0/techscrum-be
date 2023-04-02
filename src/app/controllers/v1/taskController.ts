@@ -145,7 +145,6 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
     { ...req.body },
     { new: true, runValidators: true },
   );
-
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
   const result = await findTasks({ _id: id }, {}, {}, {}, req.dbConnection, req.userConnection);
