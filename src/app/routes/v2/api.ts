@@ -56,6 +56,8 @@ const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
+const dashboardController = require('../../controllers/v1/dashboardController');
+const dashboardValidations = require('../../validations/dashboard');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -439,6 +441,14 @@ router.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
   stripeWebhookController.stripeController,
+);
+
+// dashboard
+router.get('/projects/:projectId/dashboards', dashboardValidations.show, dashboardController.show);
+router.get(
+  '/projects/:projectId/dashboards/dailyScrums',
+  dashboardValidations.showDailyScrums,
+  dashboardController.showDailyScrums,
 );
 
 module.exports = router;
