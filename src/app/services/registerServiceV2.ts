@@ -41,7 +41,6 @@ exports.emailRegister = async (
     if (!newUser) {
       throw new Error('RegisterService Cannot find user');
     }
-
     validationToken = jwt.sign({ id: newUser.id }, configApp.emailSecret);
     emailSender(
       email,

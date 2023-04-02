@@ -30,7 +30,7 @@ const connectMainTenant = async () => {
 };
 
 const getTenant = async (host: string | undefined, req: Request) => {
-  req.userConnection = connectMainTenant();
+  req.userConnection = await connectMainTenant();
   const tenantModel = Tenant.getModel(req.userConnection);
   const tenant = await tenantModel.findOne({ origin: host });
 
@@ -66,7 +66,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   if (connectTenant) {
     if (connectTenant === PUBLIC_DB || connectTenant === 'devtechscrumapp') {
       await connectTenantDB(connectTenant);
-      req.userConnection = connectMainTenant();
+      req.userConnection = await connectMainTenant();
       req.dataConnectionPool = dataConnectionPool;
       req.dbConnection = dataConnectionPool[connectTenant];
       req.tenantId = null;
