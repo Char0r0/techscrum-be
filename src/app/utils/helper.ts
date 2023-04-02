@@ -1,6 +1,4 @@
 import { NextFunction } from 'express';
-const { userConnection } = require('../utils/dbContext');
-const User = require('../model/user');
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
 };
@@ -14,7 +12,6 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
     'https://www.techscrumapp.com',
     'https://dev.techscrumapp.com',
     'https://staging.techscrumapp.com',
-    // 'http://localhost:3000',
   ];
 
   return domains.some((domain) => host.includes(domain));
@@ -26,8 +23,3 @@ export function removeHttp(url: string | undefined) {
   }
   return url.replace(/^https?:\/\//, '');
 }
-
-export const createUserModel = async () => {
-  const userModel = await User.getModel(userConnection.connection);
-  return userModel;
-};

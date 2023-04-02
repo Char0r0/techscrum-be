@@ -23,7 +23,9 @@ module.exports = () => {
   app.use(compression());
   app.use(cors());
   app.use(express.json());
-  app.use(limiter);
+  if (process.env.LIMITER?.toString() === true.toString()) {
+    app.use(limiter);
+  }
   app.use(helmet());
   app.use(`${config.api.prefix}/v1`, apiRouterV1);
   app.use(`${config.api.prefix}/v2`, apiRouterV2);

@@ -3,6 +3,6 @@ declare namespace Express {
     dbConnection: any;
     dataConnectionPool: any;
     userConnection: any;
-    tenantId: string;
+    tenantId: string | null;
   }
 }

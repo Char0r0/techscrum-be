@@ -8,6 +8,7 @@ const config = require('../../config/app');
 const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
+const logger = require('../../../loaders/logger');
 
 const connectUserDb = async (res: Response) => {
   try {
@@ -45,8 +46,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       resUserDbConnection,
       email,
       newTenants,
-      res,
+      req,
     );
+
     newTenants.owner = mongoose.Types.ObjectId(newUser.id);
     await newTenants.save();
     return res
@@ -54,8 +56,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       .json({ status: 'success', data: { newTenants, newUser, validationToken } });
   } catch (err) {
     // delete tenant if error
+    logger.error('registerV2Controller Fail:', JSON.stringify(err));
     await tenantModel.findOneAndDelete({ origin: tenantsUrl });
-    res.status(401).json({ status: 'fail', err });
+    res.status(status.INTERNAL_SERVER_ERROR).json({ status: 'fail', err });
   }
 });
 
@@ -67,25 +70,23 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   }
 
   try {
-    const userDbConnect = new Mongoose();
-    const resUserDbConnection = await userDbConnect.connect(config.userConnection);
     const { email, name, password } = req.body;
-    const user = await User.getModel(resUserDbConnection).saveInfo(email, name, password);
+    const user = await User.getModel(req.userConnection).saveInfo(email, name, password);
     user.activeAccount();
     const activeTenant = user.tenants.at(-1);
-    const tenantModel = await Tenant.getModel(resUserDbConnection);
+    const tenantModel = await Tenant.getModel(req.userConnection);
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
     res.send({ user });
   } catch (err) {
-    res.status(404).json({
+    res.status(status.INTERNAL_SERVER_ERROR).json({
       status: 'fail',
-      error: 'register err',
+      error: 'register err:' + JSON.stringify(err),
     });
   }
 });
 
 //Verify Email by token
-exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+exports.verify = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -93,11 +94,13 @@ exports.get = asyncHandler(async (req: Request, res: Response, next: NextFunctio
 
   try {
     const email = req.verifyEmail ?? '';
-    const userDbConnect = new Mongoose();
-    const resUserDbConnection = await userDbConnect.connect(config.userConnection);
-    const user = await User.getModel(resUserDbConnection).findOne({ email });
+    const user = await User.getModel(req.userConnection).findOne({ email });
     res.send({ email, active: user.active });
-  } catch (e) {
-    next(e);
+  } catch (err) {
+    res.status(status.INTERNAL_SERVER_ERROR).json({
+      status: 'fail',
+      error: 'register err:' + JSON.stringify(err),
+    });
+    next(err);
   }
 });

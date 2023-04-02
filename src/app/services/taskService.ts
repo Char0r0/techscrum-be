@@ -1,10 +1,10 @@
 import { Mongoose } from 'mongoose';
-import { createUserModel } from '../utils/helper';
 const Task = require('../model/task');
 const Type = require('../model/type');
 const Comment = require('../model/comment');
 const Label = require('../model/label');
 const Status = require('../model/status');
+const User = require('../model/user');
 import { ITask } from '../types';
 
 /** Find tasks with given filter
@@ -21,13 +21,13 @@ export const findTasks = async (
   typeFilter: object,
   labelFilter: object,
   dbConnection: Mongoose,
+  tenantConnection: Mongoose,
 ) => {
   const taskModel = Task.getModel(dbConnection);
 
   const UserFields = 'avatarIcon name email';
 
-  const userModel = await createUserModel();
-
+  const userModel = await User.getModel(tenantConnection);
   try {
     const tasks = await taskModel
       .find(queryFilter)

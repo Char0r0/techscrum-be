@@ -2,7 +2,7 @@ const aws = require('aws-sdk');
 const config = require('../config/app');
 const logger = require('../../loaders/logger');
 const awsConfig = require('../config/aws');
-
+//TODO: clean up this code to not use duplciate
 aws.config.update({
   region: awsConfig.awsRegion,
   accessKeyId: awsConfig.awsAccessKey,
@@ -105,4 +105,11 @@ export const forgetPassword = (email: string, name: string, token: string, domai
   };
 
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
+};
+
+export const getDomain = (host: string, originHost: string) => {
+  if (originHost.includes('localhost') || originHost.includes('dev.')) {
+    return originHost;
+  }
+  return host;
 };

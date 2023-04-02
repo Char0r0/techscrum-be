@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const { createUserModel } = require('../../utils/helper');
 const activity = require('../../model/activity');
+const User = require('../../model/user');
 const status = require('http-status');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,7 +10,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const { tid } = req.params;
-  const userModel = await createUserModel();
+  const userModel = await User.getModel(req.userConnection);
   try {
     const result = await activity
       .getModel(req.dbConnection)
