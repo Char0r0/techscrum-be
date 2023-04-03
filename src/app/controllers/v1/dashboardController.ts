@@ -153,8 +153,6 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
       supportType: SupportType.OTHER,
     });
 
-    // get all users under this project (WIP) - TODO: get all users under this project
-
     // get the `complete` progresses of daily scrums for the project for initial user (who sends the request) - remember `progresses` is orignially an array and is sorted and returned the latest one in toJSON method before sending to front end
     const dailyScrums: IDailyScrum[] = await DailyScrumModel.find(
       { project: projectId, user: userId },
