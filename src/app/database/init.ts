@@ -26,9 +26,7 @@ const TASK_TYPES = [
   },
 ];
 
-exports.init = async (dbConnection: any) => {
-  const role = Role.getModel(dbConnection);
-  const permission = Permission.getModel(dbConnection);
+const createTaskType = async (dbConnection: string) => {
   const type = Type.getModel(dbConnection);
 
   for (const objType of TASK_TYPES) {
@@ -37,8 +35,15 @@ exports.init = async (dbConnection: any) => {
       continue;
     }
     const newType = new type(objType);
-    newType.save();
+    await newType.save();
   }
+};
+
+exports.init = async (dbConnection: any) => {
+  const role = Role.getModel(dbConnection);
+  const permission = Permission.getModel(dbConnection);
+
+  createTaskType(dbConnection);
 
   const result = await role.find({ slug: 'admin' });
   if (result.length > 0) {
@@ -202,3 +207,5 @@ exports.init = async (dbConnection: any) => {
   await developerRole.save();
   await guestRole.save();
 };
+
+exports.createTaskType = createTaskType;

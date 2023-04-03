@@ -1,11 +1,17 @@
-const { emailSender } = require('../utils/emailSenderV2');
+const { emailSender, getDomain } = require('../utils/emailSenderV2');
 const jwt = require('jsonwebtoken');
 const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');
 const User = require('../model/user');
 const configApp = require('../config/app');
+import { Request } from 'express';
 
-exports.emailRegister = async (resUserDbConnection: any, email: string, newTenants: any) => {
+exports.emailRegister = async (
+  resUserDbConnection: any,
+  email: string,
+  newTenants: any,
+  req: Request,
+) => {
   if (!configApp || !configApp.emailSecret) {
     logger.error('Missing email secret in env');
     return null;
@@ -26,18 +32,30 @@ exports.emailRegister = async (resUserDbConnection: any, email: string, newTenan
       refreshToken: '',
       tenants: [tenantsId],
     });
+  } else {
+    newUser = targetUser;
   }
+
   try {
+    //TODO: fix
+    if (!newUser) {
+      throw new Error('RegisterService Cannot find user');
+    }
     validationToken = jwt.sign({ id: newUser.id }, configApp.emailSecret);
-    emailSender(email, `token=${validationToken}`, newTenants.origin);
+    emailSender(
+      email,
+      `token=${validationToken}`,
+      getDomain(newTenants.origin, req.headers.origin),
+    );
   } catch (e) {
+    logger.error('registerServicesV2 Fail:', JSON.stringify(e));
     if (newUser.tenants.length === 0) {
       userModel.deleteOne({ email });
     } else {
       newUser.tenants.pop();
       await newUser.save();
     }
-    throw new Error('email sent failed');
+    throw new Error('Email sent failed');
   }
 
   return { newUser, validationToken };
