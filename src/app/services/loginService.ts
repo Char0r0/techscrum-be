@@ -2,6 +2,7 @@ import { Mongoose } from 'mongoose';
 const Tenants = require('../model/tenants');
 const User = require('../model/user');
 
+//TODO: checkUserTenants ??? getUserTenants
 export const checkUserTenants = async (email: string, origin: any, dbConnection: Mongoose) => {
   const connectTenant = process.env.CONNECT_TENANT;
   const userModel = User.getModel(dbConnection);

@@ -99,70 +99,7 @@ router.post(
 router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
 
-/* https://blog.logrocket.com/documenting-your-express-api-with-swagger/ */
-/**
- * @swagger
- * components:
- *   schemas:
- *     Tenants:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: The user ID.
- *           example: 0
- *         name:
- *           type: string
- *           description: The user's name.
- *           example: Leanne Graham
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: The user ID.
- *           example: 0
- *         name:
- *           type: string
- *           description: The user's name.
- *           example: Leanne Graham
- */
-
-/**
- * @swagger
- * /tenants:
- *   get:
- *     summary: Retrieve a list of tenants
- *     description: Retrieve a list of tenants.
- *     parameters:
- *       - in: query
- *         name: domain
- *         required: true
- *         description: Domain of the url.
- *         schema:
- *           type: string
- *       - in: query
- *         name: name
- *         required: true
- *         description: App name.
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: A list of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Tenants'
- */
+//TODO: typo error
 router.get('/tenants', tenantValidations.index, tenantControllers.index);
 router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
@@ -232,6 +169,7 @@ router.get('/users', userControllers.index);
 router.get('/users/:id', userValidation.show, userControllers.show);
 router.put('/users/:id', userPageValidation.update, userPageControllers.update);
 
+//TODO: s
 router.get('/comments/:id', commentControllers.show);
 router.post('/comments', commentValidation.store, commentControllers.store);
 router.put('/comments/:id', commentValidation.update, commentControllers.update);
@@ -250,13 +188,14 @@ router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
 router.delete('/tasks/:id', taskValidation.remove, taskController.delete);
-
+//TODO: s
 router.put(
   '/account/me',
   accountSettingValidation.update,
   authenticationTokenMiddleware,
   accountSettingControllers.update,
 );
+
 router.delete(
   '/account/me',
   accountSettingValidation.remove,
@@ -264,6 +203,8 @@ router.delete(
   accountSettingControllers.destroy,
 );
 
+
+//TODO: s
 router.patch(
   '/account/change-password',
   authenticationTokenMiddleware,
@@ -305,7 +246,7 @@ router.delete(
   projectValidation.remove,
   projectsController.delete,
 );
-
+//TODO: s
 router.post('/projects/:id/shortcuts', shortcutValidation.store, shortcutControllers.store);
 router.put(
   '/projects/:projectId/shortcuts/:shortcutId',
@@ -408,11 +349,13 @@ router.delete('/sprints/:id', sprintController.destroy);
 // statuses
 router.get('/boards/:boardId/statuses', statuseValidation.index, statusesController.index);
 
+//TODO: s
 //activities
 router.get('/activities/:tid', activityControllers.show);
 router.post('/activities', activityControllers.store);
 router.delete('/activities/:id', activityControllers.destroy);
 
+//TODO: s
 //dailyScrums
 router.get(
   '/projects/:projectId/dailyScrums',
