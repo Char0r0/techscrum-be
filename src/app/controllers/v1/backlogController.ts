@@ -23,7 +23,7 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
     req.dbConnection,
     req.userConnection,
   );
-  const sprints = await findSprints(sprintFilter, {}, req.dbConnection);
+  const sprints = await findSprints(sprintFilter, {}, req.dbConnection, req.userConnection);
 
   const result = {
     backlog: {
