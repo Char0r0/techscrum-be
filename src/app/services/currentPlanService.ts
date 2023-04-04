@@ -1,21 +1,17 @@
 import { Request } from 'express';
-import { createUserModel } from '../utils/helper';
-
-const PaymentHistory = require('../model/paymentHistory');
-const Product = require('../model/product');
-
+import { createPaymentHistoryModel, createProductModel, createTenantsModel } from '../utils/helper';
 
 const checkCurrentPlan = async (req: Request, userId: string) => {
   let productType: string | undefined;
 
-  const userModel = await createUserModel();
-  const userInfo = await userModel.findOne({ _id: userId });
+  const tenantModel = await createTenantsModel(req);
+  const tenantInfo = await tenantModel.findOne({ owner: userId });
 
-  const paymentModel = await PaymentHistory.getModel(req.dbConnection);
-  const paymentInfo = await paymentModel.findOne({ _id: userInfo.currentPaymentHistoryId });
+  const paymentModel = await createPaymentHistoryModel(req);
+  const paymentInfo = await paymentModel.findOne({ _id: tenantInfo.currentPaymentHistoryId });
 
-  const productModel = await Product.getModel(req.dbConnection);
-  const productInfo = await productModel.findOne({ stripeProductId: userInfo.currentProduct });
+  const productModel = await createProductModel(req);
+  const productInfo = await productModel.findOne({ stripeProductId: tenantInfo.currentProduct });
   
   if (productInfo.productName === 'Advanced monthly plan') { 
     productType = 'monthly';
@@ -25,7 +21,7 @@ const checkCurrentPlan = async (req: Request, userId: string) => {
     productType = '';
   }
 
-  if (paymentInfo.currentProduct === userInfo.currentProduct) {
+  if (paymentInfo.currentProduct === tenantInfo.currentProduct) {
     const data = { isCurrentPlan: true, productType };
     return data;
   } else {

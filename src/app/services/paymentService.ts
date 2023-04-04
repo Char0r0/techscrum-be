@@ -15,7 +15,6 @@ const ULTRA_YEARLY_PRICE = 708;
 const PRICE_UNIT = 100;
 const PRODUCT_QUANTILITY = 1; 
 
-
 const createPrice = async (req: Request, planIdentifier: number, productName: string, paymentMode: boolean) => {
 
   if (planIdentifier === ADVANCED_PLAN) {
@@ -45,7 +44,7 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
       recurring: { interval: interval },
     });
 
-    const productModel = await createProductModel();
+    const productModel = await createProductModel(req);
     const productInformation = new productModel({ stripeProductId: product.id, productName: productName, productPrice: productPrice.id });
     await productInformation.save();
 

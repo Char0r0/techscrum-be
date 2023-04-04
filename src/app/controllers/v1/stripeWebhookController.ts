@@ -1,16 +1,11 @@
 import { Request, Response } from 'express';
-import { TrialDate } from '../../utils/TrialDate';
-import { addPaymentHistory } from '../../utils/addPaymentHistory';
-import { checkoutSessionCompleted, invoiceFinalized, invoicePaymentSucceed, subscriptionCreateCompleted } from '../../services/stripeWebhookService';
-import { createUserModel } from '../../utils/helper';
+import { checkoutSessionCompleted, invoiceFinalized, invoicePaymentSucceed, subscriptionCreateCompleted, chargeRefunded } from '../../services/stripeWebhookService';
 
-const Invoice = require('../../model/invoice');
 const config = require('../../config/app');
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event: any;
-  let userModel: any;
-
+  
   const secret = config.stripeSecret;
   const payloadString = Buffer.from(JSON.stringify(req.body)).toString();
   const header = config.stripe.webhooks.generateTestHeaderString({
@@ -26,15 +21,19 @@ exports.stripeController = async (req: Request, res: Response) => {
 
   switch (event.type) {
     case 'checkout.session.completed':
-      await checkoutSessionCompleted(event);
+      await checkoutSessionCompleted(req, res, event);
       break; 
 
     case 'customer.subscription.created':
-      await subscriptionCreateCompleted(event);
+      await subscriptionCreateCompleted(req, res, event);
       break;
     
     case 'invoice.payment_succeeded':
-      await invoicePaymentSucceed(event, req);
+      await invoicePaymentSucceed(event, req, res);
+      break;
+
+    case 'charge.refunded':
+      await chargeRefunded(req, res, event);
       break;
 
     case 'invoice.paid':
@@ -55,48 +54,11 @@ exports.stripeController = async (req: Request, res: Response) => {
     case 'payment_intent.payment_failed':
       break;
 
-    case 'charge.refunded':
-      let stripePaymentIntentId2;
-      let stripeProductId2;
-      const RefundStartDate = event.data.object.created;
-      const formattedRefundStartDate = TrialDate(RefundStartDate);
-      
-      if (!userModel) {
-        userModel = await createUserModel();
-      }        
-
-      const userInfo2 = await userModel.findOne({ customerId: event.data.object.customer }).exec();
-      if (userInfo2) {
-        stripePaymentIntentId2 = userInfo2.stripePaymentIntentId;
-        stripeProductId2 = userInfo2.currentProduct;
-      }
-
-      const intent2 = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId2);
-
-      await addPaymentHistory(req, {
-        currentChargeStartDate: formattedRefundStartDate,
-        currentProduct: stripeProductId2,
-        stripePaymentIntentId: intent2.id,
-        paymentIntentStatus: intent2.status,
-        amount: event.data.object.amount,
-        isRefund: true,
-      });
-      
-      const InvoiceModal2 = Invoice.getModel(req.dbConnection);
-      const InvoiceFinalized2 = new InvoiceModal2({
-        stripeInvoiceId: event.data.object.invoice,
-        invoiceNumber: event.data.object.number,
-        invoiceURL: event.data.object.receipt_url,
-        isRefund: true,
-      });
-      await InvoiceFinalized2.save();
-      break;
-
     case 'invoice.payment_failed':
       break;
 
     case 'invoice.finalized':
-      await invoiceFinalized(event);
+      await invoiceFinalized(req, res, event);
       break;
     
     case 'invoice.updated':

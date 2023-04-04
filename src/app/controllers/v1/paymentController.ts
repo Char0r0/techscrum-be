@@ -12,7 +12,7 @@ const ADVANCED_PLAN = 0;
 let FREE_TRIAL: number;
 
 enum FreeTrialLengths {
-  ONE_WEEK = 7,
+  ONE_WEEK = 1,
   ONE_MONTH = 30,
 }
 
@@ -20,7 +20,6 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
   const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
 
-  console.log('DOMAIN!!!!!!', domainURL);
   let freeTrialCheck: boolean = isFreeTrial;
 
   if (planIdentifier === ADVANCED_PLAN) {
@@ -41,7 +40,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
   }
   try {
-    const productModel = await createProductModel();
+    const productModel = await createProductModel(req);
     const isProductExist = await productModel.findOne({ productName: planName }).exec();
     if (!isProductExist) {
       recurringPrice = await createPrice(req, planIdentifier, planName, paymentMode);
@@ -54,7 +53,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
     }
     freeTrial = FREE_TRIAL;
 
-    const tenantModel = await createTenantsModel();
+    const tenantModel = await createTenantsModel(req);
     const tenantInfo = await tenantModel.findOne({ owner: userId }).exec();
 
     if (tenantInfo.productHistory.includes(productId)) {
@@ -66,7 +65,6 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
     res.send(payment);
   } catch (e) {
-    console.log(e);
     next(e);
   }
 };

@@ -43,7 +43,7 @@ const tenantSchema = new Schema(
       type: Types.ObjectId,
     },
 
-    subscriptionHistoryId: [
+    stripePaymentIntentHistoryId: [
       {
         type: String,
       },
@@ -96,7 +96,9 @@ const tenantSchema = new Schema(
       type: String,
     },
 
-
+    currentSubscriptionId: {
+      type: String,
+    },
   },
   { timestamps: true },
 );

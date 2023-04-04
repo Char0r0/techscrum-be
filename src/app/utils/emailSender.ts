@@ -38,11 +38,8 @@ const emailSenderTemplate = (
 
   ses.sendTemplatedEmail(params, function (email_err: any, email_data: any) {
     if (email_err) {
-      console.log('ERROR HERE');
-      console.log(email_err);
       callback(email_err, email_data);
     } else {
-      console.log('SUCCESS');
       callback(null, email_data);
     }
   });
@@ -64,9 +61,8 @@ export const subscriptionSender = (
     year: '2023',
     project: 'abc',
   };
-  console.log('yesyesyesyes');
-  // change to 'Subscription'.
-  emailSenderTemplate(email, templateData, 'CustomEmailVerify', cb);
+
+  emailSenderTemplate(email, templateData, 'Subscription', cb);
 };
 
 export const emailRecipientTemplate = (

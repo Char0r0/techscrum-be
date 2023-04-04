@@ -8,8 +8,8 @@ exports.index = (req: Request, res: Response) => {
 exports.getOwnerDomain = async (req: Request, res: Response) => {
   try {
     const { currentDomain, userId } = req.body;
-    const tenantModel = await createTenantsModel();
-    // for local environment testing, change to https .. later
+    const tenantModel = await createTenantsModel(req);
+    // for local environment testing, change to https:// .. later
     const urlPath = 'http://' + currentDomain;
     const tenantInfo = await tenantModel.findOne({ origin: urlPath }).exec();
     const ownerId = tenantInfo.owner.valueOf().toString();

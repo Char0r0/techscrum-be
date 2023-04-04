@@ -1,6 +1,5 @@
 import { NextFunction } from 'express';
 
-const { userConnection } = require('../utils/dbContext');
 const User = require('../model/user');
 const Tenant = require('../model/tenants');
 const Product = require('../model/product');
@@ -33,32 +32,28 @@ export function removeHttp(url: string | undefined) {
   return url.replace(/^https?:\/\//, '');
 }
 
-export const createUserModel = async () => {
-  const userModel = await User.getModel(userConnection.connection);
+export const createUserModel = async (req: Request) => {
+  const userModel = await User.getModel(req.userConnection);
   return userModel;
 };
 
-export const createTenantsModel = async () => {
-  //req.userConnection
-  const tenantModel = await Tenant.getModel(userConnection.connection);
+export const createTenantsModel = async (req: Request) => {
+  const tenantModel = await Tenant.getModel(req.userConnection);
   return tenantModel;
 };
 
-export const createProductModel = async () => {
-  //req.userConnection
-  const productModel = await Product.getModel(userConnection.connection);
+export const createProductModel = async (req: Request) => {
+  const productModel = await Product.getModel(req.userConnection);
   return productModel;
 };
 
-export const createPaymentHistoryModel = async () => {
-  //req.userConnection
-  const paymentHistoryModel = await PaymentHistory.getModel(userConnection.connection);
+export const createPaymentHistoryModel = async (req: Request) => {
+  const paymentHistoryModel = await PaymentHistory.getModel(req.userConnection);
   return paymentHistoryModel;
 };
 
-export const createInvoiceModel = async () => {
-  //req.userConnection
-  const invoiceModel = await Invoice.getModel(userConnection.connection);
+export const createInvoiceModel = async (req: Request) => {
+  const invoiceModel = await Invoice.getModel(req.userConnection);
   return invoiceModel;
 };
 
