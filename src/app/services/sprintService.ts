@@ -44,13 +44,13 @@ export const findSprints = async (
   }
 };
 
-export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId) => {
+export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId, tenantConnection: Mongoose) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     const sprint = await sprintModel.findById(id).populate({
       path: 'taskId',
       model: Task.getModel(dbConnection),
-      populate: populateTasks(dbConnection),
+      populate: populateTasks(dbConnection, tenantConnection),
     });
     return sprint;
   } catch (error) {
@@ -58,7 +58,7 @@ export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId) 
   }
 };
 
-export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId, updates: any) => {
+export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId, updates: any, tenantConnection: Mongoose) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     if (updates.currentSprint) {
@@ -71,7 +71,7 @@ export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId
       .populate({
         path: 'taskId',
         model: Task.getModel(dbConnection),
-        populate: populateTasks(dbConnection),
+        populate: populateTasks(dbConnection, tenantConnection),
       });
 
     return updatedSprint;
