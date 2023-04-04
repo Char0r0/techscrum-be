@@ -113,7 +113,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     labelFilter = { tags: { $all: labelIds }, projectId };
   }
 
-  const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection);
+  const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection, req.userConnection);
   for (const sprint of sprints) {
     sprint.taskId = await findTasks(
       { ...fuzzySearchFilter, sprintId: sprint.id },
