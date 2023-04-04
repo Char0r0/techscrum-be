@@ -146,3 +146,11 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
 };
+
+export const getDomain = (host: string, originHost: string) => {
+  const protocol = originHost.includes('localhost') ? 'http://' : 'https://';
+  if (originHost.includes('localhost') || originHost.includes('dev.')) {
+    return protocol + originHost;
+  }
+  return host;
+};

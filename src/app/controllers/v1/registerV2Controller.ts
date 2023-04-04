@@ -8,6 +8,7 @@ const config = require('../../config/app');
 const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
+const logger = require('../../../loaders/logger');
 
 const connectUserDb = async (res: Response) => {
   try {
@@ -45,8 +46,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       resUserDbConnection,
       email,
       newTenants,
-      res,
+      req,
     );
+
     newTenants.owner = mongoose.Types.ObjectId(newUser.id);
     await newTenants.save();
     return res
@@ -54,8 +56,9 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       .json({ status: 'success', data: { newTenants, newUser, validationToken } });
   } catch (err) {
     // delete tenant if error
+    logger.error('registerV2Controller Fail:', JSON.stringify(err));
     await tenantModel.findOneAndDelete({ origin: tenantsUrl });
-    res.status(401).json({ status: 'fail', err });
+    res.status(status.INTERNAL_SERVER_ERROR).json({ status: 'fail', err });
   }
 });
 
