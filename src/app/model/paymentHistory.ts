@@ -23,6 +23,14 @@ const paymentHistorySchema = new mongoose.Schema(
       type: String,
     },
 
+    currentFreeTrialStartDate: {
+      type: String,
+    },
+
+    currentFreeTrialEndDate: {
+      type: String,
+    },
+
     currentProduct: {
       type: String,
     },
@@ -40,7 +48,15 @@ const paymentHistorySchema = new mongoose.Schema(
       type: Boolean, 
       default: false,
     },
+
+    isFreeTrial: {
+      type: Boolean,
+      default: false,
+    },
+
+    
   },
+  { timestamps: true },
 
 );
 
