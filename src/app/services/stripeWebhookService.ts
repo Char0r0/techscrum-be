@@ -1,111 +1,145 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { addPaymentHistory } from '../utils/addPaymentHistory';
 import { subscriptionSender } from '../utils/emailSender';
+import { createInvoiceModel, createPaymentHistoryModel, createTenantsModel, createUserModel } from '../utils/helper';
 import { randomStringGenerator } from '../utils/randomStringGenerator';
 import { TrialDate } from '../utils/TrialDate';
+const Invoice = require('../model/invoice');
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/app');
-const User = require('../model/user');
-const Invoice = require('../model/invoice');
-
 
 let userModel: any;
+let tenantModel: any;
 
-const checkoutSessionCompleted = async (event: any, req: Request) => {
+
+const checkoutSessionCompleted = async (req: Request, res: Response, event: any) => {
+
   try {
-    if (!userModel) {
-      userModel = User.getModel(req.dbConnection);
+    if (!tenantModel) {
+      tenantModel = await createTenantsModel(req);
     }        
-    const userInfo = await userModel.findOne({ _id: event.data.object.metadata.userId }).exec();
-    if (!userInfo.customerId) {
-      userModel.findOneAndUpdate(
-        { _id: event.data.object.metadata.userId },
+
+    if (!userModel) {
+      userModel = await createUserModel(req);
+    }
+    const tenantInfo = await tenantModel.findOne({ origin: event.data.object.metadata.domainURL }).exec();
+
+    if (!tenantInfo.customerId) {
+      tenantModel.findOneAndUpdate(
+        { origin: event.data.object.metadata.domainURL },
         {
           customerId: event.data.object.customer,
           currentProduct: event.data.object.metadata.productId,
+          currentSubscriptionId: event.data.object.subscription,
         },
         { new: true },
       ).exec();
-    } else {
+
       userModel.findOneAndUpdate(
-        { _id: event.data.object.metadata.userId },
+        { email: event.data.object.customer_details.email },
+        {
+          customerId: event.data.object.customer,
+        },
+        { new: true },
+      ).exec();
+
+    } else {
+      tenantModel.findOneAndUpdate(
+        { origin: event.data.object.metadata.domainURL },
         {
           currentProduct: event.data.object.metadata.productId,
+          currentSubscriptionId: event.data.object.subscription,
         },
         { new: true },
       ).exec();
     }
   } catch (e: any) {
+    res.status(500).send();
   }
+
 };
 
 
-const subscriptionCreateCompleted = async (event: any, req: Request) => {
-  try {
-    if (!userModel) {
-      userModel = User.getModel(req.dbConnection);
-    }
-
-    const userInfo = await userModel.findOne({ currentProduct: event.data.object.plan.product }).exec();
-    if (!userInfo.customerId) {
-      return ;
-    }
-
-    const freeTrialStartDate = event.data.object.trial_start;
-    const formattedFreeTrialStartDate = TrialDate(freeTrialStartDate);
-
-    const freeTrialEndDate = event.data.object.trial_end;
-    const formattedFreeTrialEndDate = TrialDate(freeTrialEndDate);
-
-    const productId = event.data.object.metadata.productId;
-    
-    // get intent here when each subscription created
-    const paymentIntent = await config.stripe.paymentIntents.create({
-      amount: event.data.object.plan.amount,
-      currency: 'aud',
-      payment_method_types: ['card'],
-      receipt_email: 'wei19970101@gmail.com',
-      description: '',
-    });
-
-    userModel.findOneAndUpdate(
-      { customerId: userInfo.customerId },
-      {
-        stripeProductId: productId,
-        stripePaymentIntentId: paymentIntent.id, 
-        freeTrialStartDate: formattedFreeTrialStartDate,
-        freeTrialEndDate: formattedFreeTrialEndDate,
-        $addToSet: { productHistory: event.data.object.plan.product, subscriptionHistoryId: paymentIntent.id }, 
-      },
-      { new: true },
-    ).exec();
-  } catch (e) {
-  }
-};
-
-const invoicePaymentSucceed = async (event: any, req: Request) => {
+const subscriptionCreateCompleted = async (req: Request, res: Response, event: any) => {
   setTimeout(async () => {  
     try {
+      if (!tenantModel) {
+        tenantModel = await createTenantsModel(req);
+      }
       if (!userModel) {
-        userModel = User.getModel(req.dbConnection);
-      }   
-      const userInfo = await userModel.findOne({ email: event.data.object.customer_email }).exec();
+        userModel = await createUserModel(req);
+      }
 
-      if (!userInfo) {
+      const tenantInfo = await tenantModel.findOne({ currentSubscriptionId: event.data.object.id }).exec();
+
+      if (!tenantInfo) {
+        res.status(404).send('No tenant found for subscription ID');
+        return;
+      }
+
+      if (!tenantInfo.customerId) {
+        res.status(500).send();
+      }
+
+      const productId = event.data.object.metadata.productId;
+      
+      const PaymentHistoryModal = await createPaymentHistoryModel(req);
+      const paymentHistoryInfo = await PaymentHistoryModal.findOne({ currentProduct: event.data.object.plan.product, isFreeTrial: true }).exec();
+
+      let currentPlanPaymentIntentId: string;
+      if (paymentHistoryInfo) {
+        currentPlanPaymentIntentId = paymentHistoryInfo.stripePaymentIntentId;
+      } else {
+        const paymentIntent = await config.stripe.paymentIntents.create({
+          amount: event.data.object.plan.amount,
+          currency: 'aud',
+          payment_method_types: ['card'],
+          receipt_email: 'wei19970101@gmail.com',
+          description: '',
+        });
+        currentPlanPaymentIntentId = paymentIntent.id;
+      }
+
+      tenantModel.findOneAndUpdate(
+        { customerId: tenantInfo.customerId },
+        {
+          stripeProductId: productId,
+          stripePaymentIntentId: currentPlanPaymentIntentId, 
+          $addToSet: { productHistory: event.data.object.plan.product, stripePaymentIntentHistoryId: currentPlanPaymentIntentId }, 
+        },
+        { new: true },
+      ).exec();
+
+    } catch (e) {
+      res.status(500).send();
+    }
+  }, 5000);
+};
+
+const invoicePaymentSucceed = async (event: any, req: Request, res: Response) => {
+  setTimeout(async () => {  
+    try {
+      if (!tenantModel) {
+        tenantModel = await createTenantsModel(req);
+      }   
+      const tenantInfo = await tenantModel.findOne({ currentSubscriptionId: event.data.object.subscription }).exec();
+      
+      if (!tenantInfo) {
+        res.send(404);
         return ;
       }
-      const PlanStartDate = event.data.object.period_start;
-      const formattedPlanStartDate = TrialDate(PlanStartDate);
-
-      const PlanEndDate = event.data.object.period_end;
-      const formattedPlanEndDate = TrialDate(PlanEndDate);
       
       let stripePaymentIntentId;
       let stripeProductId;
-      if (userInfo) {
-        stripePaymentIntentId = userInfo.stripePaymentIntentId;
-        stripeProductId = userInfo.currentProduct;
+      let currentChargeStartDate;
+      let currentChargeEndDate;
+      let currentFreeTrialStartDate;
+      let currentFreeTrialEndDate;
+
+      if (tenantInfo) {
+        stripePaymentIntentId = tenantInfo.stripePaymentIntentId;
+        stripeProductId = tenantInfo.currentProduct;
       }
 
       if (!stripePaymentIntentId) {
@@ -113,63 +147,137 @@ const invoicePaymentSucceed = async (event: any, req: Request) => {
       }
       
       const intent = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId);
+      const subscription = await config.stripe.subscriptions.retrieve(event.data.object.subscription);
+
+      const PlanStartDate = subscription.current_period_start;
+      currentChargeStartDate = TrialDate(PlanStartDate);
+
+      const PlanEndDate = subscription.current_period_end;
+      currentChargeEndDate = TrialDate(PlanEndDate);
+
+      let isFreeTrial: boolean;
+      if (event.data.object.amount_paid === 0) {
+        isFreeTrial = true;
+        const freeTrialStartDate = subscription.trial_start;
+        currentFreeTrialStartDate = TrialDate(freeTrialStartDate);
+  
+        const freeTrialEndDate = subscription.trial_end;
+        currentFreeTrialEndDate = TrialDate(freeTrialEndDate);
+      } else {
+        isFreeTrial = false;
+      }
       const PaymentHistoryInformation = await addPaymentHistory(req, {
         subscriptionId: event.data.object.id, // not necessary i think.
-        currentChargeStartDate: formattedPlanStartDate,
-        currentChargeEndDate: formattedPlanEndDate,
         currentProduct: stripeProductId,
         stripePaymentIntentId: intent.id,
         paymentIntentStatus: intent.status,
         amount: event.data.object.amount_paid,
+        isFreeTrial: isFreeTrial,
       });
 
-      userModel.findOneAndUpdate(
-        { customerId: userInfo.customerId },
+      tenantModel.findOneAndUpdate(
+        { customerId: tenantInfo.customerId },
         {
-          currentChargeStartDate: formattedPlanStartDate,
-          currentChargeEndDate: formattedPlanEndDate,
           currentPaymentHistoryId: PaymentHistoryInformation._id,
           $addToSet: { paymentHistoryId: PaymentHistoryInformation._id }, 
+          plan: 'Advanced',
         },
         { new: true },
       ).exec();
-    } catch (e) {
-    }
 
+      const PaymentHistoryModal = await createPaymentHistoryModel(req);
+      PaymentHistoryModal.findOneAndUpdate(
+        { _id: PaymentHistoryInformation._id },
+        {
+          currentChargeStartDate: currentChargeStartDate,
+          currentChargeEndDate: currentChargeEndDate,
+          currentFreeTrialStartDate: currentFreeTrialStartDate,
+          currentFreeTrialEndDate: currentFreeTrialEndDate,
+        },
+        { new: true },
+      ).exec();
+
+    } catch (e) {
+      res.status(500).send();
+    }
+    
     const customerEmail = event.data.object.customer_email;
     const activeCode = randomStringGenerator(16);
     const validationToken = jwt.sign({ customerEmail, activeCode }, config.emailSecret);
     subscriptionSender(customerEmail, `token=${validationToken}`, '');
+
   }, 10000);
 };
 
 
-const invoiceFinalized = async (event: any, req: Request) => {
-  const InvoiceModal = Invoice.getModel(req.dbConnection);
-  const InvoiceFinalized = new InvoiceModal({
-    stripeInvoiceId: event.data.object.id,
-    invoiceNumber: event.data.object.number,
-    invoiceURL: event.data.object.hosted_invoice_url,
-  });
-  await InvoiceFinalized.save();
-
-  if (!userModel) {
-    userModel = await User.getModel(req.dbConnection);
-  }        
-
-  userModel.findOneAndUpdate(
-    { customerId: event.data.object.customer },
-    {
-      currentInvoice: InvoiceFinalized._id,
-      // or  event.data.object.hosted_invoice_url
-      $addToSet: { invoiceHistory: InvoiceFinalized._id },
-    },
-    { new: true },
-  ).exec();
+const invoiceFinalized = async (req: Request, res: Response, event: any) => {
+  setTimeout(async () => {  
+    try {
+      const InvoiceModal = await createInvoiceModel(req);
+      const InvoiceFinalized = new InvoiceModal({
+        stripeInvoiceId: event.data.object.id,
+        invoiceNumber: event.data.object.number,
+        invoiceURL: event.data.object.hosted_invoice_url,
+      });
+      await InvoiceFinalized.save();
+    
+      if (!tenantModel) {
+        tenantModel = await createTenantsModel(req);
+      }        
+    
+      tenantModel.findOneAndUpdate(
+        { currentSubscriptionId: event.data.object.subscription },
+        {
+          currentInvoice: InvoiceFinalized._id,
+          $addToSet: { invoiceHistory: InvoiceFinalized._id },
+        },
+        { new: true },
+      ).exec();
+    } catch (e) {
+      res.status(500).send();
+    }
+  }, 1000);
 };
 
+const chargeRefunded = async (req: Request, res: Response, event: any) => {
+  try {
+    let stripePaymentIntentId;
+    let stripeProductId;
+    const RefundStartDate = event.data.object.created;
+    const formattedRefundStartDate = TrialDate(RefundStartDate);
 
+    if (!userModel) {
+      tenantModel = await createTenantsModel(req);
+    }        
 
+    // event.data.object.invoice  -> find id in Invoice model -> locate the tenant info -> find stripe payment intent
+    const tenantInfo = await tenantModel.findOne({ customerId: event.data.object.customer }).exec();
+    if (tenantInfo) {
+      stripePaymentIntentId = tenantInfo.stripePaymentIntentId;
+      stripeProductId = tenantInfo.currentProduct;
+    }
 
+    const intent = await config.stripe.paymentIntents.retrieve(stripePaymentIntentId);
+    await addPaymentHistory(req, {
+      currentChargeStartDate: formattedRefundStartDate,
+      currentProduct: stripeProductId,
+      stripePaymentIntentId: intent.id,
+      paymentIntentStatus: intent.status,
+      amount: event.data.object.amount,
+      isRefund: true,
+    });
+    
+    const InvoiceModal = Invoice.getModel(req.dbConnection);
+    const InvoiceFinalized = new InvoiceModal({
+      stripeInvoiceId: event.data.object.invoice,
+      invoiceNumber: event.data.object.number,
+      invoiceURL: event.data.object.receipt_url,
+      isRefund: true,
+    });
+    await InvoiceFinalized.save();
 
-export { checkoutSessionCompleted, subscriptionCreateCompleted, invoicePaymentSucceed, invoiceFinalized };
+  } catch (e) {
+  }
+};
+
+export { checkoutSessionCompleted, subscriptionCreateCompleted, invoicePaymentSucceed, invoiceFinalized, chargeRefunded };
