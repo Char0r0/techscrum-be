@@ -58,6 +58,8 @@ const stripeWebhookController = require('../../controllers/v1/stripeWebhookContr
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 const dashboardController = require('../../controllers/v1/dashboardController');
 const dashboardValidations = require('../../validations/dashboard');
+const billOverviewController = require('../../controllers/v1/billingOverviewController');
+const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -82,6 +84,8 @@ router.put(
 );
 
 router.get('/domains', domainController.index);
+router.post('/domains/owner', domainController.getOwnerDomain);
+
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
@@ -202,7 +206,6 @@ router.delete(
   authenticationTokenMiddleware,
   accountSettingControllers.destroy,
 );
-
 
 //TODO: s
 router.patch(
@@ -385,6 +388,8 @@ router.post(
   express.raw({ type: 'application/json' }),
   stripeWebhookController.stripeController,
 );
+router.post('/billingOverview', billOverviewController.getBillingOverviewInfo);
+router.post('/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
 
 // dashboard
 router.get('/projects/:projectId/dashboards', dashboardValidations.show, dashboardController.show);

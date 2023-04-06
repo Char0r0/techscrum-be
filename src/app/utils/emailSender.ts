@@ -61,8 +61,8 @@ export const subscriptionSender = (
     year: '2023',
     project: 'abc',
   };
-  // change to 'Subscription'.
-  emailSenderTemplate(email, templateData, 'CustomEmailVerify', cb);
+
+  emailSenderTemplate(email, templateData, 'Subscription', cb);
 };
 
 export const emailRecipientTemplate = (
