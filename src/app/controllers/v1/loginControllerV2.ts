@@ -37,7 +37,7 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
     const token = await user.generateAuthToken();
     return res.send({ user, ...token });
   } else {
-    return res.status(403).send();
+    return res.status(status.UNAUTHORIZED).send();
   }
 });
 

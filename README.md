@@ -69,10 +69,6 @@ Emil (Junqian Su)
 Implement Register, Login, Forgetpassword, board, tasks, account setting, email sende.
 Jest testing: forgetPassword
 
-## Acknowledgments
-
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
 ## Coding Standard
 
 - https://lilac-dancer-737.notion.site/Coding-Guidelines-bfa77d75476a4b19a195ddb20b02bb33

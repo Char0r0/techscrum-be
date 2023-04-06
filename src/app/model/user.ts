@@ -120,9 +120,6 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // If user subscribed one plan before, they don't have any chance to start a new free trial. 
-    // There must be a way can check whether the user subscribe this plan before or not????
-    
     currentProduct: {
       ref: 'product',
       type: String,

@@ -51,6 +51,18 @@ const projectSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    description: {
+      type: String,
+      trim: true,
+    },
+    websiteUrl: {
+      type: String,
+      trim: true,
+    },
+    tenantId:{
+      require:true,
+      type:String,
+    },
   },
   { timestamps: true },
 );
