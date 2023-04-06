@@ -6,6 +6,7 @@ export interface IStatus {
   order: number;
   board: Schema.Types.ObjectId;
   taskList: Schema.Types.ObjectId[];
+  tenantId: String
 }
 
 const statusSchema = new Schema<IStatus>(
@@ -26,12 +27,17 @@ const statusSchema = new Schema<IStatus>(
     board: {
       type: Schema.Types.ObjectId,
     },
+    tenantId:{
+      require:true,
+      type:String,
+    },
     taskList: [
       {
         type: Schema.Types.ObjectId,
         ref: 'tasks',
       },
     ],
+
   },
   {
     timestamps: true,

@@ -5,8 +5,9 @@ const User = require('../../model/user');
 const status = require('http-status');
 
 exports.index = async (req: Request, res: Response) => {
+  const { tenantId } = req;
   const userModel = await User.getModel(req.userConnection);
-  const users = await userModel.find({ active: true });
+  const users = await userModel.find({ active: true, tenants:tenantId });
   res.send(replaceId(users));
 };
 
