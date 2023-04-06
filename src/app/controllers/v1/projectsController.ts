@@ -16,7 +16,7 @@ exports.index = asyncHandler(async (req: any, res: Response) => {
   }
   const userModel = await User.getModel(req.userConnection);
   const projects = await Project.getModel(req.dbConnection)
-    .find({ isDelete: false })
+    .find({ isDelete: false, tenantId: req.tenantId || req.userId })
     .populate({ path: 'projectLeadId', model: userModel })
     .populate({ path: 'ownerId', model: userModel });
   res.send(replaceId(projects));
@@ -42,10 +42,10 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const { body, dbConnection } = req;
+  const { body, dbConnection, tenantId } = req;
   const userId = req.body.userId;
   try {
-    const project = await initProject(body, userId, dbConnection);
+    const project = await initProject(body, userId, dbConnection, tenantId || userId);
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
     logger.error(e);

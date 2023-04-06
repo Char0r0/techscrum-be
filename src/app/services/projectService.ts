@@ -5,6 +5,7 @@ import * as Status from '../model/status';
 const config = require('../config/app');
 const Role = require('../model/role');
 
+//TODO: ?????
 const createRoleModel = async () => {
   const connection = new Mongoose();
   const resConnection = await connection.connect(config.authenticationConnection);
@@ -16,6 +17,7 @@ export const initProject = async (
   body: any,
   ownerId: string | undefined,
   dbConnection: Mongoose,
+  tenantId: string,
 ) => {
   const projectModel = Project.getModel(dbConnection);
   const boardModel = Board.getModel(dbConnection);
@@ -44,6 +46,7 @@ export const initProject = async (
       roles: initRoles,
       boardId: board._id,
       ownerId,
+      tenantId,
     });
 
     const DEFAULT_STATUS = [
@@ -52,24 +55,28 @@ export const initProject = async (
         slug: 'to-do',
         order: 0,
         board: board._id,
+        tenantId,
       },
       {
         name: 'in progress',
         slug: 'in-progress',
         order: 1,
         board: board._id,
+        tenantId,
       },
       {
         name: 'review',
         slug: 'review',
         order: 2,
         board: board._id,
+        tenantId,
       },
       {
         name: 'done',
         slug: 'done',
         order: 3,
         board: board._id,
+        tenantId,
       },
     ];
 
