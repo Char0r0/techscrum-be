@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { createInvoiceModel, createPaymentHistoryModel, createTenantsModel, createUserModel } from '../utils/helper';
+import { createInvoiceModel, createPaymentHistoryModel, createProductModel, createTenantsModel, createUserModel } from '../utils/helper';
 
 
 interface Invoice {
@@ -17,6 +17,7 @@ interface Invoice {
 
 const getBillingOverviewInformation = async (req: Request, userId: string) => {
   let planName: string;
+  let freeTrialDuration: number;
   const tenantModel = await createTenantsModel(req);
   const tenantInfo = await tenantModel.findOne({ owner: userId });
 
@@ -33,6 +34,18 @@ const getBillingOverviewInformation = async (req: Request, userId: string) => {
   } else {
     planName = 'Advanced plan';
   }
+
+  const productModel = await createProductModel(req);
+  const productInfo = await productModel.findOne({ stripeProductId: tenantInfo.currentProduct });
+  
+  if (productInfo.productName === 'Advanced monthly plan') { 
+    freeTrialDuration = 7;
+  } else if (productInfo.productName === 'Advanced yearly plan') {
+    freeTrialDuration = 14;
+  } else {
+    freeTrialDuration = 0;
+  }
+
   const overviewInfo = {
     amount: paymentInfo.amount / 100,
     planName: planName,
@@ -40,6 +53,7 @@ const getBillingOverviewInformation = async (req: Request, userId: string) => {
     periodEnd: paymentInfo.currentChargeEndDate,
     customerName: userInfo.name,
     customerEmail: userInfo.email,
+    freeTrialDuration: freeTrialDuration,
   };
 
   return overviewInfo;
