@@ -214,10 +214,37 @@ const invoiceFinalized = async (req: Request, res: Response, event: any) => {
   setTimeout(async () => {  
     try {
       const InvoiceModal = await createInvoiceModel(req);
+      let amount: number;
+      let planName: string;
+      let formattedStartDate: string;
+      let formattedEndDate: string;
+
+
+      if (event.data.object.amount_paid === 0) {
+        amount = 0;
+        planName = 'Free Trial';
+      } else if (event.data.object.amount_paid === 4900) {
+        amount = 49;
+        planName = 'Advanced Plan (Monthly)';
+      } else {
+        amount = 348;
+        planName = 'Advanced Plan (Yearly)';
+      }
+
+      const startDate = event.data.object.period_start;
+      formattedStartDate = TrialDate(startDate);
+
+      const endDate = event.data.object.period_end;
+      formattedEndDate = TrialDate(endDate);
+
       const InvoiceFinalized = new InvoiceModal({
         stripeInvoiceId: event.data.object.id,
         invoiceNumber: event.data.object.number,
         invoiceURL: event.data.object.hosted_invoice_url,
+        planName: planName,
+        amount: amount,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
       });
       await InvoiceFinalized.save();
     
@@ -233,6 +260,7 @@ const invoiceFinalized = async (req: Request, res: Response, event: any) => {
         },
         { new: true },
       ).exec();
+
     } catch (e) {
       res.status(500).send();
     }

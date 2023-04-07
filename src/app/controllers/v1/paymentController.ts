@@ -18,8 +18,8 @@ enum FreeTrialLengths {
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
 
-  const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
-
+  const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+  const domainURL = req.headers.origin;
   let freeTrialCheck: boolean = isFreeTrial;
 
   if (planIdentifier === ADVANCED_PLAN) {
