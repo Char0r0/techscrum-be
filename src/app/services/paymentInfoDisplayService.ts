@@ -74,9 +74,8 @@ const getStatusOfUserCurrentPlan = async (req: Request, domainURL: string | unde
   }
   if (paymentHistoryInfo.isFreeTrial) {
     return true;
-  } else {
-    return false;
-  }
+  } 
+  return false;
 };
 
 const checkIsUserSubscribePlan = async (req: Request, domainURL: string | undefined) => {
