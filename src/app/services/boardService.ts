@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
 const Board = require('../model/board');
 const Task = require('../model/task');
-const User = require('../model/task');
+const User = require('../model/user');
 const Status = require('../model/status');
 const Label = require('../model/label');
 const Project = require('../model/project');
