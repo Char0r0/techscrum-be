@@ -59,6 +59,10 @@ const projectSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
+    tenantId:{
+      require:true,
+      type:String,
+    },
   },
   { timestamps: true },
 );

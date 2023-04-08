@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const config = require('../config/app');
 import { Request } from 'express';
 import Stripe from 'stripe';
@@ -79,7 +80,8 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
     });
   } catch (e: any) {
   }
-  return session.url;
+  console.log(session);
+  return session?.url;
 };
 
 
