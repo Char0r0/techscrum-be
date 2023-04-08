@@ -15,6 +15,22 @@ const invoiceSchema = new mongoose.Schema(
       type: String,
     },
 
+    planName: {
+      type: String,
+    },
+
+    amount: {
+      type: Number,
+    },
+
+    startDate: {
+      type: String,
+    },
+
+    endDate: {
+      type: String,
+    },
+    
     isRefund: {
       type: Boolean,
       default: false,
