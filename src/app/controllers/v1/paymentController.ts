@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
 import { createProductModel, createTenantsModel } from '../../utils/helper';
 const { createPrice, subscribe } = require('../../services/paymentService');
+const logger = require('winston');
 
 let recurringPrice: Stripe.Price;
 let priceId: string;
@@ -18,8 +19,8 @@ enum FreeTrialLengths {
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
 
-  const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
-
+  const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+  const domainURL = req.headers.origin;
   let freeTrialCheck: boolean = isFreeTrial;
 
   if (planIdentifier === ADVANCED_PLAN) {
@@ -65,6 +66,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
     res.send(payment);
   } catch (e) {
+    logger.log(e);
     next(e);
   }
 };

@@ -76,7 +76,7 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
       },
       subscription_data: subscriptionData,
       mode: 'subscription',
-      success_url: 'https://www.techscrumapp.com/price',
+      success_url: 'https://www.techscrumapp.com/payment/success',
       cancel_url: 'https://www.techscrumapp.com/price',
     });
   } catch (e: any) {
