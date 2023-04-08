@@ -80,8 +80,7 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
     });
   } catch (e: any) {
   }
-  console.log(session);
-  return session?.url;
+  return session.url;
 };
 
 
