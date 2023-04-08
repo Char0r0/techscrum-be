@@ -424,7 +424,6 @@ router.delete(
 
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post('/billingOverview', billOverviewController.getBillingOverviewInfo);
 // router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
 router.post('/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
 
