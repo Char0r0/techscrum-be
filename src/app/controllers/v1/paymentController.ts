@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
 import { createProductModel, createTenantsModel } from '../../utils/helper';
 const { createPrice, subscribe } = require('../../services/paymentService');
+const logger = require('winston');
 
 let recurringPrice: Stripe.Price;
 let priceId: string;
@@ -65,6 +66,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
     res.send(payment);
   } catch (e) {
+    logger.log(e);
     next(e);
   }
 };
