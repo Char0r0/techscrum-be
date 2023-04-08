@@ -104,8 +104,7 @@ const getUserInvoiceHistory = async (req: Request, domainURL: string | undefined
   const latestInvoiceInfo = await invoiceModel.find({
     _id: { $in: tenantInfo.invoiceHistory },
   });
-  // .sort({ createdAt: 'desc' })
-  // .limit(3);
+
 
   const userInvoices = latestInvoiceInfo.map((invoice :Invoice) => ({
     id: invoice._id,
