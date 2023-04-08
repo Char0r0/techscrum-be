@@ -16,26 +16,24 @@ const PRICE_UNIT = 100;
 const PRODUCT_QUANTILITY = 1; 
 
 const createPrice = async (req: Request, planIdentifier: number, productName: string, paymentMode: boolean) => {
-
-  if (planIdentifier === ADVANCED_PLAN) {
-    if (paymentMode) {
-      price = ADVANCED_MONTHLY_PRICE;
-      interval = 'month';
-    } else {
-      price = ADVANCED_YEARLY_PRICE;
-      interval = 'year';
-    }
-  } else {
-    if (paymentMode) {
-      price = ULTRA_MONTHLY_PRICE;
-      interval = 'month';
-    } else {
-      price = ULTRA_YEARLY_PRICE;
-      interval = 'year';
-    }
-  }
-
   try {
+    if (planIdentifier === ADVANCED_PLAN) {
+      if (paymentMode) {
+        price = ADVANCED_MONTHLY_PRICE;
+        interval = 'month';
+      } else {
+        price = ADVANCED_YEARLY_PRICE;
+        interval = 'year';
+      }
+    } else {
+      if (paymentMode) {
+        price = ULTRA_MONTHLY_PRICE;
+        interval = 'month';
+      } else {
+        price = ULTRA_YEARLY_PRICE;
+        interval = 'year';
+      }
+    }
     const product = await config.stripe.products.create({ name: productName });
     productPrice = await config.stripe.prices.create({
       product: product.id,

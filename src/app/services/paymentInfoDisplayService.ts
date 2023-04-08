@@ -105,7 +105,6 @@ const getUserInvoiceHistory = async (req: Request, domainURL: string | undefined
     _id: { $in: tenantInfo.invoiceHistory },
   });
 
-
   const userInvoices = latestInvoiceInfo.map((invoice :Invoice) => ({
     id: invoice._id,
     invoiceURL: invoice.invoiceURL,
