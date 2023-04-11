@@ -63,7 +63,7 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
         trial_period_days: freeTrial,
       };
     }
-
+    //TODO: Typo error
     session = await config.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
@@ -82,7 +82,6 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
     });
   } catch (e: any) {
   }
-  console.log(session);
   return session?.url;
 };
 
