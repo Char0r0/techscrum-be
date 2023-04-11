@@ -58,7 +58,7 @@ const stripeWebhookController = require('../../controllers/v1/stripeWebhookContr
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 const dashboardController = require('../../controllers/v1/dashboardController');
 const dashboardValidations = require('../../validations/dashboard');
-const billOverviewController = require('../../controllers/v1/billingOverviewController');
+const paymentInfoController = require('../../controllers/v1/paymentInfoDisplayController');
 const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
@@ -388,8 +388,11 @@ router.post(
   express.raw({ type: 'application/json' }),
   stripeWebhookController.stripeController,
 );
-router.post('/billingOverview', billOverviewController.getBillingOverviewInfo);
-router.post('/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
+router.post('/payment/check/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
+router.get('/payment/check/isUserFreeTrial', paymentInfoController.isUserFreeTrial);
+router.get('/payment/check/isUserSubscribePlan', paymentInfoController.isUserSubscribePlan);
+router.post('/payment/info/billingOverview', paymentInfoController.getBillingOverviewInfo);
+router.get('/payment/info/billingHistory', paymentInfoController.getInvoice);
 
 // dashboard
 router.get('/projects/:projectId/dashboards', dashboardValidations.show, dashboardController.show);

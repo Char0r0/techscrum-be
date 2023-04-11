@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const config = require('../config/app');
 import { Request } from 'express';
 import Stripe from 'stripe';
@@ -76,12 +77,13 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
       },
       subscription_data: subscriptionData,
       mode: 'subscription',
-      success_url: 'https://www.techscrumapp.com/price',
+      success_url: 'https://www.techscrumapp.com/payment/success',
       cancel_url: 'https://www.techscrumapp.com/price',
     });
   } catch (e: any) {
   }
-  return session.url;
+  console.log(session);
+  return session?.url;
 };
 
 

@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 import { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
 import { createProductModel, createTenantsModel } from '../../utils/helper';
 const { createPrice, subscribe } = require('../../services/paymentService');
+const logger = require('winston');
 
 let recurringPrice: Stripe.Price;
 let priceId: string;
@@ -17,29 +19,29 @@ enum FreeTrialLengths {
 }
 
 exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
-
-  const { domainURL, planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
-
-  let freeTrialCheck: boolean = isFreeTrial;
-
-  if (planIdentifier === ADVANCED_PLAN) {
-    if (paymentMode) {
-      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
-      planName = 'Advanced monthly plan';
-    } else {
-      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
-      planName = 'Advanced yearly plan';
-    }
-  } else {
-    if (paymentMode) {
-      FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
-      planName = 'Ultra monthly plan';
-    } else {
-      FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
-      planName = 'Ultra yearly plan';
-    }
-  }
   try {
+    const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
+    const domainURL = req.headers.origin;
+    let freeTrialCheck: boolean = isFreeTrial;
+
+    if (planIdentifier === ADVANCED_PLAN) {
+      if (paymentMode) {
+        FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
+        planName = 'Advanced monthly plan';
+      } else {
+        FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
+        planName = 'Advanced yearly plan';
+      }
+    } else {
+      if (paymentMode) {
+        FREE_TRIAL = FreeTrialLengths.ONE_WEEK;
+        planName = 'Ultra monthly plan';
+      } else {
+        FREE_TRIAL = FreeTrialLengths.ONE_MONTH;
+        planName = 'Ultra yearly plan';
+      }
+    }
+
     const productModel = await createProductModel(req);
     const isProductExist = await productModel.findOne({ productName: planName }).exec();
     if (!isProductExist) {
@@ -65,6 +67,8 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
     res.send(payment);
   } catch (e) {
+    console.log(e);
+    logger.log(e);
     next(e);
   }
 };
