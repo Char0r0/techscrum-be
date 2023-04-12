@@ -2,10 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { checkIsUserSubscribePlan, getBillingOverviewInformation, getStatusOfUserCurrentPlan, getUserInvoiceHistory } from '../../services/paymentInfoDisplayService';
 
 exports.getBillingOverviewInfo = async (req: Request, res: Response, next: NextFunction) => {
-  const { userId } = req.body;
-
+  const domainURL = req.headers.origin;
   try {
-    const billingInfo = await getBillingOverviewInformation(req, userId);
+    const billingInfo = await getBillingOverviewInformation(req, domainURL);
     res.send(billingInfo);
   } catch (e) {
     next(e);
