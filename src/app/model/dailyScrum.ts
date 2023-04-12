@@ -66,10 +66,10 @@ dailyScrumSchema.methods.toJSON = function () {
   dailyScrumObject.id = id;
   dailyScrumObject._id = undefined;
 
-  if (dailyScrumObject.progresses.length > 0) {
+  if (dailyScrumObject?.progresses?.length > 0) {
     dailyScrumObject.progresses.sort(
       (a: { timeStamp: number; value: number }, b: { timeStamp: number; value: number }) =>
-        b.timeStamp - a.timeStamp,
+        b?.timeStamp - a?.timeStamp,
     );
 
     dailyScrumObject.progress = dailyScrumObject.progresses[0];

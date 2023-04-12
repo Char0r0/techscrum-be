@@ -178,4 +178,4 @@ const destroy = [
   generateIdValidationRule('query', 'taskId', true),
 ];
 
-module.exports = { show, update, store, destroy };
+module.exports = { show, update, store, destroy, generateIdValidationRule };
