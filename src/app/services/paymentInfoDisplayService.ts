@@ -15,48 +15,52 @@ interface Invoice {
   __v?: number;
 }
 
-const getBillingOverviewInformation = async (req: Request, userId: string) => {
-  let planName: string;
-  let freeTrialDuration: number;
-  const tenantModel = await createTenantsModel(req);
-  const tenantInfo = await tenantModel.findOne({ owner: userId });
-
-  const userModel = await createUserModel(req);
-  const userInfo = await userModel.findOne({ _id: userId });
-
-  const paymentModel = await createPaymentHistoryModel(req);
-  const paymentInfo = await paymentModel.findOne({ _id: tenantInfo.currentPaymentHistoryId });
-
-  if ((paymentInfo.amount / 100) === 49) {
-    planName = 'Advanced plan (Monthly)';
-  } else if ((paymentInfo.amount / 100) === 348) {
-    planName = 'Advanced plan (Yearly)';
-  } else {
-    planName = 'Advanced plan';
-  }
-
-  const productModel = await createProductModel(req);
-  const productInfo = await productModel.findOne({ stripeProductId: tenantInfo.currentProduct });
+const getBillingOverviewInformation = async (req: Request, domainURL: string | undefined) => {
+  try {
+    let planName: string;
+    let freeTrialDuration: number;
+    const tenantModel = await createTenantsModel(req);
+    const tenantInfo = await tenantModel.findOne({ origin: domainURL });
   
-  if (productInfo.productName === 'Advanced monthly plan') { 
-    freeTrialDuration = 7;
-  } else if (productInfo.productName === 'Advanced yearly plan') {
-    freeTrialDuration = 14;
-  } else {
-    freeTrialDuration = 0;
+    const userModel = await createUserModel(req);
+    const userInfo = await userModel.findOne({ _id: tenantInfo.owner });
+  
+    const paymentModel = await createPaymentHistoryModel(req);
+    const paymentInfo = await paymentModel.findOne({ _id: tenantInfo.currentPaymentHistoryId });
+  
+    if ((paymentInfo.amount / 100) === 49) {
+      planName = 'Advanced plan (Monthly)';
+    } else if ((paymentInfo.amount / 100) === 348) {
+      planName = 'Advanced plan (Yearly)';
+    } else {
+      planName = 'Advanced plan';
+    }
+  
+    const productModel = await createProductModel(req);
+    const productInfo = await productModel.findOne({ stripeProductId: tenantInfo.currentProduct });
+    
+    if (productInfo.productName === 'Advanced monthly plan') { 
+      freeTrialDuration = 7;
+    } else if (productInfo.productName === 'Advanced yearly plan') {
+      freeTrialDuration = 14;
+    } else {
+      freeTrialDuration = 0;
+    }
+  
+    const overviewInfo = {
+      amount: paymentInfo.amount / 100,
+      planName: planName,
+      periodStart: paymentInfo.currentChargeStartDate,
+      periodEnd: paymentInfo.currentChargeEndDate,
+      customerName: userInfo.name,
+      customerEmail: userInfo.email,
+      freeTrialDuration: freeTrialDuration,
+    };
+  
+    return overviewInfo;
+
+  } catch (e) {
   }
-
-  const overviewInfo = {
-    amount: paymentInfo.amount / 100,
-    planName: planName,
-    periodStart: paymentInfo.currentChargeStartDate,
-    periodEnd: paymentInfo.currentChargeEndDate,
-    customerName: userInfo.name,
-    customerEmail: userInfo.email,
-    freeTrialDuration: freeTrialDuration,
-  };
-
-  return overviewInfo;
 };
 
 const getStatusOfUserCurrentPlan = async (req: Request, domainURL: string | undefined) => {
@@ -104,7 +108,6 @@ const getUserInvoiceHistory = async (req: Request, domainURL: string | undefined
   const latestInvoiceInfo = await invoiceModel.find({
     _id: { $in: tenantInfo.invoiceHistory },
   });
-
 
   const userInvoices = latestInvoiceInfo.map((invoice :Invoice) => ({
     id: invoice._id,

@@ -8,10 +8,14 @@ exports.index = (req: Request, res: Response) => {
 exports.getOwnerDomain = async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
+
     const domainURL = req.headers.origin;
+
     const tenantModel = await createTenantsModel(req);
     const tenantInfo = await tenantModel.findOne({ origin: domainURL }).exec();
+
     const ownerId = tenantInfo.owner.valueOf().toString();
+
     if (ownerId === userId) {
       res.send(true); 
     } else {
@@ -19,6 +23,6 @@ exports.getOwnerDomain = async (req: Request, res: Response) => {
     }
 
   } catch (e) {
-  
+
   }
 };
