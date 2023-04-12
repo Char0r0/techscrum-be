@@ -352,7 +352,7 @@ router.delete('/sprints/:id', sprintController.destroy);
 // statuses
 router.get('/boards/:boardId/statuses', statuseValidation.index, statusesController.index);
 
-//TODO: s
+//TODO:
 //activities
 router.get('/activities/:tid', activityControllers.show);
 router.post('/activities', activityControllers.store);
@@ -388,10 +388,10 @@ router.post(
   express.raw({ type: 'application/json' }),
   stripeWebhookController.stripeController,
 );
-router.post('/payment/check/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
+router.get('/payment/check/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
 router.get('/payment/check/isUserFreeTrial', paymentInfoController.isUserFreeTrial);
 router.get('/payment/check/isUserSubscribePlan', paymentInfoController.isUserSubscribePlan);
-router.post('/payment/info/billingOverview', paymentInfoController.getBillingOverviewInfo);
+router.get('/payment/info/billingOverview', paymentInfoController.getBillingOverviewInfo);
 router.get('/payment/info/billingHistory', paymentInfoController.getInvoice);
 
 // dashboard
