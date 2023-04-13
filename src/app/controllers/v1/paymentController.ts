@@ -14,7 +14,7 @@ const ADVANCED_PLAN = 0;
 let FREE_TRIAL: number;
 
 enum FreeTrialLengths {
-  ONE_WEEK = 1,
+  ONE_WEEK = 7,
   ONE_MONTH = 30,
 }
 

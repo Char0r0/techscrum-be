@@ -55,6 +55,9 @@ const createPrice = async (req: Request, planIdentifier: number, productName: st
 const subscribe = async (domainURL: string, productId: string, priceId: string, userId: string, freeTrial: number, isFreeTrial: boolean) => {
   try {
     let subscriptionData = {};
+    let successURL = domainURL + '/payment/success';
+    let priceURL = domainURL + '/price';
+
     if (isFreeTrial) {
       subscriptionData = {
         trial_settings: { end_behavior: { missing_payment_method: 'cancel' } },
@@ -75,8 +78,8 @@ const subscribe = async (domainURL: string, productId: string, priceId: string, 
       },
       subscription_data: subscriptionData,
       mode: 'subscription',
-      success_url: 'https://www.techscrumapp.com/payment/success',
-      cancel_url: 'https://www.techscrumapp.com/price',
+      success_url: successURL,
+      cancel_url: priceURL,
     });
   } catch (e: any) {
   }
