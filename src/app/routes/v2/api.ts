@@ -56,6 +56,8 @@ const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
+const dashboardController = require('../../controllers/v1/dashboardController');
+const dashboardValidations = require('../../validations/dashboard');
 const paymentInfoController = require('../../controllers/v1/paymentInfoDisplayController');
 const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
 import * as sprintController from '../../controllers/v1/sprintController';
@@ -205,7 +207,6 @@ router.delete(
   accountSettingControllers.destroy,
 );
 
-
 //TODO: s
 router.patch(
   '/account/change-password',
@@ -351,7 +352,7 @@ router.delete('/sprints/:id', sprintController.destroy);
 // statuses
 router.get('/boards/:boardId/statuses', statuseValidation.index, statusesController.index);
 
-//TODO: 
+//TODO:
 //activities
 router.get('/activities/:tid', activityControllers.show);
 router.post('/activities', activityControllers.store);
@@ -380,15 +381,25 @@ router.delete(
   dailyScrumControllers.destroy,
 );
 
-
 // payment
 router.post('/payment', paymentController.createPayment);
-router.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.stripeController);
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhookController.stripeController,
+);
 router.get('/payment/check/userCurrentPlan', userCurrentPlanController.getUserCurrentPlan);
 router.get('/payment/check/isUserFreeTrial', paymentInfoController.isUserFreeTrial);
 router.get('/payment/check/isUserSubscribePlan', paymentInfoController.isUserSubscribePlan);
 router.get('/payment/info/billingOverview', paymentInfoController.getBillingOverviewInfo);
 router.get('/payment/info/billingHistory', paymentInfoController.getInvoice);
 
+// dashboard
+router.get('/projects/:projectId/dashboards', dashboardValidations.show, dashboardController.show);
+router.get(
+  '/projects/:projectId/dashboards/dailyScrums',
+  dashboardValidations.showDailyScrums,
+  dashboardController.showDailyScrums,
+);
 
 module.exports = router;
