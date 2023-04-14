@@ -219,11 +219,10 @@ const invoiceFinalized = async (req: Request, res: Response, event: any) => {
       let formattedStartDate: string;
       let formattedEndDate: string;
 
-
-      if (event.data.object.amount_paid === 0) {
+      if (event.data.object.amount_due === 0) {
         amount = 0;
         planName = 'Free Trial';
-      } else if (event.data.object.amount_paid === 4900) {
+      } else if (event.data.object.amount_due === 4900) {
         amount = 49;
         planName = 'Advanced Plan (Monthly)';
       } else {
@@ -231,11 +230,10 @@ const invoiceFinalized = async (req: Request, res: Response, event: any) => {
         planName = 'Advanced Plan (Yearly)';
       }
 
-      const startDate = event.data.object.period_start;
-      formattedStartDate = TrialDate(startDate);
+      const subscription = await config.stripe.subscriptions.retrieve(event.data.object.subscription);
 
-      const endDate = event.data.object.period_end;
-      formattedEndDate = TrialDate(endDate);
+      formattedStartDate = TrialDate(subscription.current_period_start);
+      formattedEndDate = TrialDate(subscription.current_period_end);
 
       const InvoiceFinalized = new InvoiceModal({
         stripeInvoiceId: event.data.object.id,
