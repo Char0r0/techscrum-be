@@ -10,4 +10,6 @@ const showDailyScrums = [
   generateIdValidationRule('query', 'userId', true),
 ];
 
-module.exports = { show, showDailyScrums };
+const generatePDF = [generateIdValidationRule('param', 'projectId', true)];
+
+module.exports = { show, showDailyScrums, generatePDF };

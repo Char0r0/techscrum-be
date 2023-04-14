@@ -401,5 +401,10 @@ router.get(
   dashboardValidations.showDailyScrums,
   dashboardController.showDailyScrums,
 );
+router.get(
+  '/projects/:projectId/dashboards/reports',
+  dashboardValidations.generatePDF,
+  dashboardController.generatePDF,
+);
 
 module.exports = router;
