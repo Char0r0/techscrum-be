@@ -42,7 +42,7 @@ const getBillingOverviewInformation = async (req: Request, domainURL: string | u
     if (productInfo.productName === 'Advanced monthly plan') { 
       freeTrialDuration = 7;
     } else if (productInfo.productName === 'Advanced yearly plan') {
-      freeTrialDuration = 14;
+      freeTrialDuration = 30;
     } else {
       freeTrialDuration = 0;
     }
