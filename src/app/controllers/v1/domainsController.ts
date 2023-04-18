@@ -17,12 +17,11 @@ exports.getOwnerDomain = async (req: Request, res: Response) => {
     const ownerId = tenantInfo.owner.valueOf().toString();
 
     if (ownerId === userId) {
-      res.send(true); 
+      res.send(true);
     } else {
       res.send(false);
     }
-
   } catch (e) {
-
+    res.status(500).json(e);
   }
 };
