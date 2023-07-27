@@ -13,7 +13,7 @@ const logger = require('../../../loaders/logger');
 const connectUserDb = async (res: Response) => {
   try {
     const userDbConnection = new Mongoose();
-    const resUserDbConnection = await userDbConnection.connect(config.userConnection);
+    const resUserDbConnection = await userDbConnection.connect(config.tenantsDBConnection);
     return resUserDbConnection;
   } catch (err) {
     return res.status(401).json({ status: 'fail', error: 'Database connection fail' });
@@ -71,10 +71,10 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 
   try {
     const { email, name, password } = req.body;
-    const user = await User.getModel(req.userConnection).saveInfo(email, name, password);
+    const user = await User.getModel(req.tenantsConnection).saveInfo(email, name, password);
     user.activeAccount();
     const activeTenant = user.tenants.at(-1);
-    const tenantModel = await Tenant.getModel(req.userConnection);
+    const tenantModel = await Tenant.getModel(req.tenantsConnection);
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true });
     res.send({ user });
   } catch (err) {
@@ -94,7 +94,7 @@ exports.verify = asyncHandler(async (req: Request, res: Response, next: NextFunc
 
   try {
     const email = req.verifyEmail ?? '';
-    const user = await User.getModel(req.userConnection).findOne({ email });
+    const user = await User.getModel(req.tenantsConnection).findOne({ email });
     res.send({ email, active: user.active });
   } catch (err) {
     res.status(status.INTERNAL_SERVER_ERROR).json({
