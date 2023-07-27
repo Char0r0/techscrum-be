@@ -87,3 +87,6 @@ cat filename
 //history | grep run
 
 docker run -p 8000:8080 -d -v ${pwd}/.:/app techscrum:lastest
+
+
+sdfsdfdf
