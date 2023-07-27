@@ -1,8 +1,10 @@
 declare namespace Express {
   interface Request {
     dbConnection: any;
-    dataConnectionPool: any;
+    dbName: string;
     userConnection: any;
     tenantId: string | null;
+    dataConnectionPool: any;
+    tenantsConnection: any;
   }
 }

@@ -25,9 +25,11 @@ const authenticationEmailTokenMiddlewareV2 = async (
   jwt.verify(token, config.emailSecret, async (err: Error) => {
     if (err) return res.status(status.FORBIDDEN).send();
     const { id } = jwt.verify(token, config.emailSecret);
-    const resUserDbConnection = req.userConnection;
+    const resUserDbConnection = req.tenantsConnection;
+   
     const userModel = await User.getModel(resUserDbConnection);
     const user = await userModel.findById(id);
+    
     // if user is not active, continue registration process
     if (user && !user.active) {
       req.verifyEmail = user.email;
