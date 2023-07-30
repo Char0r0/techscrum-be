@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-
 export {};
 
 const mongoose = require('mongoose');
 const config = require('../config/app');
 const Tenant = require('../model/tenants');
 const User = require('../model/user');
+const readline = require('readline');
 
 const options = {
   useNewURLParser: true,
@@ -21,14 +21,25 @@ const tenantsDBConnection =  () => {
 };
     
 
-const init = async () => {
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const init = async (domainInput:string, emailInput:string, passwordInput:string) => {
   try {
-    const emailAdd = 'techscrum@gmail.com';
-    const domain = 'http://localhost:3000';
-    const password = '12345678';
+    const emailAdd = emailInput || 'techscrum@gmail.com' ;
+    const domain = domainInput || 'http://localhost:3000';
+    const password = passwordInput || '12345678';
+    if (process.env.ENVIRONMENT === 'production') {
+      if (emailAdd === 'techscrum@gmail.com' || password === '12345678') {
+        console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
+        process.exit();
+      }
+    }
     const tenantsDbConnection = await tenantsDBConnection();
     const tenantModel = Tenant.getModel(tenantsDbConnection);
-    const tenant = await tenantModel.create({ origin: config.connectTenantsOrigin || domain });
+    const tenant = await tenantModel.findOneAndUpdate({ origin: domain }, { origin: domain },   { upsert: true, new: true });
 
     const user = await User.getModel(tenantsDbConnection);
     const resUser = await user.create({
@@ -42,12 +53,25 @@ const init = async () => {
    
     const activeTenant = resUser.tenants.at(-1);
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true, owner: mongoose.Types.ObjectId(user._id) });
-    console.log('Init sucuess! \nLogin details:\n', 'Domain: ' + domain + '\n', 'Email: ' + emailAdd + '\n', 'Password: ' + password + '\n');
+    console.log('Create success! \n\x1b[32mLogin details:\n', 'Domain: ' + domain + '\n', 'Email: ' + emailAdd + '\n', 'Password: ' + password + '\x1b[0m\n');
     process.exit();
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
 };
-
-init();
+console.log('\x1b[31mDEVOPS IMPORTANT!!! DON"T use the default email OR password for PRODUCTION environment, SERIOUS SECURITY ISSUE!!!\x1b[0m');
+rl.question('Please type confirm that you have READ THIS MESSAGE: ',  (answer:string) => {
+  if (answer.toLowerCase() === 'confirm') {
+    rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string) => {
+      rl.question('Please enter the user email (techscrum@gmail.com): ', (email:string) => {
+        rl.question('Please enter the user password (12345678): ', (password:string) => {
+          init(domain, email, password);
+        });
+      });
+    });
+  } else {
+    console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
+    process.exit();
+  }
+});
