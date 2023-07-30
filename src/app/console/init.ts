@@ -33,7 +33,7 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
     const password = passwordInput || '12345678';
     if (process.env.ENVIRONMENT === 'production') {
       if (emailAdd === 'techscrum@gmail.com' || password === '12345678') {
-        console.log('\x1b[31mCannot create account.\x1b[0m');
+        console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
         process.exit();
       }
     }
@@ -71,6 +71,7 @@ rl.question('Please type confirm that you have READ THIS MESSAGE: ',  (answer:st
       });
     });
   } else {
+    console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
     process.exit();
   }
 });
