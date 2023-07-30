@@ -33,8 +33,9 @@ module.exports = {
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
   stripeSecret: process.env.STRIPE_WEBHOOK_SECRET,
   //---------------------------v2--------------------------
-  tenantsDBConnection: process.env.USER_URL || DEFAULT_USER_CONNECTION,
-  publicConnection: process.env.PUBLIC_URL || DEFAULT_PUBLIC_CONNECTION,
+  tenantsDBConnection: process.env.TENANTS_CONNECTION || DEFAULT_USER_CONNECTION,
+  publicConnection: process.env.PUBLIC_CONNECTION || DEFAULT_PUBLIC_CONNECTION,
   authenticationConnection: process.env.DB_V1 || DEFAULT_USER_CONNECTION,
   environment: process.env.ENVIRONMENT || 'production',
+  connectTenantsOrigin: process.env.CONNECT_TENANT || null,
 };

@@ -25,7 +25,7 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
     jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
       if (err) return res.status(status.FORBIDDEN).send();
       const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
-      const userDb = await User.getModel(req.userConnection);
+      const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
         res.status(status.FORBIDDEN).send();

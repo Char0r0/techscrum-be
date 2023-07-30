@@ -4,13 +4,13 @@ const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');
 const User = require('../model/user');
 const configApp = require('../config/app');
-import { Request } from 'express';
+
 
 exports.emailRegister = async (
   resUserDbConnection: any,
   email: string,
   newTenants: any,
-  req: Request,
+  origin: string | null,
 ) => {
   if (!configApp || !configApp.emailSecret) {
     logger.error('Missing email secret in env');
@@ -45,10 +45,10 @@ exports.emailRegister = async (
     emailSender(
       email,
       `token=${validationToken}`,
-      getDomain(newTenants.origin, req.headers.origin),
+      getDomain(newTenants.origin, origin),
     );
   } catch (e) {
-    logger.error('registerServicesV2 Fail:', JSON.stringify(e));
+    logger.error('registerServicesV2 Fail:' + e);
     if (newUser.tenants.length === 0) {
       userModel.deleteOne({ email });
     } else {

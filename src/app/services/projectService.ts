@@ -2,16 +2,7 @@ import { Mongoose } from 'mongoose';
 const Project = require('../model/project');
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-const config = require('../config/app');
 const Role = require('../model/role');
-
-//TODO: ?????
-const createRoleModel = async () => {
-  const connection = new Mongoose();
-  const resConnection = await connection.connect(config.authenticationConnection);
-  const role = await Role.getModel(resConnection);
-  return role;
-};
 
 export const initProject = async (
   body: any,
@@ -30,7 +21,7 @@ export const initProject = async (
   }
 
   //use cache after all features move to v2
-  const roleModel = await createRoleModel();
+  const roleModel = await Role.getModel(dbConnection);
   let initRoles = await roleModel.find(
     {},
     { name: 1, slug: 1, permission: 1, allowDelete: 1, _id: 0 },

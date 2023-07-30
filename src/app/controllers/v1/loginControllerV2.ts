@@ -27,15 +27,14 @@ exports.login = asyncHandler(async (req: Request, res: Response) => {
     req.body.email,
     req.body.password,
   );
-
   if (user === null) return res.status(status.UNAUTHORIZED).send();
   if (user === undefined) return res.status(status.UNAUTHORIZED).send();
   //check the if the domain is in user's tenants when user login
-  const qualifiedTenants = await checkUserTenants(req.body.email, origin, req.tenantsConnection);
   if (config.environment.toLowerCase() === 'local') {
     const token = await user.generateAuthToken();
     return res.send({ user, ...token });
   }
+  const qualifiedTenants = await checkUserTenants(req.body.email, origin, req.tenantsConnection);
   if (qualifiedTenants.length > 0) {
     const token = await user.generateAuthToken();
     return res.send({ user, ...token });
