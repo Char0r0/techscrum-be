@@ -62,16 +62,17 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
 };
 console.log('\x1b[31mDEVOPS IMPORTANT!!! DON"T use the default email OR password for PRODUCTION environment, SERIOUS SECURITY ISSUE!!!\x1b[0m');
 rl.question('Please type confirm that you have READ THIS MESSAGE: ',  (answer:string) => {
-  if (answer.toLowerCase() === 'confirm') {
-    rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string) => {
-      rl.question('Please enter the user email (techscrum@gmail.com): ', (email:string) => {
-        rl.question('Please enter the user password (12345678): ', (password:string) => {
-          init(domain, email, password);
-        });
-      });
-    });
-  } else {
+  if (answer.toLowerCase() !== 'confirm') {
     console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
     process.exit();
   }
-});
+
+  rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string) => {
+    rl.question('Please enter the user email (techscrum@gmail.com): ', (email:string) => {
+      rl.question('Please enter the user password (12345678): ', (password:string) => {
+        init(domain, email, password);
+      });
+    });
+  });
+}, 
+);
