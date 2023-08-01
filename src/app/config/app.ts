@@ -38,4 +38,6 @@ module.exports = {
   authenticationConnection: process.env.DB_V1 || DEFAULT_USER_CONNECTION,
   environment: process.env.ENVIRONMENT || 'production',
   connectTenantsOrigin: process.env.CONNECT_TENANT || null,
+  mainDomain: process.env.MAIN_DOMAIN,
+  protocol: process.env.ENVIRONMENT === 'local' ? 'http://' : 'https://',
 };

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-secrets/no-secrets */
 export {};
 import { Response, Request, NextFunction } from 'express';
@@ -37,8 +38,8 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   //For more info: https://lucid.app/lucidspark/c24b6e6f-7e1a-439a-a4bf-699edd941d86/edit?viewport_loc=-151%2C-545%2C2560%2C1249%2C0_0&invitationId=inv_052c9ca7-93bd-491e-b621-f97c52fe116f
 
   try {
-    const connectTenant = config.connectTenantsOrigin;
-    const domain = !connectTenant ? req.headers.origin : connectTenant;
+    const connectTenant = `${config.protocol}.${config.connectTenantsOrigin}.${config.mainDomain}`;
+    const domain = !config.connectTenantsOrigin || config.connectTenantsOrigin === '' ? req.headers.origin : connectTenant;
     // if (connectTenant) {
     //   if (connectTenant === PUBLIC_DB || connectTenant === 'devtechscrumapp') {
     //     await tenantDBConnection(connectTenant);
@@ -59,8 +60,14 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
     req.dbConnection = dataConnectionPool[connectTenantDbName];
     req.tenantId = tenantId;
     req.dbName = connectTenantDbName;
-  } catch (e) {
-    logger.error(e);
+  } catch (e:any) {
+    if (e.message.includes('Cannot read properties of null (reading \'id\')')) {
+      const message = `\x1b[31mError: Cannot find tenant:(${config.connectTenantsOrigin}) in this database (${config.tenantsDBConnection}).\nPlease ensure the CONNECT_TENANT in .env file or database is correct. \n\x1b[31mRESTART SERVER AFTER CHANGE \x1b[0m\n`;
+      console.error(message);
+      logger.error(message);
+    } else {
+      logger.error(e);
+    }
     res.sendStatus(status.SERVER_ERROR);
   }
   return next();

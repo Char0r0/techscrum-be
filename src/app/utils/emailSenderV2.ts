@@ -30,7 +30,7 @@ const emailSenderTemplate = (
   };
 
   let params = {
-    Source: 'noreply@techscrumapp.com',
+    Source: `noreply@${config.mainDomain}`,
     Destination: destination,
     Template: templateName,
     TemplateData: JSON.stringify(data),

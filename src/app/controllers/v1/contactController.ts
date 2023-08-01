@@ -28,7 +28,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
           },
         },
       },
-      Source: 'admin@techscrumapp.com',
+      Source: `admin@${config.mainDomain}`,
     };
 
     // Create the promise and SES service object

@@ -8,6 +8,7 @@ const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
 const logger = require('../../../loaders/logger');
 const { tenantsDBConnection } = require('../../database/connections');
+const config = require('../../config/app');
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   // check Validation
@@ -18,7 +19,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, company } = req.body;
   let tenantModel;
   let newTenants;
-  let tenantsUrl = `https://${company}.techscrumapp.com`;
+  let tenantsUrl = `${config.protocol}.${company}.${config.mainDomain}`;
   const tenantsDbConnection = await tenantsDBConnection();
  
   try {
