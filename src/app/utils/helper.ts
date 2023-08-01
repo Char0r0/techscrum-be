@@ -5,6 +5,7 @@ const Tenant = require('../model/tenants');
 const Product = require('../model/product');
 const PaymentHistory = require('../model/paymentHistory');
 const Invoice = require('../model/invoice');
+const config = require('../config/app');
 import { Response, Request } from 'express';
 
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -15,7 +16,7 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
   if (!host) {
     return false;
   }
-  if ('http://localhost:3000' === host) {
+  if (config.environment.toLowerCase() === 'local') {
     return true;
   }
   const domains = [
