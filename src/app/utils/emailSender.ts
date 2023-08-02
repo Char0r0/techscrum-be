@@ -2,7 +2,7 @@ const aws = require('aws-sdk');
 const config = require('../config/app');
 const logger = require('../../loaders/logger');
 const awsConfig = require('../config/aws');
-//TODO: clean up this code to not use duplciate
+
 aws.config.update({
   region: awsConfig.awsRegion,
   accessKeyId: awsConfig.awsAccessKey,
