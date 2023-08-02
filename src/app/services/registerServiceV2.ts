@@ -1,4 +1,4 @@
-const { emailSender, getDomain } = require('../utils/emailSenderV2');
+const { emailSender, getDomain } = require('../utils/emailSender');
 const jwt = require('jsonwebtoken');
 const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');

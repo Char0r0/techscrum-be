@@ -16,8 +16,8 @@ declare module 'express-serve-static-core' {
 const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  const authType = authHeader && authHeader.split(' ')[0];
-  const authToken = authHeader && authHeader.split(' ')[1];
+  const authType =  authHeader?.split(' ')[0];
+  const authToken = authHeader?.split(' ')[1];
 
   if (!authHeader || !authToken) return res.sendStatus(401);
 

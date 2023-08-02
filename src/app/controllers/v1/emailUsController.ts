@@ -9,7 +9,7 @@ exports.contactForm = async (req: Request, res: Response) => {
   }
 
   try {
-    const emailFrom = 'noreply@techscrumapp.com';
+    const emailFrom = `noreply@${config.mainDomain}`;
     const emailTo = ['infotechscrum@gmail.com'];
     await emailRecipientTemplate(emailFrom, emailTo, req.body, 'contactPageEmailTemplate');
     res.status(202).json({ message: 'Email Sent Successfully.' });

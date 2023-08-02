@@ -5,6 +5,7 @@ const Tenant = require('../model/tenants');
 const Product = require('../model/product');
 const PaymentHistory = require('../model/paymentHistory');
 const Invoice = require('../model/invoice');
+const config = require('../config/app');
 import { Response, Request } from 'express';
 
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -15,11 +16,14 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
   if (!host) {
     return false;
   }
-
+  if (config.environment.toLowerCase() === 'local') {
+    return true;
+  }
   const domains = [
-    'https://www.techscrumapp.com',
-    'https://dev.techscrumapp.com',
-    'https://staging.techscrumapp.com',
+    `https://www.${config.mainDomain}`,
+    `https://dev.${config.mainDomain}`,
+    `https://staging.${config.mainDomain}`,
+    `https://uat.${config.mainDomain}`,
   ];
 
   return domains.some((domain) => host.includes(domain));
