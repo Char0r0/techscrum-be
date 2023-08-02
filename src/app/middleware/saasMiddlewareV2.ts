@@ -18,7 +18,7 @@ const getTenant = async (host: string | undefined, connection: any) => {
   const tenantModel = Tenant.getModel(connection);
   const tenant = await tenantModel.findOne({ origin: host });
 
-  if (!config || !config.emailSecret) {
+  if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');
   }
@@ -40,16 +40,6 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   try {
     const connectTenant = `${config.protocol}.${config.connectTenantsOrigin}.${config.mainDomain}`;
     const domain = !config.connectTenantsOrigin || config.connectTenantsOrigin === '' ? req.headers.origin : connectTenant;
-    // if (connectTenant) {
-    //   if (connectTenant === PUBLIC_DB || connectTenant === 'devtechscrumapp') {
-    //     await tenantDBConnection(connectTenant);
-    //     req.userConnection = await tenantsDBConnection();
-    //     req.dataConnectionPool = dataConnectionPool;
-    //     req.dbConnection = dataConnectionPool[connectTenant];
-    //     req.tenantId = null;
-    //     return next();
-    //   }
-    // }
     const tenantsConnection = await tenantsDBConnection();
     const tenant = await getTenant(domain, tenantsConnection);
     const tenantId = tenant?.id.toString();
