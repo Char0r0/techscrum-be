@@ -12,7 +12,7 @@ exports.emailRegister = async (
   newTenants: any,
   origin: string | null,
 ) => {
-  if (!configApp || !configApp.emailSecret) {
+  if (!configApp?.emailSecret) {
     logger.error('Missing email secret in env');
     return null;
   }

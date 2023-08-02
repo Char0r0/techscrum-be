@@ -1,4 +1,4 @@
-import { NextFunction } from 'express';
+import { NextFunction, Response, Request  } from 'express';
 
 const User = require('../model/user');
 const Tenant = require('../model/tenants');
@@ -6,7 +6,6 @@ const Product = require('../model/product');
 const PaymentHistory = require('../model/paymentHistory');
 const Invoice = require('../model/invoice');
 const config = require('../config/app');
-import { Response, Request } from 'express';
 
 export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
