@@ -1,6 +1,6 @@
 const swaggerAutogen = require('swagger-autogen')();
 const dotenv = require('dotenv');
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = process.env.NODE_ENV ?? 'development';
 dotenv.config();
 
 const doc = {
@@ -8,7 +8,7 @@ const doc = {
     title: 'TechScrum API',
     description: 'This is TechScrum API v1',
   },
-  host: `localhost:${process.env.PORT}${process.env.API_PREFIX || '/api/v1'}`,
+  host: `localhost:${process.env.PORT}${process.env.API_PREFIX ?? '/api/v1'}`,
   schemes: ['http'],
 };
 

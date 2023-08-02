@@ -28,9 +28,9 @@ const rl = readline.createInterface({
 
 const init = async (domainInput:string, emailInput:string, passwordInput:string) => {
   try {
-    const emailAdd = emailInput || 'techscrum@gmail.com' ;
-    const domain = domainInput || 'http://localhost:3000';
-    const password = passwordInput || '12345678';
+    const emailAdd = emailInput ?? 'techscrum@gmail.com' ;
+    const domain = domainInput ?? 'http://localhost:3000';
+    const password = passwordInput ?? '12345678';
     if (process.env.ENVIRONMENT === 'production') {
       if (emailAdd === 'techscrum@gmail.com' || password === '12345678') {
         console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
