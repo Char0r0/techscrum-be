@@ -13,7 +13,7 @@ const options = {
 };
 
 exports.tenantsDBConnection = async () => {
-  if (!tenantConnection || !tenantConnection.connection) {
+  if (!tenantConnection?.connection) {
     tenantConnection.connection = await mongoose.createConnection(
       config.tenantsDBConnection, 
       options,

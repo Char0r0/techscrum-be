@@ -6,7 +6,7 @@ export interface IStatus {
   order: number;
   board: Schema.Types.ObjectId;
   taskList: Schema.Types.ObjectId[];
-  tenantId: String
+  tenantId: string
 }
 
 const statusSchema = new Schema<IStatus>(

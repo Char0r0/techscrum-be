@@ -16,7 +16,7 @@ const authenticationEmailTokenMiddleware = async (
   next: NextFunction,
 ) => {
   const token = req.params.verifyEmail;
-  if (!config || !config.emailSecret) {
+  if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
     res.status(status.FORBIDDEN).send();
   }

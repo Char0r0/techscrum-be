@@ -14,7 +14,7 @@ const emailRegister = async (email: string, dbConnection: any, domain: string) =
       { new: true, upsert: true },
     );
 
-    if (!config || !config.emailSecret) {
+    if (!config?.emailSecret) {
       logger.error('Missing email secret in env');
       return null;
     }

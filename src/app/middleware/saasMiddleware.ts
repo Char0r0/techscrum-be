@@ -8,7 +8,7 @@ const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 
 const getTenantId = async (host: string | undefined) => {
-  const defaultConnection = config.defaultTenantConnection || 'testdevtechscrumapp';
+  const defaultConnection = config.defaultTenantConnection ?? 'testdevtechscrumapp';
   const excludeDomain = await shouldExcludeDomainList(host);
   const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
   const haveConnection = Object.keys(tenantConnection).length !== 0;
@@ -24,7 +24,7 @@ const getTenantId = async (host: string | undefined) => {
 
   const tenantModel = Tenant.getModel(tenantConnection.connection);
   const result = await tenantModel.findOne({ origin: host });
-  if (!config || !config.emailSecret) {
+  if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
     throw new Error('Missing email secret in env');
   }
