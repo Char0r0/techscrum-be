@@ -20,9 +20,10 @@ export const shouldExcludeDomainList = (host: string | undefined) => {
     return true;
   }
   const domains = [
-    'https://www.techscrumapp.com',
-    'https://dev.techscrumapp.com',
-    'https://staging.techscrumapp.com',
+    `https://www.${config.mainDomain}`,
+    `https://dev.${config.mainDomain}`,
+    `https://staging.${config.mainDomain}`,
+    `https://uat.${config.mainDomain}`,
   ];
 
   return domains.some((domain) => host.includes(domain));
