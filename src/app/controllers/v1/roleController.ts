@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { asyncHandler } from '../../utils/helper';
-import { Mongoose } from 'mongoose';
 const Permission = require('../../model/permission');
 const Project = require('../../model/project');
 const Role = require('../../model/role');
@@ -8,13 +7,6 @@ const status = require('http-status');
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const { Types } = require('mongoose');
-const config = require('../../config/app');
-
-const permissionConnection = async () => {
-  const connection = new Mongoose();
-  const resConnection = await connection.connect(config.authenticationConnection);
-  return resConnection;
-};
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -25,12 +17,11 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectId } = req.params;
     //use cache after all features moved to v2
-    const connection = await permissionConnection();
     const project = await Project.getModel(req.dbConnection)
       .findById(projectId)
       .populate({
         path: 'roles.permission',
-        model: Permission.getModel(connection),
+        model: Permission.getModel(req.userConnection),
       });
     const rolesArr = project.roles;
     res.send(replaceId(rolesArr));
@@ -48,12 +39,11 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { projectId, roleId } = req.params;
     //use cache after all features moved to v2
-    const connection = await permissionConnection();
     const project = await Project.getModel(req.dbConnection)
       .findById(projectId)
       .populate({
         path: 'roles.permission',
-        model: Permission.getModel(connection),
+        model: Permission.getModel(req.userConnection),
       });
 
     const rolesArr = project.roles.filter(
@@ -129,7 +119,6 @@ exports.getDefaultRoles = async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   //use cache after all features moved to v2 ????
-  const connection = await permissionConnection();
-  const roles = await Role.getModel(connection).find({});
+  const roles = await Role.getModel(req.userConnection).find({});
   return res.status(status.OK).json(replaceId(roles));
 };

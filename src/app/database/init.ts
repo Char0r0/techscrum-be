@@ -1,4 +1,5 @@
 export {};
+
 const Role = require('../model/role');
 const Permission = require('../model/permission');
 const Type = require('../model/type');
@@ -207,5 +208,6 @@ exports.init = async (dbConnection: any) => {
   await developerRole.save();
   await guestRole.save();
 };
+
 
 exports.createTaskType = createTaskType;

@@ -30,7 +30,7 @@ const emailSenderTemplate = (
   };
 
   let params = {
-    Source: 'noreply@techscrumapp.com',
+    Source: `noreply@${config.mainDomain}`,
     Destination: destination,
     Template: templateName,
     TemplateData: JSON.stringify(data),
@@ -85,6 +85,7 @@ export const emailRecipientTemplate = (
   return ses.sendTemplatedEmail(params).promise();
 };
 
+
 export const emailSender = (
   email: string,
   validationCode: string,
@@ -95,7 +96,7 @@ export const emailSender = (
     name: email,
     appName: 'TECHSCRUMAPP',
     domain,
-    url: 'verify',
+    url: 'verify-v2',
     token: validationCode,
     color: '#7291F7',
     border: '5px solid #7291F7',
@@ -148,9 +149,11 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 };
 
 export const getDomain = (host: string, originHost: string) => {
-  const protocol = originHost.includes('localhost') ? 'http://' : 'https://';
+  if (config.environment.toLowerCase() === 'local') {
+    return 'http://localhost:3000';
+  }
   if (originHost.includes('localhost') || originHost.includes('dev.')) {
-    return protocol + originHost;
+    return originHost;
   }
   return host;
 };
