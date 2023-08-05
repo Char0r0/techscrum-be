@@ -10,6 +10,15 @@ const logger = require('../../../loaders/logger');
 const { tenantsDBConnection } = require('../../database/connections');
 const config = require('../../config/app');
 
+export const invalidSubdomains : { [key: string]: boolean } = { 'localhost' : true, 'dev': true, 'staging': true, 'uat': true, 'testing': true, 'test': true, 'develop': true, 'www': true };
+
+const canRegisterCompany = (company:string) => {
+  if (invalidSubdomains[company]) {
+    return false;
+  }
+  return true;
+};  
+
 export const register = asyncHandler(async (req: Request, res: Response) => {
   // check Validation
   const errors = validationResult(req);
@@ -17,9 +26,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     res.send(status.UNPROCESSABLE_ENTITY).json({});
   }
   const { email, company } = req.body;
+  if (!canRegisterCompany(company)) {
+    res.send(status.BAD_REQUEST).json({ errorMessage: 'Invalid company name. ' + Object.keys(invalidSubdomains).join(' ') + ' are not allowed.' });
+  }
   let tenantModel;
   let newTenants;
-  let tenantsUrl = `${config.protocol}.${company}.${config.mainDomain}`;
+  let tenantsUrl = `${config.protocol}${company}.${config.mainDomain}`;
   const tenantsDbConnection = await tenantsDBConnection();
  
   try {
