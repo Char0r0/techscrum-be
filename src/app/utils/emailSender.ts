@@ -148,12 +148,12 @@ export const forgetPassword = (email: string, name: string, token: string, domai
   emailSenderTemplate(email, templateData, 'ForgotPassword', cb);
 };
 
-export const getDomain = (host: string, originHost: string) => {
-  if (config.environment.toLowerCase() === 'local') {
-    return 'http://localhost:3000';
+export const getDomain = (companyHost: string, originHost: string) => {
+  if (config.environment.toLowerCase() === 'production' || config.environment.toLowerCase() === 'prod') {
+    if (companyHost.includes('localhost') || companyHost.includes('dev.') || companyHost.includes('uat.') || companyHost.includes('test.') || companyHost.includes('staging.') || companyHost.includes('www.')) {
+      throw new Error('Invalid Domain');
+    }
+    return companyHost;  
   }
-  if (originHost.includes('localhost') || originHost.includes('dev.')) {
-    return originHost;
-  }
-  return host;
+  return originHost;
 };

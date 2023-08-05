@@ -19,7 +19,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, company } = req.body;
   let tenantModel;
   let newTenants;
-  let tenantsUrl = `${config.protocol}.${company}.${config.mainDomain}`;
+  let tenantsUrl = `${config.protocol}${company}.${config.mainDomain}`;
   const tenantsDbConnection = await tenantsDBConnection();
  
   try {
