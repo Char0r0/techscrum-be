@@ -53,13 +53,12 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
     req.tenantId = tenantId;
     req.dbName = connectTenantDbName;
   } catch (e:any) {
+    let message = null;
     if (e.message.includes('Cannot read properties of null (reading \'id\')')) {
-      const message = `\x1b[31mError: Cannot find tenant:(${config.connectTenantsOrigin}) in this database (${config.tenantsDBConnection}).\nPlease ensure the CONNECT_TENANT in .env file or database is correct. \n\x1b[31mRESTART SERVER AFTER CHANGE \x1b[0m\n`;
+      message = `\x1b[31mError: Cannot find tenant:(${config.connectTenantsOrigin}) in this database (${config.tenantsDBConnection}).\nPlease ensure the CONNECT_TENANT in .env file or database is correct. \n\x1b[31mRESTART SERVER AFTER CHANGE \x1b[0m\n`;
       console.error(message);
-      logger.error(message);
-      return res.sendStatus(status.SERVER_ERROR);
     }
-    logger.error(e);
+    logger.error(message ?? e);
     return res.sendStatus(status.SERVER_ERROR);
   }
   return next();
