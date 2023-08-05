@@ -57,10 +57,10 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
       const message = `\x1b[31mError: Cannot find tenant:(${config.connectTenantsOrigin}) in this database (${config.tenantsDBConnection}).\nPlease ensure the CONNECT_TENANT in .env file or database is correct. \n\x1b[31mRESTART SERVER AFTER CHANGE \x1b[0m\n`;
       console.error(message);
       logger.error(message);
-    } else {
-      logger.error(e);
+      return res.sendStatus(status.SERVER_ERROR);
     }
-    res.sendStatus(status.SERVER_ERROR);
+    logger.error(e);
+    return res.sendStatus(status.SERVER_ERROR);
   }
   return next();
 });
