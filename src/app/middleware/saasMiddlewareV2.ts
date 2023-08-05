@@ -14,9 +14,10 @@ enum Plans {
   Free = 'Free',
 }
 
-const getTenant = async (host: string | undefined, connection: any) => {
+const getTenant = async (host: string | undefined, connection: any, useOrigin: boolean) => {
   const tenantModel = Tenant.getModel(connection);
-  const tenant = await tenantModel.findOne({ origin: host });
+  const isLocalAndUseOrigin = config.environment === 'local'  && useOrigin;
+  const tenant = isLocalAndUseOrigin ? await tenantModel.findOne({ origin: { $regex: 'localhost' } }) : await tenantModel.findOne({ origin: host });
 
   if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
@@ -39,9 +40,10 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
 
   try {
     const connectTenant = `${config.protocol}.${config.connectTenantsOrigin}.${config.mainDomain}`;
-    const domain = !config.connectTenantsOrigin || config.connectTenantsOrigin === '' ? req.headers.origin : connectTenant;
+    const useOrigin = !config.connectTenantsOrigin || config.connectTenantsOrigin === '';
+    const domain = useOrigin ? req.headers.origin : connectTenant;
     const tenantsConnection = await tenantsDBConnection();
-    const tenant = await getTenant(domain, tenantsConnection);
+    const tenant = await getTenant(domain, tenantsConnection, useOrigin);
     const tenantId = tenant?.id.toString();
     const connectTenantDbName = getConnectDatabase(tenant);
     const tenantConnection = await tenantDBConnection(connectTenantDbName);
