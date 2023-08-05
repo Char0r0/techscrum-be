@@ -149,10 +149,7 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 };
 
 export const getDomain = (host: string, originHost: string) => {
-  if (config.environment.toLowerCase() === 'local') {
-    return 'http://localhost:3000';
-  }
-  if (originHost.includes('localhost') || originHost.includes('dev.')) {
+  if (originHost.includes('local') || originHost.includes('dev.') || originHost.includes('uat.') || originHost.includes('test.') || originHost.includes('staging.') || originHost.includes('www')) {
     return originHost;
   }
   return host;
