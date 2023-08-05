@@ -150,9 +150,10 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 
 export const getDomain = (host: string, originHost: string) => {
   if (config.environment.toLowerCase() === 'production' || config.environment.toLowerCase() === 'prod') {
+    if (originHost.includes('local') || originHost.includes('dev.') || originHost.includes('uat.') || originHost.includes('test.') || originHost.includes('staging.') || originHost.includes('www')) {
+      throw new Error('Invalid Domain');
+    }
     return host;  
   }
-  if (originHost.includes('local') || originHost.includes('dev.') || originHost.includes('uat.') || originHost.includes('test.') || originHost.includes('staging.') || originHost.includes('www')) {
-    return originHost;
-  }
+  return originHost;
 };
