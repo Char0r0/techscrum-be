@@ -4,6 +4,7 @@ const { tenantConnection, dataConnectionPool } = require('../utils/dbContext');
 const mongoose = require('mongoose');
 const config = require('../../app/config/app');
 const PUBLIC_DB = 'publicdb';
+mongoose.set('strictQuery', false);
 
 const options = {
   useNewURLParser: true,

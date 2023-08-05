@@ -1,3 +1,5 @@
+import { invalidSubdomains } from '../controllers/v1/registerV2Controller';
+
 const aws = require('aws-sdk');
 const config = require('../config/app');
 const logger = require('../../loaders/logger');
@@ -150,7 +152,7 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 
 export const getDomain = (companyHost: string, originHost: string) => {
   if (config.environment.toLowerCase() === 'production' || config.environment.toLowerCase() === 'prod') {
-    if (companyHost.includes('localhost') || companyHost.includes('dev.') || companyHost.includes('uat.') || companyHost.includes('test.') || companyHost.includes('staging.') || companyHost.includes('www.')) {
+    if (Object.keys(invalidSubdomains).join('. ').includes(companyHost)) {
       throw new Error('Invalid Domain');
     }
     return companyHost;  
