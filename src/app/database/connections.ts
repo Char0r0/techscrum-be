@@ -14,12 +14,12 @@ const options = {
 };
 
 exports.tenantsDBConnection = async () => {
-  if (!tenantConnection?.connection) {
-    tenantConnection.connection = await mongoose.createConnection(
-      config.tenantsDBConnection, 
-      options,
-    );
-  }
+  // if (!tenantConnection?.connection) {
+  tenantConnection.connection = await mongoose.createConnection(
+    config.tenantsDBConnection, 
+    options,
+  );
+  //}
   return tenantConnection.connection;
 };
   

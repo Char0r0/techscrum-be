@@ -69,7 +69,9 @@ import * as statuseValidation from '../../validations/statusValidation';
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
-
+router.get('/healthcheck', async (req: any, res: any) => {
+  res.sendStatus(200, {});
+});
 router.use(saasMiddlewareV2.saas);
 
 //emailVerifyCheck-stepTwo-V2
@@ -88,10 +90,6 @@ router.post('/domains/owner', domainController.getOwnerDomain);
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
-});
-
-router.get('/healthcheck', (req: any, res: any) => {
-  res.sendStatus(200);
 });
 
 router.post(
