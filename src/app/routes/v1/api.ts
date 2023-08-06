@@ -63,10 +63,6 @@ router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 
-router.get('/healthcheck', (req: any, res: any) => {
-  res.sendStatus(200);
-});
-
 router.get('/domains', domainController.index);
 
 router.post(
