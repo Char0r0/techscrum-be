@@ -37,8 +37,10 @@ One time command
 
 - docker build -t techscrum:lastest .
 - cp .env.example .env (ASK DEVS FOR THE VALUES)
+- Update the value in .env
 - npm run build
 - npm run init-app
+- Go to chrome paste this http://localhost:8000/api/v2/healthcheck 
 
 ### Start application
 
@@ -89,5 +91,3 @@ cat filename
 //history | grep run
 
 docker run -p 8000:8080 -d -v ${pwd}/.:/app techscrum:lastest
-
-sdfsdfdf
