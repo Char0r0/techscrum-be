@@ -57,6 +57,7 @@ const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
 const registerV2Controller = require('../../controllers/v1/registerV2Controller');
 const dashboardController = require('../../controllers/v1/dashboardController');
+const healthCheckController = require('../../controllers/v1/healthCheckController');
 const dashboardValidations = require('../../validations/dashboard');
 const paymentInfoController = require('../../controllers/v1/paymentInfoDisplayController');
 const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
@@ -69,6 +70,7 @@ import * as statuseValidation from '../../validations/statusValidation';
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
+router.get('/healthcheck', healthCheckController.index);
 
 router.use(saasMiddlewareV2.saas);
 
@@ -88,10 +90,6 @@ router.post('/domains/owner', domainController.getOwnerDomain);
 
 router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
-});
-
-router.get('/healthcheck', (req: any, res: any) => {
-  res.sendStatus(200);
 });
 
 router.post(

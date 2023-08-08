@@ -6,6 +6,7 @@ const config = require('../config/app');
 const Tenant = require('../model/tenants');
 const User = require('../model/user');
 const readline = require('readline');
+const healthCheckService = require('../services/healthCheckService');
 
 const options = {
   useNewURLParser: true,
@@ -13,6 +14,7 @@ const options = {
   maxPoolSize: 10,
   socketTimeoutMS: 30000,
 };
+
 const tenantsDBConnection =  () => {
   return mongoose.createConnection(
     config.tenantsDBConnection, 
@@ -28,9 +30,9 @@ const rl = readline.createInterface({
 
 const init = async (domainInput:string, emailInput:string, passwordInput:string) => {
   try {
-    const emailAdd = emailInput ?? 'techscrum@gmail.com' ;
-    const domain = domainInput ?? 'http://localhost:3000';
-    const password = passwordInput ?? '12345678';
+    const emailAdd = emailInput || 'techscrum@gmail.com';
+    const domain = domainInput || 'http://localhost:3000';
+    const password = passwordInput || '12345678';
     if (process.env.ENVIRONMENT === 'production') {
       if (emailAdd === 'techscrum@gmail.com' || password === '12345678') {
         console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
@@ -55,15 +57,35 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true, owner: mongoose.Types.ObjectId(user._id) });
     console.log('Create success! \n\x1b[32mLogin details:\n', 'Domain: ' + domain + '\n', 'Email: ' + emailAdd + '\n', 'Password: ' + password + '\x1b[0m\n');
     process.exit();
-  } catch (e) {
+  } catch (e: any) {
+    if (e.message.includes('duplicate key error collection: users')) {
+      console.error('\x1b[31mEmail already exists in database\x1b[0m');
+      process.exit(1);
+    }
     console.error(e);
     process.exit(1);
   }
 };
+if (
+  process.env.ENVIRONMENT !== 'production' && 
+  process.env.ENVIRONMENT !== 'develop' && 
+  process.env.ENVIRONMENT !== 'local'
+) {
+  console.error('\x1b[31mABORT!!! ENVIRONMENT has not been set .env file\x1b[0m');
+  process.exit();
+}
+
 console.log('\x1b[31mDEVOPS IMPORTANT!!! DON"T use the default email OR password for PRODUCTION environment, SERIOUS SECURITY ISSUE!!!\x1b[0m');
-rl.question('Please type confirm that you have READ THIS MESSAGE: ',  (answer:string) => {
+rl.question('Please type confirm that you have READ THIS MESSAGE: ',  async (answer:string) => {
   if (answer.toLowerCase() !== 'confirm') {
-    console.log('\x1b[31mYOU ARE IGNORING IMPORTANT INFORMATION AND CAUSING SERIOUS SECURITY ISSUE. ABORT\x1b[0m');
+    console.log('\x1b[31mABORT!!! EXIT\x1b[0m');
+    process.exit();
+  }
+
+  const healthCheckMessage = await healthCheckService.healthCheck();
+  console.log(healthCheckMessage);
+  if (healthCheckMessage.includes('Failed')) {
+    console.log('\x1b[31mABORT!!! One or more item FAILED in above list \x1b[0m \n');
     process.exit();
   }
 
