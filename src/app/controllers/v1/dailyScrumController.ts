@@ -77,7 +77,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.send(replaceId(updatedDailyScrum));
   } catch (e) {
-    logger.log(e);
+    logger.info(e);
     next(e);
   }
 };

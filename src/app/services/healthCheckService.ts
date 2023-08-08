@@ -4,6 +4,7 @@ const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../datab
 const config = require('../config/app');
 const whois = require('whois-json');
 const awsConfig = require('../config/aws');
+const logger = require('../../loaders/logger');
 
 aws.config.update({
   region: awsConfig.awsRegion,
@@ -34,13 +35,13 @@ exports.healthCheck = async () => {
   const tenantsDbConnection = await tenantsDBConnection();
   const tenantDbConnection = await tenantDBConnection(PUBLIC_DB);
   const domain = config.mainDomain;
- 
   const tenantsDbConnect = tenantsDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
   const tenantDbConnect = tenantDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
   
   const validDomain = await isValidDomain(domain);
   const hasAllTemplatesUploaded = await hasAllRequiredTemplates();
   const connectedAws = await hasSES(domain);
-  
-  return '\nTenantsDb Connect: ' + tenantsDbConnect + ' \n' + 'TenantDb Connect: ' +  tenantDbConnect + '\n' + `Domain(${domain}) Connect: ${validDomain}` + `\nAWS SES: ${connectedAws}\n` +  'AWS Email Templates: ' + hasAllTemplatesUploaded + '\n'; 
+  const message =  '\nTenantsDb Connect: ' + tenantsDbConnect + ' \n' + 'TenantDb Connect: ' +  tenantDbConnect + '\n' + `Domain(${domain}) Connect: ${validDomain}` + `\nAWS SES: ${connectedAws}\n` +  'AWS SES Templates: ' + hasAllTemplatesUploaded + '\n'; 
+  logger.info(message.replace(/\[\d+m/g, '').replace(/\x1B\[\d+m/g, ''));
+  return message;
 };
