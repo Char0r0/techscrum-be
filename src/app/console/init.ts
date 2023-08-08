@@ -71,7 +71,7 @@ if (
   process.env.ENVIRONMENT !== 'develop' && 
   process.env.ENVIRONMENT !== 'local'
 ) {
-  console.error('\x1b[31mABORT!!! Missing ENVIRONMENT in .env file\x1b[0m');
+  console.error('\x1b[31mABORT!!! ENVIRONMENT has not been set .env file\x1b[0m');
   process.exit();
 }
 
