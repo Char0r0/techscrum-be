@@ -49,6 +49,7 @@
     "stripe": "^11.14.0",
     "swagger-jsdoc": "^6.2.1",
     "swagger-ui-express": "^4.4.0",
+    "whois-json": "^2.0.4",
     "winston": "^3.7.2"
   },
   "devDependencies": {
