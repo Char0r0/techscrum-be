@@ -3,7 +3,7 @@ import { Response, Request, NextFunction } from 'express';
 import { asyncHandler, shouldExcludeDomainList } from '../utils/helper';
 const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenants');
-const config = require('../../app/config/app');
+import config from '../../app/config/app';
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 

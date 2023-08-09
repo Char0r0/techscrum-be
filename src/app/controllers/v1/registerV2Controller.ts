@@ -8,7 +8,7 @@ const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
 const logger = require('../../../loaders/logger');
 const { tenantsDBConnection } = require('../../database/connections');
-const config = require('../../config/app');
+import config from '../../config/app';
 
 export const invalidSubdomains : { [key: string]: boolean } = { 'localhost' : true, 'dev': true, 'staging': true, 'uat': true, 'testing': true, 'test': true, 'develop': true, 'www': true };
 

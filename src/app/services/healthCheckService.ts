@@ -1,7 +1,7 @@
 export {};
 const aws = require('aws-sdk');
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
-const config = require('../config/app');
+import config from '../config/app';
 const whois = require('whois-json');
 const awsConfig = require('../config/aws');
 const logger = require('../../loaders/logger');
@@ -34,7 +34,7 @@ const isValidDomain = async (domain:string) => {
 exports.healthCheck = async () => {
   const tenantsDbConnection = await tenantsDBConnection();
   const tenantDbConnection = await tenantDBConnection(PUBLIC_DB);
-  const domain = config.mainDomain;
+  const domain = config.mainDomain || '';
   const tenantsDbConnect = tenantsDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
   const tenantDbConnect = tenantDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
   

@@ -5,7 +5,7 @@ import { Response, Request, NextFunction } from 'express';
 import { asyncHandler } from '../utils/helper';
 import status from 'http-status';
 const Tenant = require('../model/tenants');
-const config = require('../../app/config/app');
+import config from '../../app/config/app';
 const { dataConnectionPool } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');

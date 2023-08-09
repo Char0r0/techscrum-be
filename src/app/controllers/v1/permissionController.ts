@@ -4,7 +4,7 @@ import status from 'http-status';
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const { Mongoose } = require('mongoose');
-const config = require('../../config/app');
+import config from '../../config/app';
 
 const createPermissionModel = async () => {
   const connection = new Mongoose();

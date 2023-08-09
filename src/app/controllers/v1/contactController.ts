@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
 import aws from 'aws-sdk';
-const config = require('../../config/app');
+import config from '../../config/app';
+
 exports.store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

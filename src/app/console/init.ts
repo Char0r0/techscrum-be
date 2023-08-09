@@ -2,7 +2,7 @@
 export {};
 
 const mongoose = require('mongoose');
-const config = require('../config/app');
+import config from '../config/app';
 const Tenant = require('../model/tenants');
 const User = require('../model/user');
 const readline = require('readline');

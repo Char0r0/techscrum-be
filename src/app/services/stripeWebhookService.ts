@@ -7,7 +7,7 @@ import { TrialDate } from '../utils/TrialDate';
 const Invoice = require('../model/invoice');
 
 const jwt = require('jsonwebtoken');
-const config = require('../config/app');
+import config from '../config/app';
 
 let userModel: any;
 let tenantModel: any;
