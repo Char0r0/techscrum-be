@@ -5,7 +5,7 @@ const { isUserActived } = require('../../services/emailCheckService');
 const User = require('../../model/user');
 const { forgetPassword } = require('../../utils/emailSender');
 const jwt = require('jsonwebtoken');
-const config = require('../../config/app');
+import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     email?: string;

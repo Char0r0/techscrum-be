@@ -15,7 +15,7 @@ const DEFAULT_PUBLIC_CONNECTION =
   // eslint-disable-next-line no-secrets/no-secrets
   `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/publicdb?retryWrites=true&w=majority`;
 
-module.exports = {
+export const config = {
   name: process.env.NAME ?? 'techscrumapp',
   port: process.env.PORT ?? 8000,
   api: {
@@ -41,3 +41,5 @@ module.exports = {
   mainDomain: process.env.MAIN_DOMAIN,
   protocol: process.env.ENVIRONMENT === 'local' ? 'http://' : 'https://',
 };
+
+export default config;

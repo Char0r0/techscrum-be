@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { checkoutSessionCompleted, invoiceFinalized, invoicePaymentSucceed, subscriptionCreateCompleted, chargeRefunded } from '../../services/stripeWebhookService';
 
-const config = require('../../config/app');
+import config from '../../config/app';
 
 exports.stripeController = async (req: Request, res: Response) => {
   let event: any;

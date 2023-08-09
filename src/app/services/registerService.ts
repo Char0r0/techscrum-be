@@ -2,7 +2,7 @@ const { randomStringGenerator } = require('../utils/randomStringGenerator');
 const { emailSender } = require('../utils/emailSender');
 const User = require('../model/user');
 const jwt = require('jsonwebtoken');
-const config = require('../config/app');
+import config from '../config/app';
 const logger = require('../../loaders/logger');
 
 const emailRegister = async (email: string, dbConnection: any, domain: string) => {

@@ -1,7 +1,7 @@
 import { invalidSubdomains } from '../controllers/v1/registerV2Controller';
 
 const aws = require('aws-sdk');
-const config = require('../config/app');
+import config from '../config/app';
 const logger = require('../../loaders/logger');
 const awsConfig = require('../config/aws');
 
@@ -50,7 +50,7 @@ const emailSenderTemplate = (
 export const subscriptionSender = (
   email: string,
   validationCode: string,
-  domain: string = config.frontEndAddress,
+  domain: string = '',
 ) => {
   const templateData = {
     name: email,
@@ -91,7 +91,7 @@ export const emailRecipientTemplate = (
 export const emailSender = (
   email: string,
   validationCode: string,
-  domain: string = config.frontEndAddress,
+  domain: string = '',
 ) => {
   // Create sendEmail params
   const templateData = {

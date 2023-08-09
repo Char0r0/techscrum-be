@@ -15,13 +15,11 @@ For more info please refer to
 - Compression (Enabling gzip compression in Express.js)
 - Swagger (API docs)
 
-## Roadmap
+## TechDebt
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
+These are ongoing techdebt that needed to be fixed
+
+- [] REMOVE all CommonJS require('...') to use ES6 modules ( import ... from '...' )
 
 See the [open issues](https://010001.atlassian.net/jira/software/projects/TEC/boards/2/backlog) for a full list of proposed features (and known issues).
 
@@ -40,7 +38,7 @@ One time command
 - Update the value in .env
 - npm run build
 - npm run init-app
-- Go to chrome paste this http://localhost:8000/api/v2/healthcheck 
+- Go to chrome paste this http://localhost:8000/api/v2/healthcheck
 
 ### Start application
 

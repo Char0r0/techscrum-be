@@ -22,7 +22,7 @@ activitySchema.methods.toJSON = function () {
   return activityObject;
 };
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }

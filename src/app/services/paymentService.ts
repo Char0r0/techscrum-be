@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const config = require('../config/app');
+import config from '../config/app';
 import { Request } from 'express';
 import Stripe from 'stripe';
 import { createProductModel } from '../utils/helper';

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../model/user');
 import status from 'http-status';
 const logger = require('../../loaders/logger');
-const config = require('../../app/config/app');
+import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     verifyEmail?: string;

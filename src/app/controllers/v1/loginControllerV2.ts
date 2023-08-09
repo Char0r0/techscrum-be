@@ -5,7 +5,7 @@ import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { checkUserTenants } from '../../services/loginService';
 import status from 'http-status';
-const config = require('../../config/app');
+import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     userId?: string;
