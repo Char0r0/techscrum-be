@@ -49,7 +49,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
     res.status(status.CREATED).send(replaceId(project));
   } catch (e) {
     logger.error(e);
-    res.sendStatus(status.SERVER_ERROR);
+    res.sendStatus(status.INTERNAL_SERVER_ERROR);
   }
 });
 

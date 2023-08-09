@@ -59,7 +59,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
       console.error(message);
     }
     logger.error(message ?? e);
-    return res.sendStatus(status.SERVER_ERROR);
+    return res.sendStatus(status.INTERNAL_SERVER_ERROR);
   }
   return next();
 });
