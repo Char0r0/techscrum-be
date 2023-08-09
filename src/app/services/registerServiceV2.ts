@@ -20,7 +20,7 @@ exports.emailRegister = async (
   const tenantsId = mongoose.Types.ObjectId(newTenants.id);
   let newUser;
   let validationToken;
-  if (targetUser && targetUser.active) {
+  if (targetUser?.active) {
     targetUser.tenants.push(tenantsId);
     newUser = await targetUser.save();
   } else if (!targetUser) {
