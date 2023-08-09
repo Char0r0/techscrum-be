@@ -3,9 +3,9 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler } from '../utils/helper';
-const status = require('http-status');
+import status from 'http-status';
 const Tenant = require('../model/tenants');
-const config = require('../../app/config/app');
+import config from '../../app/config/app';
 const { dataConnectionPool } = require('../utils/dbContext');
 const logger = require('../../loaders/logger');
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
@@ -59,7 +59,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
       console.error(message);
     }
     logger.error(message ?? e);
-    return res.sendStatus(status.SERVER_ERROR);
+    return res.sendStatus(status.INTERNAL_SERVER_ERROR);
   }
   return next();
 });

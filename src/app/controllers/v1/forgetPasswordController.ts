@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const status = require('http-status');
+import status from 'http-status';
 const { isUserActived } = require('../../services/emailCheckService');
 const User = require('../../model/user');
 const { forgetPassword } = require('../../utils/emailSender');
 const jwt = require('jsonwebtoken');
-const config = require('../../config/app');
+import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     email?: string;

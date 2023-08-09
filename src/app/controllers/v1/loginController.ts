@@ -2,7 +2,7 @@ import { Response, Request, NextFunction } from 'express';
 const User = require('../../model/user');
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
-const status = require('http-status');
+import status from 'http-status';
 
 declare module 'express-serve-static-core' {
   interface Request {

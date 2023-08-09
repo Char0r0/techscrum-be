@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');
 const User = require('../model/user');
-const configApp = require('../config/app');
-
+import config from '../config/app';
 
 exports.emailRegister = async (
   resUserDbConnection: any,
@@ -12,7 +11,7 @@ exports.emailRegister = async (
   newTenants: any,
   origin: string | null,
 ) => {
-  if (!configApp?.emailSecret) {
+  if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
     return null;
   }
@@ -41,7 +40,7 @@ exports.emailRegister = async (
     if (!newUser) {
       throw new Error('RegisterService Cannot find user');
     }
-    validationToken = jwt.sign({ id: newUser.id }, configApp.emailSecret);
+    validationToken = jwt.sign({ id: newUser.id }, config.emailSecret);
     emailSenderUtils.emailSender(
       email,
       `token=${validationToken}`,

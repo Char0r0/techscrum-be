@@ -67,7 +67,7 @@ exports.createPayment = async (req: Request, res: Response, next: NextFunction) 
 
     res.send(payment);
   } catch (e) {
-    logger.log(e);
+    logger.info(e);
     next(e);
   }
 };

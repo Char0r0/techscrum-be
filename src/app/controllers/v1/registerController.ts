@@ -3,13 +3,13 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { Mongoose } from 'mongoose';
 import { asyncHandler, removeHttp } from '../../utils/helper';
-const status = require('http-status');
+import status from 'http-status';
 const { isUserActived } = require('../../services/emailCheckService');
 const { emailRegister } = require('../../services/registerService');
 const database = require('../../database/init');
 const User = require('../../model/user');
 const Tenant = require('../../model/tenants');
-const config = require('../../config/app');
+import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     verifyEmail?: string;

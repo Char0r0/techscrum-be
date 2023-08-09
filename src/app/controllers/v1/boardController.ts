@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import httpStatus from 'http-status';
 import { getBoardTasks } from '../../services/boardService';
 import { replaceId } from '../../services/replaceService';
 import { asyncHandler } from '../../utils/helper';
 import escapeStringRegexp from 'escape-string-regexp';
-
-const status = require('http-status');
+import status from 'http-status';
 
 // GET one
 exports.show = asyncHandler(async (req: Request, res: Response) => {
@@ -64,5 +62,5 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
 
   const result = replaceId(boardTasks);
 
-  res.status(httpStatus.OK).json(result[0]);
+  res.status(status.OK).json(result[0]);
 });

@@ -1,6 +1,7 @@
 export {};
 import { Request, Response } from 'express';
+import status from 'http-status';
 
-exports.index = async (req: Request, res: Response) => {
-  return res.status(200).send({});
+exports.index = (req: Request, res: Response) => {
+  return res.sendStatus(status.OK);
 };

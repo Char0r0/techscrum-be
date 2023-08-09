@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const activity = require('../../model/activity');
+import status from 'http-status';
+import * as Activity from '../../model/activity';
 const User = require('../../model/user');
-const status = require('http-status');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -12,7 +12,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const { tid } = req.params;
   const userModel = await User.getModel(req.userConnection);
   try {
-    const result = await activity
+    const result = await Activity
       .getModel(req.dbConnection)
       .find({ taskId: tid })
       .populate({ path: 'userId', model: userModel });
@@ -30,7 +30,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
   const { userId, taskId, operation } = req.body;
   try {
-    const newAction = await activity.getModel(req.dbConnection).create({
+    const newAction = await Activity.getModel(req.dbConnection).create({
       userId,
       taskId,
       operation,
@@ -52,8 +52,8 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   }
   const taskId = req.params.id;
   try {
-    await activity.getModel(req.dbConnection).updateMany({ taskId: taskId }, { isDeleted: true });
-    const deletedActivities = await activity.getModel(req.dbConnection).find({ taskId: taskId });
+    await Activity.getModel(req.dbConnection).updateMany({ taskId: taskId }, { isDeleted: true });
+    const deletedActivities = await Activity.getModel(req.dbConnection).find({ taskId: taskId });
     res.send(deletedActivities);
     return;
   } catch (e) {

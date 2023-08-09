@@ -1,13 +1,13 @@
 import express, { NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
+import config from '../app/config/app';
 const apiRouterV1 = require('../app/routes/v1/api');
 const apiRouterV2 = require('../app/routes/v2/api');
-const config = require('../app/config/app');
 const cors = require('cors');
 const helmet = require('helmet');
 const swagger = require('./swagger');
 const { errorHandler } = require('./errorHandler');
-const status = require('http-status');
+import status from 'http-status';
 const compression = require('compression');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

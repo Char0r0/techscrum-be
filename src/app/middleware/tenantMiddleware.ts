@@ -2,7 +2,7 @@ export {};
 import { Response, Request, NextFunction } from 'express';
 const TenantSchema = require('../model/tenants');
 const connection = require('../utils/db');
-const config = require('../config/app');
+import config from '../config/app';
 exports.dbContextInitializer = (req: Request, res: Response, next: NextFunction) => {
   let origin = req.headers.origin;
   let connectDB = config.tenantConnection;

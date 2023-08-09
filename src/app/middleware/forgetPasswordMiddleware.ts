@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
-const status = require('http-status');
-const config = require('../config/app');
+import status from 'http-status';
+import config from '../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     email?: string;

@@ -2,13 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
-const status = require('http-status');
+import status from 'http-status';
 const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');
 const logger = require('../../../loaders/logger');
 const { tenantsDBConnection } = require('../../database/connections');
-const config = require('../../config/app');
+import config from '../../config/app';
 
 export const invalidSubdomains : { [key: string]: boolean } = { 'localhost' : true, 'dev': true, 'staging': true, 'uat': true, 'testing': true, 'test': true, 'develop': true, 'www': true };
 

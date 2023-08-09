@@ -1,10 +1,11 @@
 import { Response, Request, NextFunction } from 'express';
 const User = require('../../model/user');
+
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { checkUserTenants } from '../../services/loginService';
-const status = require('http-status');
-const config = require('../../config/app');
+import status from 'http-status';
+import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {
     userId?: string;
