@@ -2,6 +2,7 @@ export {};
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { emailRecipientTemplate } from '../../utils/emailSender';
+import config from '../../config/app';
 
 exports.contactForm = async (req: Request, res: Response) => {
   const errors = validationResult(req);
