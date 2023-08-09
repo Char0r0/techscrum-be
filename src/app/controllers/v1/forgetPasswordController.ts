@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-const status = require('http-status');
+import status from 'http-status';
 const { isUserActived } = require('../../services/emailCheckService');
 const User = require('../../model/user');
 const { forgetPassword } = require('../../utils/emailSender');

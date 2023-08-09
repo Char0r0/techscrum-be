@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import status from 'http-status';
 const comment = require('../../model/comment');
 const User = require('../../model/user');
-const status = require('http-status');
 const { replaceId } = require('../../services/replaceService');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {

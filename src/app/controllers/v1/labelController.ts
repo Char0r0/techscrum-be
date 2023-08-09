@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { replaceId } from '../../services/replaceService';
 const Label = require('../../model/label');
 const Task = require('../../model/task');
-const status = require('http-status');
+import status from 'http-status';
 const mongoose = require('mongoose');
 
 exports.index = async (req: Request, res: Response) => {

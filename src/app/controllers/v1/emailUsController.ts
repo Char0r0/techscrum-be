@@ -1,6 +1,7 @@
+export {};
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-const { emailRecipientTemplate } = require('../../utils/emailSender');
+import { emailRecipientTemplate } from '../../utils/emailSender';
 
 exports.contactForm = async (req: Request, res: Response) => {
   const errors = validationResult(req);

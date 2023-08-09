@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
-const status = require('http-status');
+import status from 'http-status';
 const Tenant = require('../../model/tenants');
 const User = require('../../model/user');
 const { emailRegister } = require('../../services/registerServiceV2');

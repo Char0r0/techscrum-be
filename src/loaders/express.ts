@@ -7,7 +7,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const swagger = require('./swagger');
 const { errorHandler } = require('./errorHandler');
-const status = require('http-status');
+import status from 'http-status';
 const compression = require('compression');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes

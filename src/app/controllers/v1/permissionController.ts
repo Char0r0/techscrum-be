@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const Permission = require('../../model/permission');
-const status = require('http-status');
+import status from 'http-status';
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const { Mongoose } = require('mongoose');

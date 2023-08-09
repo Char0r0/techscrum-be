@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
-const logger = require('winston');
+import logger from 'winston';
+import status from 'http-status';
 const DailyScrum = require('../../model/dailyScrum');
 const User = require('../../model/user');
 const Project = require('../../model/project');
 const Task = require('../../model/task');
-const status = require('http-status');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -77,7 +77,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.send(replaceId(updatedDailyScrum));
   } catch (e) {
-    logger.log(e);
+    logger.info(e);
     next(e);
   }
 };

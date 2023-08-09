@@ -3,7 +3,7 @@ import { asyncHandler } from '../../utils/helper';
 const Permission = require('../../model/permission');
 const Project = require('../../model/project');
 const Role = require('../../model/role');
-const status = require('http-status');
+import status from 'http-status';
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
 const { Types } = require('mongoose');

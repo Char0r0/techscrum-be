@@ -5,7 +5,7 @@ const { randomStringGenerator } = require('../../utils/randomStringGenerator');
 import { invite } from '../../utils/emailSender';
 const User = require('../../model/user');
 const Project = require('../../model/project');
-const status = require('http-status');
+import status from 'http-status';
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const logger = require('../../../loaders/logger');
