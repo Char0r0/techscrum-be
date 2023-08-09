@@ -1,4 +1,4 @@
-const config = require('../app/config/app');
+import config from '../app/config/app';
 
 module.exports = (app:any) => {
   app.listen(config.port, () => {

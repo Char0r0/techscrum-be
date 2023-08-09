@@ -15,7 +15,7 @@ const DEFAULT_PUBLIC_CONNECTION =
   // eslint-disable-next-line no-secrets/no-secrets
   `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/publicdb?retryWrites=true&w=majority`;
 
-const config = {
+export const config = {
   name: process.env.NAME ?? 'techscrumapp',
   port: process.env.PORT ?? 8000,
   api: {
