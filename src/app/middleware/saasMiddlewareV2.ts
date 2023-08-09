@@ -3,7 +3,7 @@
 export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler } from '../utils/helper';
-const status = require('http-status');
+import status from 'http-status';
 const Tenant = require('../model/tenants');
 const config = require('../../app/config/app');
 const { dataConnectionPool } = require('../utils/dbContext');

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
-const status = require('http-status');
+import status from 'http-status';
 const logger = require('../../loaders/logger');
 const config = require('../../app/config/app');
 declare module 'express-serve-static-core' {

@@ -5,8 +5,7 @@ import { getBoardTasks } from '../../services/boardService';
 import { replaceId } from '../../services/replaceService';
 import { asyncHandler } from '../../utils/helper';
 import escapeStringRegexp from 'escape-string-regexp';
-
-const status = require('http-status');
+import status from 'http-status';
 
 // GET one
 exports.show = asyncHandler(async (req: Request, res: Response) => {

@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 import { findDailyScrumsByProjectAndUser } from '../../services/dailyScrumService';
+import logger from 'winston';
+import status from 'http-status';
 const openai = require('../../services/openAiService');
-const logger = require('winston');
-const status = require('http-status');
 const { getDashboardCounts } = require('../../services/dashboardService');
 const openAiConfig = require('../../config/openAi');
 

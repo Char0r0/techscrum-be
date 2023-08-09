@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 const Project = require('../../model/project');
 const User = require('../../model/user');
-const status = require('http-status');
+import status from 'http-status';
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');
 import { asyncHandler } from '../../utils/helper';

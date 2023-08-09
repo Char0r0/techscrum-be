@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 import { deleteSprint, findSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
-const status = require('http-status');
+import status from 'http-status';
 const Sprint = require('../../model/sprint');
 // show
 export const show = asyncHandler(async (req: Request, res: Response) => {

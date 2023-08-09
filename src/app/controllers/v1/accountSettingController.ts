@@ -1,7 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import status from 'http-status';
 const User = require('../../model/user');
-const status = require('http-status');
+
 const { passwordAuth } = require('../../services/passwordAuthService');
 const { encryption } = require('../../services/encryptionService');
 
@@ -94,7 +95,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       }
       const userModel = await User.getModel(req.userConnection);
       await userModel.deleteOne({ _id: user._id });
-      return res.sendStatus(status.NOTCONNECTED);
+      return res.sendStatus(status.OK);
     } catch (e) {
       next(e);
     }

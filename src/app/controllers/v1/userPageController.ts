@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const User = require('../../model/user');
-const status = require('http-status');
+import status from 'http-status';
 import { validationResult } from 'express-validator';
 
 exports.update = async (req: Request, res: Response, next: NextFunction) => {

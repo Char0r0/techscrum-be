@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import status from 'http-status';
 const activity = require('../../model/activity');
 const User = require('../../model/user');
-const status = require('http-status');
+
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
