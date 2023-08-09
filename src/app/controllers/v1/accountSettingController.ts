@@ -89,7 +89,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
   if (typeof req.user === 'object') {
     const user: IUser = req.user;
     try {
-      const checkPasswordFlag = await passwordAuth(password, user.password || 'string');
+      const checkPasswordFlag = await passwordAuth(password, user.password ?? 'string');
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
