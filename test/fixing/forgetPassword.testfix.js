@@ -4,7 +4,7 @@ const dbHandler = require('../dbHandler');
 const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 const User = require('../../src/app/model/user');
 const bcrypt = require('bcrypt');
-const jwt = require('JsonWebToken');
+const jwt = require('jsonwebtoken');
 import config from '../../src/app/config/app';
 
 let application = null;
