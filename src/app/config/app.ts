@@ -23,7 +23,6 @@ export const config = {
   //---------------------------v2--------------------------
   tenantsDBConnection: process.env.TENANTS_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/users?authSource=admin',
   publicConnection: process.env.PUBLIC_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
-  authenticationConnection: process.env.DB_V1 ?? '', //remove later on
   environment: process.env.ENVIRONMENT ?? 'production',
   connectTenantsOrigin: process.env.CONNECT_TENANT ?? null,
   mainDomain: process.env.MAIN_DOMAIN,
