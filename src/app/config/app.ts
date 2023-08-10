@@ -16,11 +16,11 @@ export const config = {
     prefix: process.env.API_PREFIX ?? '/api/v1',
   },
   version: '1.0.0',
-  db: process.env.MONGODB_URL ?? null, //remove later on
-  tenantConnection: process.env.TENANT_MONGODB_URL ?? null, //remove later on
+  db: process.env.MONGODB_URL ?? '', //remove later on
+  tenantConnection: process.env.TENANT_MONGODB_URL ?? '', //remove later on
   useDefaultDatabase: process.env.USE_DEFAULT_DATABASE ?? true, //remove later on
-  companyAddress: process.env.COMPANY_ADDRESS ?? null,
-  defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION ?? null, //remove later on
+  companyAddress: process.env.COMPANY_ADDRESS ?? '',
+  defaultTenantConnection: process.env.DEFAULT_TENANT_CONNECTION ?? '', //remove later on
   emailSecret: process.env.EMAIL_SECRET ?? '123456',
   forgotSecret: process.env.FORGET_SECRET ?? '321654',
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
