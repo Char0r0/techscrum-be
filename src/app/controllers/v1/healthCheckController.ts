@@ -8,5 +8,5 @@ exports.index = (req: Request, res: Response) => {
 };
 
 exports.envs = (req: Request, res: Response)  => {
-  return res.status(status.OK).send({ tenantsDBConnection: config.tenantsDBConnection, publicDBConnection: config.publicConnection });
+  return res.status(status.OK).send({ mainDomain: config.mainDomain, tenantsDBConnection: config.tenantsDBConnection, publicDBConnection: config.publicConnection });
 };
