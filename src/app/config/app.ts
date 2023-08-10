@@ -26,8 +26,8 @@ export const config = {
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY),
   stripeSecret: process.env.STRIPE_WEBHOOK_SECRET,
   //---------------------------v2--------------------------
-  tenantsDBConnection: process.env.TENANTS_CONNECTION ?? null,
-  publicConnection: process.env.PUBLIC_CONNECTION ?? null,
+  tenantsDBConnection: process.env.TENANTS_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/users?authSource=admin',
+  publicConnection: process.env.PUBLIC_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
   authenticationConnection: process.env.DB_V1 ?? DEFAULT_USER_CONNECTION, //remove later on
   environment: process.env.ENVIRONMENT ?? 'production',
   connectTenantsOrigin: process.env.CONNECT_TENANT ?? null,
