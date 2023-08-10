@@ -9,14 +9,11 @@ const {
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
 } = require('../../middleware/authMiddleware');
-const { authenticationEmailTokenMiddleware } = require('../../middleware/registerMiddleware');
 const {
   authenticationForgetPasswordMiddleware,
 } = require('../../middleware/forgetPasswordMiddleware');
 const loginController = require('../../controllers/v1/loginController');
 const loginValidation = require('../../validations/login');
-const registerController = require('../../controllers/v1/registerController');
-const registerValidation = require('../../validations/register');
 const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
 const forgetPasswordValidation = require('../../validations/forgetPassword');
 const boardController = require('../../controllers/v1/boardController');
@@ -65,13 +62,6 @@ router.get('/', (req: any, res: any) => {
 
 router.get('/domains', domainController.index);
 
-router.post(
-  '/admin-register/:email',
-  registerValidation.register,
-  registerController.adminRegister,
-);
-
-router.post('/register/:email', registerValidation.register, registerController.register);
 router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
 router.all('*', saasMiddleware.saas);
@@ -144,13 +134,7 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 router.post('/login', loginValidation.login, loginController.login);
 
-router.get('/register/:token', authenticationEmailTokenMiddleware, registerController.get);
-router.put(
-  '/register/:token',
-  registerValidation.store,
-  authenticationEmailTokenMiddleware,
-  registerController.store,
-);
+
 
 router.post(
   '/reset-password',
