@@ -4,11 +4,6 @@ const stripeAPI = require('stripe');
 process.env.NODE_ENV = process.env.NODE_ENV ?? 'development';
 dotenv.config();
 
-//---------------------------v2--------------------------
-const DEFAULT_USER_CONNECTION =
-  // eslint-disable-next-line no-secrets/no-secrets
-  `mongodb+srv://dbuser:${process.env.DB_PASSWORD}@cluster0.c7jps.mongodb.net/users?retryWrites=true&w=majority`;
-
 export const config = {
   name: process.env.NAME ?? 'techscrumapp',
   port: process.env.PORT ?? 8000,
@@ -28,7 +23,7 @@ export const config = {
   //---------------------------v2--------------------------
   tenantsDBConnection: process.env.TENANTS_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/users?authSource=admin',
   publicConnection: process.env.PUBLIC_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
-  authenticationConnection: process.env.DB_V1 ?? DEFAULT_USER_CONNECTION, //remove later on
+  authenticationConnection: process.env.DB_V1 ?? '', //remove later on
   environment: process.env.ENVIRONMENT ?? 'production',
   connectTenantsOrigin: process.env.CONNECT_TENANT ?? null,
   mainDomain: process.env.MAIN_DOMAIN,
