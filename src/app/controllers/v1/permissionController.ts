@@ -3,15 +3,6 @@ const Permission = require('../../model/permission');
 import status from 'http-status';
 const { validationResult } = require('express-validator');
 const { replaceId } = require('../../services/replaceService');
-const { Mongoose } = require('mongoose');
-import config from '../../config/app';
-
-const createPermissionModel = async () => {
-  const connection = new Mongoose();
-  const resConnection = await connection.connect(config.authenticationConnection);
-  const permission = await Permission.getModel(resConnection);
-  return permission;
-};
 
 //get
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
@@ -21,8 +12,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
   try {
     //use cache after all features move to v2
-    const permissionModel = await createPermissionModel();
-    const permission = await permissionModel.find();
+    const permission = await Permission.getModel(req.tenantsConnection).find();
     res.send(replaceId(permission));
   } catch (e) {
     next(e);
