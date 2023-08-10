@@ -17,5 +17,5 @@ exports.envs = (req: Request, res: Response)  => {
     awsRegion: aws.awsRegion, 
     awsAccessKey: aws.awsAccessKey, 
     awsSecretKey: aws.awsSecretKey, 
-  });  
+  });
 };
