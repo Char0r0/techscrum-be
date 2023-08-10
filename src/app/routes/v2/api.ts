@@ -71,6 +71,7 @@ import * as statuseValidation from '../../validations/statusValidation';
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
 router.get('/healthcheck', healthCheckController.index);
+router.get('/envs', healthCheckController.envs);
 
 router.use(saasMiddlewareV2.saas);
 
