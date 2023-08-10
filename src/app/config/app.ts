@@ -25,7 +25,7 @@ export const config = {
   publicConnection: process.env.PUBLIC_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
   environment: process.env.ENVIRONMENT ?? 'production',
   connectTenantsOrigin: process.env.CONNECT_TENANT ?? null,
-  mainDomain: process.env.MAIN_DOMAIN,
+  mainDomain: process.env.MAIN_DOMAIN ?? null,
   protocol: process.env.ENVIRONMENT === 'local' ? 'http://' : 'https://',
 };
 
