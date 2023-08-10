@@ -66,12 +66,17 @@ import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
+import { config } from '../../config/app';
+import { stringToBoolean } from '../../utils/stringToBoolean';
 
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
 router.get('/healthcheck', healthCheckController.index);
-router.get('/envs', healthCheckController.envs);
+
+if (stringToBoolean(config.isDevops)) {
+  router.get('/envs', healthCheckController.envs);
+}
 
 router.use(saasMiddlewareV2.saas);
 
