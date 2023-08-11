@@ -4,7 +4,7 @@ import { replaceId } from '../../services/replaceService';
 import logger from 'winston';
 import status from 'http-status';
 const DailyScrum = require('../../model/dailyScrum');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 const Project = require('../../model/project');
 const Task = require('../../model/task');
 

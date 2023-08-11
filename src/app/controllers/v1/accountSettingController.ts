@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
-const User = require('../../model/user');
+import * as User from '../../model/user';
 
 const { passwordAuth } = require('../../services/passwordAuthService');
 const { encryption } = require('../../services/encryptionService');

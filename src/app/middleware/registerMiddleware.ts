@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+import * as User from '../model/user';
 import status from 'http-status';
 const logger = require('../../loaders/logger');
 import config from '../../app/config/app';

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 const Project = require('../../model/project');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 import status from 'http-status';
 const { Types } = require('mongoose');
 const { validationResult } = require('express-validator');

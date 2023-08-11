@@ -3,7 +3,7 @@ import { Mongoose, ObjectId } from 'mongoose';
 const Sprint = require('../model/sprint');
 const Task = require('../model/task');
 const Status = require('../model/status');
-const User = require('../model/user');
+import * as User from '../model/user';
 const Type = require('../model/type');
 
 const populateTasks = function (dbConnection: Mongoose, tenantConnection: Mongoose) {

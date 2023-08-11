@@ -4,7 +4,7 @@ export {};
 const mongoose = require('mongoose');
 import config from '../config/app';
 const Tenant = require('../model/tenants');
-const User = require('../model/user');
+import * as User from '../model/user';
 const readline = require('readline');
 const healthCheckService = require('../services/healthCheckService');
 

@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 const { randomStringGenerator } = require('../../utils/randomStringGenerator');
 import { invite } from '../../utils/emailSender';
-const User = require('../../model/user');
+import * as User from '../../model/user';
 const Project = require('../../model/project');
 import status from 'http-status';
 const mongoose = require('mongoose');

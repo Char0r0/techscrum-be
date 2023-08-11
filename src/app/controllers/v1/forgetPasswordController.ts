@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
 const { isUserActived } = require('../../services/emailCheckService');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 const { forgetPassword } = require('../../utils/emailSender');
 const jwt = require('jsonwebtoken');
 import config from '../../config/app';
