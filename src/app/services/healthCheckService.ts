@@ -3,7 +3,7 @@ const aws = require('aws-sdk');
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
 import config from '../config/app';
 const whois = require('whois-json');
-const awsConfig = require('../config/aws');
+import awsConfig from '../config/aws';
 const logger = require('../../loaders/logger');
 
 aws.config.update({
