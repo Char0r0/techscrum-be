@@ -10,7 +10,26 @@ const logger = require('../../../loaders/logger');
 const { tenantsDBConnection } = require('../../database/connections');
 import config from '../../config/app';
 
-export const invalidSubdomains : { [key: string]: boolean } = { 'localhost' : true, 'dev': true, 'staging': true, 'uat': true, 'testing': true, 'test': true, 'develop': true, 'www': true };
+export const invalidSubdomains : { [key: string]: boolean } = { 
+  'localhost' : true, 
+  'local': true,
+  'dev': true, 
+  'staging': true,
+  'uat': true, 
+  'testing': true, 
+  'test': true, 
+  'develop': true,
+  'qat': true,
+  'qa': true,
+  'www': true, 
+  'api-dev': true,
+  'api-staging': true,
+  'api': true,
+  'api-develop': true,
+  'api-uat': true,
+  'api-qa': true,
+  'api-qat': true,
+};
 
 const canRegisterCompany = (company:string) => {
   if (invalidSubdomains[company]) {
