@@ -12,7 +12,7 @@
     "build": "npx tsc",
     "init-app": "node dist/src/app/console/init.js",
     "start": "node dist/index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js --watch .env\"",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "lint": "eslint src/",
     "prepare": "husky install",
     "load-test": "artillery run artilleryio-load-test.yml --output .artilleryio/test.json",

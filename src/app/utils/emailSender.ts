@@ -3,7 +3,7 @@ import { invalidSubdomains } from '../controllers/v1/registerV2Controller';
 const aws = require('aws-sdk');
 import config from '../config/app';
 const logger = require('../../loaders/logger');
-const awsConfig = require('../config/aws');
+import awsConfig from '../config/aws';
 
 aws.config.update({
   region: awsConfig.awsRegion,

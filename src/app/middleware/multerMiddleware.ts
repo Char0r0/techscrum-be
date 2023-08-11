@@ -2,7 +2,7 @@ const aws = require('aws-sdk');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 import path from 'path';
-const awsConfig = require('../config/aws');
+import awsConfig from '../config/aws';
 
 aws.config.update({
   region: awsConfig.awsRegion,
