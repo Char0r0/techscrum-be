@@ -11,7 +11,7 @@ const getTenantId = async (host: string | undefined) => {
   //const defaultConnection = config?.defaultTenantConnection ?? 'testdevtechscrumapp';
   const defaultConnection = 'testdevtechscrumapp';
   const excludeDomain = await shouldExcludeDomainList(host);
-  const useDefaultConnection = config.useDefaultDatabase.toString() === true.toString();
+  const useDefaultConnection = false;
   const haveConnection = Object.keys(tenantConnection).length !== 0;
 
   if (!host || excludeDomain || useDefaultConnection) {
