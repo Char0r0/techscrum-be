@@ -16,7 +16,7 @@ const {
 const loginController = require('../../controllers/v1/loginController');
 const loginControllerV2 = require('../../controllers/v1/loginControllerV2');
 const loginValidation = require('../../validations/login');
-const registerController = require('../../controllers/v1/registerController');
+// const registerController = require('../../controllers/v1/registerController');
 const registerValidation = require('../../validations/register');
 const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
 const forgetPasswordValidation = require('../../validations/forgetPassword');
@@ -98,11 +98,11 @@ router.get('/', (req: any, res: any) => {
   res.sendStatus(201);
 });
 
-router.post(
-  '/admin-register/:email',
-  registerValidation.register,
-  registerController.adminRegister,
-);
+// router.post(
+//   '/admin-register/:email',
+//   registerValidation.register,
+//   registerController.adminRegister,
+// );
 
 router.post('/contacts', contactValidation.store, contactController.store);
 router.post('/emailus', contactValidation.contactForm, emailUsController.contactForm);
