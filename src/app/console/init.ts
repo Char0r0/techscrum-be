@@ -69,14 +69,20 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
 
 
 function isValidDomain(domain: string): boolean {
-  const pattern = new RegExp('^https?:\\/\\/' + // protocol is mandatory now
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,})$', 'i'); // domain name
+  const pattern = new RegExp('^https?:\\/\\/' +   // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,})' + // domain name
+      '(:[0-9]{1,5})?' +   // optional port
+      '$', 'i'); 
   return pattern.test(domain);
 }
 
 
 const askForDomain = (next: any) => {
-  rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string) => {
+  rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string = 'http://localhost:3000') => {
+    if (domain === '') {
+      next('http://localhost:3000');  
+      return;
+    }
     if (isValidDomain(domain)) {
       next(domain);
     } else {

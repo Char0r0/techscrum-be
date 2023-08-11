@@ -73,7 +73,7 @@ import { stringToBoolean } from '../../utils/stringToBoolean';
 //apply tenant and register-stepOne-V2
 router.post('/register', registerV2Controller.register);
 router.get('/healthcheck', healthCheckController.index);
-
+router.get('/domains/exists', domainController.isValidDomain);
 if (stringToBoolean(config.isDevops)) {
   router.get('/envs', healthCheckController.envs);
 }
