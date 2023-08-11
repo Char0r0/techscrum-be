@@ -12,7 +12,6 @@ export const config = {
     prefix: process.env.API_PREFIX ?? '/api',
   },
   version: '1.0.0',
-  useDefaultDatabase: process.env.USE_DEFAULT_DATABASE ?? true, //remove later on
   companyAddress: process.env.COMPANY_ADDRESS ?? '',
   emailSecret: process.env.EMAIL_SECRET ?? '123456',
   forgotSecret: process.env.FORGET_SECRET ?? '321654',
