@@ -4,7 +4,7 @@ const Project = require('../../model/project');
 import * as User from '../../model/user';
 import status from 'http-status';
 const { Types } = require('mongoose');
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
 const logger = require('../../../loaders/logger');

@@ -4,7 +4,7 @@ const Permission = require('../../model/permission');
 const Project = require('../../model/project');
 const Role = require('../../model/role');
 import status from 'http-status';
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 const { replaceId } = require('../../services/replaceService');
 const { Types } = require('mongoose');
 
