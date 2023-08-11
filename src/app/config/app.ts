@@ -9,7 +9,7 @@ export const config = {
   name: process.env.NAME ?? 'techscrumapp',
   port: process.env.PORT ?? 8000,
   api: {
-    prefix: process.env.API_PREFIX ?? '/api/v1',
+    prefix: process.env.API_PREFIX ?? '/api',
   },
   version: '1.0.0',
   useDefaultDatabase: process.env.USE_DEFAULT_DATABASE ?? true, //remove later on
