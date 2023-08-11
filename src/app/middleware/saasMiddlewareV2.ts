@@ -47,6 +47,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
     const tenantId = tenant?.id.toString();
     const connectTenantDbName = getConnectDatabase(tenant);
     const tenantConnection = await tenantDBConnection(connectTenantDbName);
+    
     req.tenantsConnection = tenantsConnection;
     req.userConnection = tenantConnection;
     req.dbConnection = dataConnectionPool[connectTenantDbName];

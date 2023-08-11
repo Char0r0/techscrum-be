@@ -66,6 +66,32 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
     process.exit(1);
   }
 };
+
+
+function isValidDomain(domain: string): boolean {
+  const pattern = new RegExp('^https?:\\/\\/' +   // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,})' + // domain name
+      '(:[0-9]{1,5})?' +   // optional port
+      '$', 'i'); 
+  return pattern.test(domain);
+}
+
+
+const askForDomain = (next: any) => {
+  rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string = 'http://localhost:3000') => {
+    if (domain === '') {
+      next('http://localhost:3000');  
+      return;
+    }
+    if (isValidDomain(domain)) {
+      next(domain);
+    } else {
+      console.log('\x1b[31mError: Invalid domain entered. Please try again.\x1b[0m');
+      askForDomain(next);
+    }
+  });
+};
+
 if (
   process.env.ENVIRONMENT !== 'production' && 
   process.env.ENVIRONMENT !== 'develop' && 
@@ -89,12 +115,12 @@ rl.question('Please type confirm that you have READ THIS MESSAGE: ',  async (ans
     process.exit();
   }
 
-  rl.question('Please enter the FRONTEND domain (http://localhost:3000): ', (domain:string) => {
+  askForDomain((domain:string) => {
     rl.question('Please enter the user email (techscrum@gmail.com): ', (email:string) => {
       rl.question('Please enter the user password (12345678): ', (password:string) => {
         init(domain, email, password);
       });
     });
   });
-}, 
-);
+});
+
