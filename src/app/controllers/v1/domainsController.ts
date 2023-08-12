@@ -12,8 +12,10 @@ exports.getOwnerDomain = async (req: Request, res: Response) => {
     const { userId } = req.body;
     const domainURL = req.headers.origin;
     const tenantModel = await Tenant.getModel(req.tenantsConnection);
- 
     const tenantInfo = await tenantModel.findOne({ origin: domainURL }).exec();
+    if (!tenantInfo) {
+      res.send(false);
+    }
     const ownerId = tenantInfo.owner.valueOf().toString();
     res.send(ownerId === userId);
   } catch (e) {
