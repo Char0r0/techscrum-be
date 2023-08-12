@@ -36,27 +36,27 @@ export function removeHttp(url: string | undefined) {
 }
 
 export const createUserModel = async (req: Request) => {
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   return userModel;
 };
 
 export const createTenantsModel = async (req: Request) => {
-  const tenantModel = await Tenant.getModel(req.userConnection);
+  const tenantModel = await Tenant.getModel(req.tenantsConnection);
   return tenantModel;
 };
 
 export const createProductModel = async (req: Request) => {
-  const productModel = await Product.getModel(req.userConnection);
+  const productModel = await Product.getModel(req.tenantsConnection);
   return productModel;
 };
 
 export const createPaymentHistoryModel = async (req: Request) => {
-  const paymentHistoryModel = await PaymentHistory.getModel(req.userConnection);
+  const paymentHistoryModel = await PaymentHistory.getModel(req.tenantsConnection);
   return paymentHistoryModel;
 };
 
 export const createInvoiceModel = async (req: Request) => {
-  const invoiceModel = await Invoice.getModel(req.userConnection);
+  const invoiceModel = await Invoice.getModel(req.tenantsConnection);
   return invoiceModel;
 };
 

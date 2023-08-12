@@ -57,7 +57,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     taskTypes,
     labels,
     req.dbConnection,
-    req.userConnection,
+    req.tenantsConnection,
   );
 
   const result = replaceId(boardTasks);

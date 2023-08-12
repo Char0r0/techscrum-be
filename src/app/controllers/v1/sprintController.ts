@@ -23,7 +23,7 @@ export const store = asyncHandler(async (req: Request, res: Response) => {
   const sprintModel = Sprint.getModel(req.dbConnection);
   const sprint = new sprintModel(req.body);
   await sprint.save();
-  const createdSprint = await findSprint(req.dbConnection, sprint.id, req.userConnection);
+  const createdSprint = await findSprint(req.dbConnection, sprint.id, req.tenantsConnection);
   res.status(status.CREATED).send(replaceId(createdSprint));
 });
 
@@ -33,7 +33,7 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
   const sprint = await Sprint.getModel(req.dbConnection).findById(id);
   if (!sprint) return res.status(404).send();
 
-  const updatedSprint = await updateSprint(req.dbConnection, id, req.body, req.userConnection);
+  const updatedSprint = await updateSprint(req.dbConnection, id, req.body, req.tenantsConnection);
   res.status(status.OK).json(replaceId(updatedSprint));
 });
 

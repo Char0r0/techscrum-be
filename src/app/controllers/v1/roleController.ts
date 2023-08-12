@@ -21,7 +21,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
       .findById(projectId)
       .populate({
         path: 'roles.permission',
-        model: Permission.getModel(req.userConnection),
+        model: Permission.getModel(req.tenantsConnection),
       });
     const rolesArr = project.roles;
     res.send(replaceId(rolesArr));
@@ -43,7 +43,7 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
       .findById(projectId)
       .populate({
         path: 'roles.permission',
-        model: Permission.getModel(req.userConnection),
+        model: Permission.getModel(req.tenantsConnection),
       });
 
     const rolesArr = project.roles.filter(
@@ -119,6 +119,6 @@ exports.getDefaultRoles = async (req: Request, res: Response) => {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   //use cache after all features moved to v2 ????
-  const roles = await Role.getModel(req.userConnection).find({});
+  const roles = await Role.getModel(req.tenantsConnection).find({});
   return res.status(status.OK).json(replaceId(roles));
 };
