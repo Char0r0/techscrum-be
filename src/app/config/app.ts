@@ -23,7 +23,7 @@ export const config = {
   connectTenantsOrigin: process.env.CONNECT_TENANT ?? null,
   mainDomain: process.env.MAIN_DOMAIN ?? null,
   protocol: process.env.ENVIRONMENT === 'local' ? 'http://' : 'https://',
-  isDevops: process.env.IS_DEVOPS ?? 'false',
+  devopsMode: process.env.DEVOPS_MODE ?? 'false',
 };
 
 export default config;

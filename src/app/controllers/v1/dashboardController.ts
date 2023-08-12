@@ -26,7 +26,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
       projectId,
       userId as string,
       req.dbConnection,
-      req.userConnection,
+      req.tenantsConnection,
     );
 
     return res.status(200).json(
@@ -55,7 +55,7 @@ exports.showDailyScrums = async (req: Request, res: Response, next: NextFunction
       projectId,
       userId as string,
       req.dbConnection,
-      req.userConnection,
+      req.tenantsConnection,
     );
 
     res.status(200).json(replaceId(result));
