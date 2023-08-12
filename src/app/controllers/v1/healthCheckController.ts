@@ -18,5 +18,6 @@ exports.envs = (req: Request, res: Response)  => {
     awsRegion: awsConfig.awsRegion, 
     awsAccessKey: awsConfig.awsAccessKey, 
     awsSecretKey: awsConfig.awsSecretKey, 
+    serverEmail: `noreply@${config.mainDomain}`,
   });
 };
