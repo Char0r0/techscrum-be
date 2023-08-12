@@ -74,6 +74,7 @@ import { stringToBoolean } from '../../utils/stringToBoolean';
 router.post('/register', registerV2Controller.register);
 router.get('/healthcheck', healthCheckController.index);
 router.get('/domains/exists', domainController.isValidDomain);
+router.get('/domains', domainController.index);
 if (stringToBoolean(config.devopsMode)) {
   router.get('/envs', healthCheckController.envs);
 }
@@ -91,7 +92,7 @@ router.put(
   registerV2Controller.store,
 );
 
-router.get('/domains', domainController.index);
+
 router.post('/domains/owner', domainController.getOwnerDomain);
 
 router.get('/', (req: any, res: any) => {
