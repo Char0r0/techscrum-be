@@ -11,6 +11,7 @@
     "coverage": "nyc --reporter=text npm test",
     "build": "npx tsc",
     "init-app": "node dist/src/app/console/init.js",
+    "loggly": "node dist/loggly.js",
     "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "lint": "eslint src/",
