@@ -72,7 +72,7 @@ function isValidDomain(domain: string): boolean {
   const pattern = new RegExp('^https?:\\/\\/' +   // protocol
       '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,})' + // domain name
       '(:[0-9]{1,5})?' +   // optional port
-      '$', 'i'); 
+      '(?<!\\/)$', 'i'); 
   return pattern.test(domain);
 }
 
