@@ -35,8 +35,8 @@ Docker Desktop
 One time command
 
 - docker build -t techscrum:lastest .
-- cp .env.example .env (ASK DEVS FOR THE VALUES)
-- Update the value in .env
+- cp .env.example .env
+- Update the value in .env (https://1drv.ms/w/s!AjTqzZQqiCqtgdM7QigoxTePfKaQow?e=L8oUz1), Ask Kitman for password
 - npm run build
 - npm run init-app
 - Go to chrome paste this http://localhost:8000/api/v2/healthcheck
