@@ -14,7 +14,7 @@ exports.index = asyncHandler(async (req: any, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   const projects = await Project.getModel(req.dbConnection)
     .find({ isDelete: false, tenantId: req.tenantId || req.userId })
     .populate({ path: 'projectLeadId', model: userModel })
@@ -28,7 +28,7 @@ exports.show = asyncHandler(async (req: any, res: Response) => {
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   const project = await Project.getModel(req.dbConnection)
     .findOne({ _id: req.params.id, isDelete: false })
     .populate({ path: 'projectLeadId', model: userModel })

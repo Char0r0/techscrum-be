@@ -21,9 +21,9 @@ export const index = asyncHandler(async (req: Request, res: Response) => {
     {},
     {},
     req.dbConnection,
-    req.userConnection,
+    req.tenantsConnection,
   );
-  const sprints = await findSprints(sprintFilter, {}, req.dbConnection, req.userConnection);
+  const sprints = await findSprints(sprintFilter, {}, req.dbConnection, req.tenantsConnection);
 
   const result = {
     backlog: {
@@ -54,7 +54,7 @@ export const searchBacklogTasks = asyncHandler(async (req: Request, res: Respons
     {},
     {},
     req.dbConnection,
-    req.userConnection,
+    req.tenantsConnection,
   );
 
   return res.status(httpStatus.OK).json(tasks);
@@ -113,7 +113,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     labelFilter = { tags: { $all: labelIds }, projectId };
   }
 
-  const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection, req.userConnection);
+  const sprints = await findSprints({ projectId }, { isComplete: false }, req.dbConnection, req.tenantsConnection);
   for (const sprint of sprints) {
     sprint.taskId = await findTasks(
       { ...fuzzySearchFilter, sprintId: sprint.id },
@@ -121,7 +121,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
       { ...typeFilter, sprintId: sprint.id },
       { ...labelFilter, sprintId: sprint.id },
       req.dbConnection,
-      req.userConnection,
+      req.tenantsConnection,
     );
   }
 
@@ -131,7 +131,7 @@ export const filter = asyncHandler(async (req: Request, res: Response) => {
     { ...typeFilter, sprintId: null },
     { ...labelFilter, sprintId: null },
     req.dbConnection,
-    req.userConnection,
+    req.tenantsConnection,
   );
 
   const result = {

@@ -18,7 +18,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const { projectId } = req.params;
   const { userId } = req.query;
   const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
 
   try {
     const results = await DailyScrumModel.find({ project: projectId, user: userId })

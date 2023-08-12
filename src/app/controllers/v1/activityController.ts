@@ -10,7 +10,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const { tid } = req.params;
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   try {
     const result = await Activity
       .getModel(req.dbConnection)

@@ -18,7 +18,7 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   }
   const { newPassword, oldPassword } = req.body;
   const userId = req.body.userInfo.id;
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   const user = await userModel.findOne({ _id: userId });
   try {
     const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
@@ -59,7 +59,7 @@ exports.update = async (req: Request, res: Response) => {
     return;
   }
 
-  const userModel = await User.getModel(req.userConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
   const updateUser = await userModel.findOneAndUpdate(
     { _id: user._id },
     {
@@ -93,7 +93,7 @@ exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
       if (!checkPasswordFlag) {
         res.sendStatus(status.FORBIDDEN);
       }
-      const userModel = await User.getModel(req.userConnection);
+      const userModel = await User.getModel(req.tenantsConnection);
       await userModel.deleteOne({ _id: user._id });
       return res.sendStatus(status.OK);
     } catch (e) {

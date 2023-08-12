@@ -28,7 +28,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     {},
     {},
     req.dbConnection,
-    req.userConnection,
+    req.tenantsConnection,
   );
   res.status(200).send(replaceId(tasks[0]));
 });
@@ -97,7 +97,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
       {},
       {},
       req.dbConnection,
-      req.userConnection,
+      req.tenantsConnection,
     );
     res.status(httpStatus.CREATED).json(replaceId(result[0]));
   }
@@ -147,7 +147,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
   );
   if (!task) return res.status(httpStatus.NOT_FOUND).send();
 
-  const result = await findTasks({ _id: id }, {}, {}, {}, req.dbConnection, req.userConnection);
+  const result = await findTasks({ _id: id }, {}, {}, {}, req.dbConnection, req.tenantsConnection);
 
   return res.status(httpStatus.OK).json(replaceId(result[0]));
 });
