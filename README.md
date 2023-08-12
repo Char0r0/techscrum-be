@@ -14,6 +14,7 @@ For more info please refer to
 - Nodemon (Automatically restarts application when code files are updated)
 - Compression (Enabling gzip compression in Express.js)
 - Swagger (API docs)
+- Loggly (Cloud-based logging solutions)
 
 ## TechDebt
 
@@ -61,6 +62,13 @@ To know more about this package you can visit https://www.npmjs.com/package/swag
 ## Tests
 
 - npm run test
+
+## Logs
+
+Logs file help developers/devops to address server or code issues when application crashes, you would need to ask email and password from Kitman.
+
+- Local: /storage/logs/logger.log. This file will only generate when there are errors
+- Production: https://techscrumapp.loggly.com/search?terms=tag:heroku&from=-20m&until=now&source_group=&newtab=1#terms=tag:*&from=2023-08-12T06:55:41.477Z&until=2023-08-12T07:15:41.477Z&source_group=
 
 ## License
 
