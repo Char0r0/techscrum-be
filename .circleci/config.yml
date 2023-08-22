@@ -166,6 +166,9 @@ workflows:
       - dscan:
           requires:
             - skip_ci_check
+      - dast:
+          requires:
+            - skip_ci_check
       - sast:
           requires:
             - skip_ci_check
@@ -179,6 +182,7 @@ workflows:
           requires:
             - sast
             - dast
+            - dscan
             - e2e_test
             - unit_test
           filters:
@@ -186,6 +190,8 @@ workflows:
               only:
                 - master
       - deploy:
+          requires:
+            - semantic_release
           filters:
             branches:
               only:
