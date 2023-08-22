@@ -1,5 +1,6 @@
 import { Response, Request } from 'express';
 import { shouldExcludeDomainList } from '../../utils/helper';
+import { isLocalHostAndNoConnectedTenant } from '../../utils/tenantHelper';
 const Tenant = require('../../model/tenants');
 const { tenantsDBConnection } = require('../../database/connections');
 
@@ -29,7 +30,7 @@ exports.isValidDomain = async (req: Request, res : Response) => {
     const tenantsConnection = await tenantsDBConnection();
     const domainURL = req.headers.origin;
     const tenantModel = await Tenant.getModel(tenantsConnection);
-    const tenantInfo = await tenantModel.findOne({ origin: domainURL }).exec();
+    const tenantInfo = isLocalHostAndNoConnectedTenant(domainURL || '') ? await tenantModel.findOne({ origin: { $regex: 'localhost' } }).exec() : await tenantModel.findOne({ origin: domainURL }).exec();
     res.send(!!tenantInfo);
   } catch (e) {
     res.status(500).json(e);
