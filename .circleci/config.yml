@@ -50,7 +50,7 @@ jobs:
             - ~/.npm
             - ~/.cache
           key: v1-dependencies-{{ checksum "package.json" }}
-#      - snyk/scan
+  #      - snyk/scan
   deploy:
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
@@ -144,13 +144,13 @@ workflows:
   heroku_deploy:
     jobs:
       - skip_ci_check
-      - sast: 
-          requires:
-            - skip_ci_check        
-      - unit_test
+      - sast:
           requires:
             - skip_ci_check
-      - e2e_test
+      - unit_test:
+          requires:
+            - skip_ci_check
+      - e2e_test:
           requires:
             - skip_ci_check
       - semantic_release:
