@@ -1,3 +1,6 @@
+//1. require to import
+//2. no services
+
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 const Project = require('../../model/project');
@@ -77,10 +80,12 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  if (Types.ObjectId.isValid(req.params.id)) {
-    await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), {
-      isDelete: true,
-    });
-    res.status(status.NO_CONTENT).json({});
+  if (!Types.ObjectId.isValid(req.params.id)) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({});  
   }
+
+  await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), {
+    isDelete: true,
+  });
+  res.status(status.NO_CONTENT).json({});
 });
