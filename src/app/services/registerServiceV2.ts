@@ -2,7 +2,7 @@ const emailSenderUtils = require('../utils/emailSender');
 const jwt = require('jsonwebtoken');
 const logger = require('../../loaders/logger');
 const mongoose = require('mongoose');
-const User = require('../model/user');
+import * as User from '../model/user';
 import config from '../config/app';
 
 exports.emailRegister = async (

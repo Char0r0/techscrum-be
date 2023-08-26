@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
 import { IDailyScrum, IDailyScrumTimeStampModified } from '../types';
 const DailyScrum = require('../model/dailyScrum');
-const User = require('../model/user');
+import * as User from '../model/user';
 const Project = require('../model/project');
 const {
   removeDuplicateDate,

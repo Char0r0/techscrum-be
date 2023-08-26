@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 const Project = require('../../model/project');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 import status from 'http-status';
 const { Types } = require('mongoose');
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
 const logger = require('../../../loaders/logger');

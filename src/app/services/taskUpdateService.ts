@@ -1,7 +1,7 @@
 import { Request } from 'express';
 const Task = require('../model/task');
 const Board = require('../model/board');
-const User = require('../model/user');
+import * as User from '../model/user';
 
 export const taskUpdate = async (req: Request) => {
   const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });

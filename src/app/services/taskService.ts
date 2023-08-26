@@ -4,7 +4,7 @@ const Type = require('../model/type');
 const Comment = require('../model/comment');
 const Label = require('../model/label');
 const Status = require('../model/status');
-const User = require('../model/user');
+import * as User from '../model/user';
 import { ITask } from '../types';
 
 /** Find tasks with given filter

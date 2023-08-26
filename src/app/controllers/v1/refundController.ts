@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-const User = require('../../model/user');
+import * as User from '../../model/user';
 import config from '../../config/app';
 
 exports.refundController = async (req: Request, res: Response) => {
