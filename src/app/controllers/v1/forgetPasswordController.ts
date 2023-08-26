@@ -4,7 +4,7 @@ import status from 'http-status';
 const { isUserActived } = require('../../services/emailCheckService');
 import * as User from '../../model/user';
 const { forgetPassword } = require('../../utils/emailSender');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import config from '../../config/app';
 declare module 'express-serve-static-core' {
   interface Request {

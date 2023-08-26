@@ -3,9 +3,9 @@ import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { replaceId } from '../../services/replaceService';
+import status from 'http-status';
 const Label = require('../../model/label');
 const Task = require('../../model/task');
-import status from 'http-status';
 const mongoose = require('mongoose');
 
 exports.index = async (req: Request, res: Response) => {

@@ -7,8 +7,9 @@ import * as User from '../../model/user';
 const Project = require('../../model/project');
 import status from 'http-status';
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 const logger = require('../../../loaders/logger');
+import config from '../../config/app';
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -113,7 +114,7 @@ exports.invite = async (req: Request, res: Response) => {
     }
 
     if (!user.active)
-      validationToken = jwt.sign({ email, activeCode: user.activeCode }, process.env.EMAIL_SECRET);
+      validationToken = jwt.sign({ email, activeCode: user.activeCode }, config.emailSecret);
 
     const name = user.active ? user.name : '';
     invite(user.email, name, validationToken, roleName, project.name, req.headers.origin ?? '');

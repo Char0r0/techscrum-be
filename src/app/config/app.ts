@@ -15,6 +15,7 @@ export const config = {
   companyAddress: process.env.COMPANY_ADDRESS ?? '',
   emailSecret: process.env.EMAIL_SECRET ?? '123456',
   forgotSecret: process.env.FORGET_SECRET ?? '321654',
+  accessSecret: process.env.ACCESS_SECRET ?? '',
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY) ?? null,
   stripeSecret: process.env.STRIPE_WEBHOOK_SECRET ?? null,
   //---------------------------v2--------------------------
