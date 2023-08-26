@@ -4,7 +4,7 @@ const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../datab
 import config from '../config/app';
 const whois = require('whois-json');
 import awsConfig from '../config/aws';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 
 aws.config.update({
   region: awsConfig.awsRegion,

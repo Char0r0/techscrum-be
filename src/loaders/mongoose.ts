@@ -1,7 +1,7 @@
 export {};
 // const mongoose = require('mongoose');
 // const config = require('../app/config/app');
-// const logger = require('../loaders/logger');
+// import logger from '../loaders/logger';
 
 module.exports = async function () {
   // const connection = await mongoose

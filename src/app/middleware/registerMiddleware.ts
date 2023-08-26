@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import * as User from '../model/user';
 import status from 'http-status';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
   interface Request {

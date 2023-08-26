@@ -1,6 +1,6 @@
 const emailSenderUtils = require('../utils/emailSender');
 import jwt from 'jsonwebtoken';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 const mongoose = require('mongoose');
 import * as User from '../model/user';
 import config from '../config/app';

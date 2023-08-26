@@ -2,7 +2,7 @@ import { invalidSubdomains } from '../controllers/v1/registerV2Controller';
 
 const aws = require('aws-sdk');
 import config from '../config/app';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 import awsConfig from '../config/aws';
 
 aws.config.update({
