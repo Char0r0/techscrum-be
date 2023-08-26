@@ -1,6 +1,6 @@
 import { NextFunction, Response, Request  } from 'express';
 
-const User = require('../model/user');
+import * as User from '../model/user';
 const Tenant = require('../model/tenants');
 const Product = require('../model/product');
 const PaymentHistory = require('../model/paymentHistory');

@@ -1,8 +1,9 @@
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import config from '../config/app';
 
 export function tokenGenerate(input: string) {
   const encryptObj = { input };
-  const token = jwt.sign(encryptObj, process.env.ACCESS_SECRET, {
+  const token = jwt.sign(encryptObj, config.accessSecret, {
     expiresIn: process.env.EXPERT_TIME ?? '24h',
   });
 

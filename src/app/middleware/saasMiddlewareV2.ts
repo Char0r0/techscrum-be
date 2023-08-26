@@ -8,7 +8,7 @@ const Tenant = require('../model/tenants');
 import config from '../../app/config/app';
 import { isLocalHostAndNoConnectedTenant } from '../utils/tenantHelper';
 const { dataConnectionPool } = require('../utils/dbContext');
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
 
 enum Plans {

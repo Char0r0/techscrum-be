@@ -8,7 +8,7 @@ const Status = require('../../model/status');
 const Sprint = require('../../model/sprint');
 const Project = require('../../model/project');
 const httpStatus = require('http-status');
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 
 declare module 'express-serve-static-core' {
   interface Request {

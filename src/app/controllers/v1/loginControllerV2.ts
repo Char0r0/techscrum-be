@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-const User = require('../../model/user');
+import * as User from '../../model/user';
 
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';

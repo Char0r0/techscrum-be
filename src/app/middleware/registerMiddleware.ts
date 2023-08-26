@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+import jwt from 'jsonwebtoken';
+import * as User from '../model/user';
 import status from 'http-status';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
   interface Request {
@@ -20,15 +20,15 @@ const authenticationEmailTokenMiddleware = async (
     logger.error('Missing email secret in env');
     res.status(status.FORBIDDEN).send();
   }
-  jwt.verify(token, config.emailSecret, async (err: Error) => {
+  jwt.verify(token, config.emailSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const { email, activeCode } = jwt.verify(token, config.emailSecret);
-    const user = await User.getModel(req.dbConnection).findOne({ email, activeCode }).exec();
+    const result :any = await jwt.verify(token, config.emailSecret);
+    const user = await User.getModel(req.dbConnection).findOne({ email:result.email, activeCode: result.activeCode }).exec();
     if (user && !user.active) {
-      req.verifyEmail = email;
+      req.verifyEmail = result.email;
       return next();
     }
-    logger.info(email + 'activation code incorrect. User input ' + activeCode);
+    logger.info(result.email + 'activation code incorrect. User input ' + result.activeCode);
     res.status(status.FORBIDDEN).send();
   });
 };

@@ -5,7 +5,7 @@ const { Mongoose } = require('mongoose');
 const Tenant = require('../model/tenants');
 import config from '../../app/config/app';
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 
 const getTenantId = async (host: string | undefined) => {
   //const defaultConnection = config?.defaultTenantConnection ?? 'testdevtechscrumapp';

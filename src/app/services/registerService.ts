@@ -1,9 +1,9 @@
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
 const { emailSender } = require('../utils/emailSender');
-const User = require('../model/user');
-const jwt = require('jsonwebtoken');
+import * as User from '../model/user';
+import jwt from 'jsonwebtoken';
 import config from '../config/app';
-const logger = require('../../loaders/logger');
+import logger from '../../loaders/logger';
 
 const emailRegister = async (email: string, dbConnection: any, domain: string) => {
   const activeCode = randomStringGenerator(16);

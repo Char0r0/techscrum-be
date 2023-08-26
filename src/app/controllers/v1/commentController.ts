@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
 const comment = require('../../model/comment');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 const { replaceId } = require('../../services/replaceService');
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {

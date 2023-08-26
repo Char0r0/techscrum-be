@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+import jwt from 'jsonwebtoken';
+import * as User from '../model/user';
 const Tenant = require('../model/tenants');
 import status from 'http-status';
-const logger = require('../../loaders/logger');
 import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
   interface Request {
@@ -17,18 +16,13 @@ const authenticationEmailTokenMiddlewareV2 = async (
   next: NextFunction,
 ) => {
   const token = req.params.token;
-  if (!config?.emailSecret) {
-    logger.error('Missing email secret in env');
-    res.status(status.FORBIDDEN).send();
-  }
-
-  jwt.verify(token, config.emailSecret, async (err: Error) => {
+  jwt.verify(token, config.emailSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const { id } = jwt.verify(token, config.emailSecret);
+    const result:any = await jwt.verify(token, config.emailSecret);
     const resUserDbConnection = req.tenantsConnection;
    
     const userModel = await User.getModel(resUserDbConnection);
-    const user = await userModel.findById(id);
+    const user = await userModel.findById(result.id);
     
     // if user is not active, continue registration process
     if (user && !user.active) {

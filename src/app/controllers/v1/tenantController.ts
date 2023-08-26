@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import status from 'http-status';
 const Tenant = require('../../model/tenants');
-const { validationResult } = require('express-validator');
-
+import { validationResult } from 'express-validator';
 //GET ALL
 exports.index = (req: Request, res: Response) => {
   const errors = validationResult(req);

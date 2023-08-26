@@ -4,9 +4,9 @@ import { asyncHandler } from '../../utils/helper';
 const mongoose = require('mongoose');
 import status from 'http-status';
 const Tenant = require('../../model/tenants');
-const User = require('../../model/user');
+import * as User from '../../model/user';
 const { emailRegister } = require('../../services/registerServiceV2');
-const logger = require('../../../loaders/logger');
+import logger from '../../../loaders/logger';
 const { tenantsDBConnection } = require('../../database/connections');
 import config from '../../config/app';
 

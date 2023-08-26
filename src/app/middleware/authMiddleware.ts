@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-const jwt = require('jsonwebtoken');
-const User = require('../model/user');
+import jwt from 'jsonwebtoken';
+import * as User from '../model/user';
 import status from 'http-status';
+import config from '../config/app';
 
 declare module 'express-serve-static-core' {
   interface Request {
@@ -22,9 +23,9 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
   if (!authHeader || !authToken) return res.sendStatus(401);
 
   if (authType === 'Bearer') {
-    jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
+    jwt.verify(authToken, config.accessSecret, async (err: any) => {
       if (err) return res.status(status.FORBIDDEN).send();
-      const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
+      const verifyUser:any = jwt.verify(authToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
@@ -54,9 +55,9 @@ const authenticationTokenValidationMiddleware = (
   if (!authHeader || !authToken) return res.sendStatus(401);
 
   if (authType === 'Bearer') {
-    jwt.verify(authToken, process.env.ACCESS_SECRET, async (err: Error) => {
+    jwt.verify(authToken, config.accessSecret, async (err: any) => {
       if (err) return next();
-      const verifyUser = jwt.verify(authToken, process.env.ACCESS_SECRET);
+      const verifyUser:any = jwt.verify(authToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
@@ -87,9 +88,9 @@ const authenticationRefreshTokenMiddleware = async (
   if (!authHeader || !authRefreshToken) return res.sendStatus(401);
 
   if (authType === 'Bearer') {
-    jwt.verify(authRefreshToken, process.env.ACCESS_SECRET, async (err: Error) => {
+    jwt.verify(authRefreshToken, config.accessSecret, async (err: any) => {
       if (err) return next();
-      const verifyUser = jwt.verify(authRefreshToken, process.env.ACCESS_SECRET);
+      const verifyUser:any = jwt.verify(authRefreshToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({
         _id: verifyUser.id,
@@ -97,12 +98,12 @@ const authenticationRefreshTokenMiddleware = async (
       });
       req.user = user;
 
-      req.token = await jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
+      req.token = await jwt.sign({ id: user._id.toString() }, config.accessSecret, {
         expiresIn: '48h',
       });
       req.refreshToken = jwt.sign(
         { id: user._id, refreshToken: user.refreshToken },
-        process.env.ACCESS_SECRET,
+        config.accessSecret,
         {
           expiresIn: '360h',
         },

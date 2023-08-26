@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 const Permission = require('../../model/permission');
 import status from 'http-status';
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 const { replaceId } = require('../../services/replaceService');
 
 //get
