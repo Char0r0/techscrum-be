@@ -31,12 +31,14 @@ const isValidDomain = async (domain:string) => {
   return domainData.domainStatus ? '\x1b[32mSuccess\x1b[0m' : '\x1b[31mFailed\x1b[0m';
 };
 
+const DB_CONNECTED = 1;
+
 exports.healthCheck = async () => {
   const tenantsDbConnection = await tenantsDBConnection();
   const tenantDbConnection = await tenantDBConnection(PUBLIC_DB);
   const domain = config.mainDomain ?? '';
-  const tenantsDbConnect = tenantsDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
-  const tenantDbConnect = tenantDbConnection.readyState !== 2 ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
+  const tenantsDbConnect = tenantsDbConnection.readyState !== DB_CONNECTED ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
+  const tenantDbConnect = tenantDbConnection.readyState !== DB_CONNECTED ? '\x1b[31mFailed\x1b[0m' : '\x1b[32mSuccess\x1b[0m';
   
   const validDomain = await isValidDomain(domain);
   const hasAllTemplatesUploaded = await hasAllRequiredTemplates();
