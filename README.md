@@ -39,6 +39,7 @@ One time command
 - Update the value in .env ask Kitman for AWS
 - npm run build
 - npm run init-app
+- start application
 - Go to chrome paste this http://localhost:8000/api/v2/healthcheck
 
 ### Start application
