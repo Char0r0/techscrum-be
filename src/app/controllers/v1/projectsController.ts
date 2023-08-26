@@ -7,7 +7,7 @@ const { Types } = require('mongoose');
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
-const logger = require('../../../loaders/logger');
+import logger from '../../../loaders/logger';
 //get
 exports.index = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);

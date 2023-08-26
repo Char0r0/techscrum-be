@@ -8,7 +8,7 @@ const Project = require('../../model/project');
 import status from 'http-status';
 const mongoose = require('mongoose');
 import jwt from 'jsonwebtoken';
-const logger = require('../../../loaders/logger');
+import logger from '../../../loaders/logger';
 import config from '../../config/app';
 
 exports.index = async (req: Request, res: Response, next: NextFunction) => {
