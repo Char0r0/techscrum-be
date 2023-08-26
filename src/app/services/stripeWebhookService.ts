@@ -6,7 +6,7 @@ import { randomStringGenerator } from '../utils/randomStringGenerator';
 import { TrialDate } from '../utils/TrialDate';
 const Invoice = require('../model/invoice');
 
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import config from '../config/app';
 
 let userModel: any;

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 import * as User from '../model/user';
 const Tenant = require('../model/tenants');
 import status from 'http-status';
@@ -22,13 +22,13 @@ const authenticationEmailTokenMiddlewareV2 = async (
     res.status(status.FORBIDDEN).send();
   }
 
-  jwt.verify(token, config.emailSecret, async (err: Error) => {
+  jwt.verify(token, config.emailSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const { id } = jwt.verify(token, config.emailSecret);
+    const result:any = await jwt.verify(token, config.emailSecret);
     const resUserDbConnection = req.tenantsConnection;
    
     const userModel = await User.getModel(resUserDbConnection);
-    const user = await userModel.findById(id);
+    const user = await userModel.findById(result.id);
     
     // if user is not active, continue registration process
     if (user && !user.active) {

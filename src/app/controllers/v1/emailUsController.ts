@@ -1,4 +1,3 @@
-export {};
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { emailRecipientTemplate } from '../../utils/emailSender';

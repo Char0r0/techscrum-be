@@ -1,7 +1,8 @@
 import { NextFunction } from 'express';
 import { Types } from 'mongoose';
 
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+import config from '../config/app';
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const { randomStringGenerator } = require('../utils/randomStringGenerator');
@@ -210,14 +211,14 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ id: user._id.toString() }, process.env.ACCESS_SECRET, {
+  const token = jwt.sign({ id: user._id.toString() }, config.accessSecret, {
     expiresIn: '48h',
   });
   if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
     const randomeString = randomStringGenerator(10);
     const refreshToken = jwt.sign(
       { id: user._id, refreshToken: randomeString },
-      process.env.ACCESS_SECRET,
+      config.accessSecret,
       {
         expiresIn: '360h',
       },
@@ -228,7 +229,7 @@ userSchema.methods.generateAuthToken = async function () {
   }
   const refreshToken = jwt.sign(
     { id: user._id, refreshToken: user.refreshToken },
-    process.env.ACCESS_SECRET,
+    config.accessSecret,
     {
       expiresIn: '360h',
     },

@@ -4,9 +4,9 @@ import { replaceId } from '../../services/replaceService';
 import { findDailyScrumsByProjectAndUser } from '../../services/dailyScrumService';
 import logger from 'winston';
 import status from 'http-status';
-const openai = require('../../services/openAiService');
-const { getDashboardCounts } = require('../../services/dashboardService');
-const openAiConfig = require('../../config/openAi');
+import { openai } from '../../services/openAiService';
+import { getDashboardCounts } from '../../services/dashboardService';
+import { GPT_MODEL, USER_ROLE } from '../../config/openAi';
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -77,10 +77,10 @@ exports.generatePDF = async (req: Request, res: Response, next: NextFunction) =>
     const dashboardCounts = await getDashboardCounts(projectId, req.dbConnection);
 
     const response = await openai.createChatCompletion({
-      model: openAiConfig.GPT_MODEL,
+      model: GPT_MODEL,
       messages: [
         {
-          role: openAiConfig.USER_ROLE,
+          role: USER_ROLE,
           content: `I am a business analyst and please help me generate a formal report based on the following data: ${JSON.stringify(
             dashboardCounts,
           )}`,

@@ -99,6 +99,6 @@ const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => 
   };
 };
 
-module.exports = {
+export {
   getDashboardCounts,
 };
