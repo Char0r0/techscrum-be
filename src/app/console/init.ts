@@ -55,10 +55,11 @@ const init = async (domainInput:string, emailInput:string, passwordInput:string)
    
     const activeTenant = resUser.tenants.at(-1);
     await tenantModel.findByIdAndUpdate(activeTenant, { active: true, owner: mongoose.Types.ObjectId(user._id) });
-    console.log('Create success! \n\x1b[32mLogin details:\n', 'Domain: ' + domain + '\n', 'Email: ' + emailAdd + '\n', 'Password: ' + password + '\x1b[0m\n');
+    console.error('\x1b[31mNow please FOLLOW README.MD and start up your BACKEND and FRONTEND server!\x1b[0m');
+    console.log('Create success \n\x1b[32mLogin details:\n', 'Frontend Domain: ' + domain + '\n', 'Email: ' + emailAdd + '\n', 'Password: ' + password + '\x1b[0m\n');
     process.exit();
   } catch (e: any) {
-    if (e.message.includes('duplicate key error collection: users')) {
+    if (e.message.includes('duplicate key')) {
       console.error('\x1b[31mEmail already exists in database\x1b[0m');
       process.exit(1);
     }
