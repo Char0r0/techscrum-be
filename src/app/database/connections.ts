@@ -2,6 +2,7 @@ export {};
 
 const { tenantConnection, dataConnectionPool } = require('../utils/dbContext');
 const mongoose = require('mongoose');
+const Tenant = require('../model/tenants');
 import config from '../../app/config/app';
 const PUBLIC_DB = 'publicdb';
 mongoose.set('strictQuery', false);
@@ -20,6 +21,8 @@ exports.tenantsDBConnection = async () => {
       options,
     );
   }
+  const tenantModel = await Tenant.getModel(tenantConnection?.connection);
+  await tenantModel.find({});
   return tenantConnection.connection;
 };
   
@@ -30,8 +33,11 @@ exports.tenantDBConnection = async (tenant: string) => {
       options,
     );
     dataConnectionPool[tenant] = dataConnectionMongoose;
+    const tenantModel = await Tenant.getModel(dataConnectionMongoose);
+    await tenantModel.find({});
     return dataConnectionMongoose;
   }
+
   return dataConnectionPool[tenant]; 
 };
 
