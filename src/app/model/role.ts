@@ -33,9 +33,11 @@ const roleSchema = new mongoose.Schema<IRole>(
   },
 );
 
-export const getModel = (connection: Mongoose) => {
+const getModel = (connection: Mongoose) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('roles', roleSchema);
 };
+
+export default { getModel };

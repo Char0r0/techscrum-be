@@ -1,5 +1,5 @@
-export {};
-const mongoose = require('mongoose');
+
+import mongoose from 'mongoose';
 
 const invoiceSchema = new mongoose.Schema(
   {
@@ -38,9 +38,11 @@ const invoiceSchema = new mongoose.Schema(
   },
 );
 
-module.exports.getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('invoice', invoiceSchema);
 };
+
+export default { getModel };

@@ -1,7 +1,7 @@
-export {};
-const mongoose = require('mongoose');
-const { Types } = require('mongoose');
-const projectSchema = mongoose.Schema(
+import * as mongoose from 'mongoose';
+import { Types } from 'mongoose';
+
+const projectSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -59,17 +59,19 @@ const projectSchema = mongoose.Schema(
       type: String,
       trim: true,
     },
-    tenantId:{
-      require:true,
-      type:String,
+    tenantId: {
+      require: true,
+      type: String,
     },
   },
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('projects', projectSchema);
 };
+
+export default { getModel };

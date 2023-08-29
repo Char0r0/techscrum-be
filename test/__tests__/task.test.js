@@ -4,7 +4,7 @@ const dbHandler = require('../dbHandler');
 const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 const authMiddleware = require('../../src/app/middleware/authMiddleware');
 const User = require('../../src/app/model/user');
-const Project = require('../../src/app/model/project');
+import Project from '../../src/app/model/project';
 const Task = require('../../src/app/model/task');
 const Board = require('../../src/app/model/board');
 const Status = require('../../src/app/model/status');

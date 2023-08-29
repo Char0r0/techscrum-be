@@ -1,5 +1,5 @@
-export {};
-const mongoose = require('mongoose');
+
+import mongoose from 'mongoose';
 
 const paymentHistorySchema = new mongoose.Schema(
   {
@@ -60,11 +60,11 @@ const paymentHistorySchema = new mongoose.Schema(
 
 );
 
-module.exports.getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('paymentsHistory', paymentHistorySchema);
 };
 
-
+export default { getModel };

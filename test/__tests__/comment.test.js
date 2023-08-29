@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const dbHandler = require('../dbHandler');
 const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 const User = require('../../src/app/model/user');
-const Project = require('../../src/app/model/project');
+import Project from '../../src/app/model/project';
 const Task = require('../../src/app/model/task');
 const Comment = require('../../src/app/model/comment');
 const bcrypt = require('bcrypt');

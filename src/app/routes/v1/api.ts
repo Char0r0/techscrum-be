@@ -1,6 +1,6 @@
 const express = require('express');
 const router = new express.Router();
-const projectsController = require('../../controllers/v1/projectsController');
+import * as projectsController from '../../controllers/v1/projectsController';
 const projectValidation = require('../../validations/project');
 const tenantValidations = require('../../validations/tenant');
 const tenantControllers = require('../../controllers/v1/tenantController');
@@ -269,7 +269,7 @@ router.delete(
   authenticationTokenMiddleware,
   permissionMiddleware.permission('delete:projects'),
   projectValidation.remove,
-  projectsController.delete,
+  projectsController.deleteOne,
 );
 
 router.post('/projects/:id/shortcuts', shortcutValidation.store, shortcutControllers.store);

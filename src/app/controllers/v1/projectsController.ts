@@ -1,18 +1,17 @@
-//1. require to import
 //2. no services
 
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
-const Project = require('../../model/project');
+import Project from '../../model/project';
 import * as User from '../../model/user';
 import status from 'http-status';
-const { Types } = require('mongoose');
+import { Types } from 'mongoose';
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
 import logger from '../../../loaders/logger';
 //get
-exports.index = asyncHandler(async (req: any, res: Response) => {
+const index = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -26,7 +25,7 @@ exports.index = asyncHandler(async (req: any, res: Response) => {
 });
 
 //get one
-exports.show = asyncHandler(async (req: any, res: Response) => {
+const show = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -40,7 +39,7 @@ exports.show = asyncHandler(async (req: any, res: Response) => {
 });
 
 //POST
-exports.store = asyncHandler(async (req: Request, res: Response) => {
+const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -57,14 +56,14 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // put
-exports.update = asyncHandler(async (req: Request, res: Response) => {
+const update = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   if (Types.ObjectId.isValid(req.params.id)) {
     const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
-      Types.ObjectId(req.params.id),
+      new Types.ObjectId(req.params.id),
       req.body,
       { new: true },
     );
@@ -75,17 +74,19 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //delete
-exports.delete = asyncHandler(async (req: Request, res: Response) => {
+const deleteOne = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
   if (!Types.ObjectId.isValid(req.params.id)) {
-    return res.status(status.INTERNAL_SERVER_ERROR).json({});  
+    return res.status(status.INTERNAL_SERVER_ERROR).json({});
   }
 
-  await Project.getModel(req.dbConnection).findByIdAndUpdate(Types.ObjectId(req.params.id), {
+  await Project.getModel(req.dbConnection).findByIdAndUpdate(new Types.ObjectId(req.params.id), {
     isDelete: true,
   });
   res.status(status.NO_CONTENT).json({});
 });
+
+export { index, show, store, update, deleteOne };

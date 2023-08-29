@@ -6,7 +6,8 @@ const Tenant = require('../model/tenants');
 import config from '../../app/config/app';
 const { dataConnectionPool, tenantConnection } = require('../utils/dbContext');
 import logger from '../../loaders/logger';
-
+// decrypted
+// 如果任何函数调用了此middleware就不正常
 const getTenantId = async (host: string | undefined) => {
   //const defaultConnection = config?.defaultTenantConnection ?? 'testdevtechscrumapp';
   const defaultConnection = 'testdevtechscrumapp';
@@ -20,7 +21,7 @@ const getTenantId = async (host: string | undefined) => {
 
   if (!haveConnection) {
     const tenantConnectionMongoose = new Mongoose();
-    //const connectionn = config.tenantConnection;
+    // const connectionn = config.tenantConnection;
     const connectionn = '';
     tenantConnection.connection = await tenantConnectionMongoose.connect(connectionn);
   }

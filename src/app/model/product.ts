@@ -1,5 +1,4 @@
-export {};
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
   {
@@ -17,9 +16,11 @@ const productSchema = new mongoose.Schema(
   },
 );
 
-module.exports.getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('product', productSchema);
 };
+
+export default { getModel };
