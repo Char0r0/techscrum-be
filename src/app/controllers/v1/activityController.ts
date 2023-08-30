@@ -12,8 +12,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const { tid } = req.params;
   const userModel = await User.getModel(req.tenantsConnection);
   try {
-    const result = await Activity
-      .getModel(req.dbConnection)
+    const result = await Activity.getModel(req.dbConnection)
       .find({ taskId: tid })
       .populate({ path: 'userId', model: userModel });
     res.send(result);
@@ -29,12 +28,14 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
   const { userId, taskId, operation } = req.body;
+
   try {
     const newAction = await Activity.getModel(req.dbConnection).create({
       userId,
       taskId,
       operation,
     });
+
     if (!newAction) {
       res.sendStatus(status.UNPROCESSABLE_ENTITY);
       return;

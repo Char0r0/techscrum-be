@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 const paymentHistorySchema = new mongoose.Schema(
@@ -6,7 +5,7 @@ const paymentHistorySchema = new mongoose.Schema(
     stripePaymentIntentId: {
       type: String,
     },
-    
+
     paymentIntentStatus: {
       type: String,
     },
@@ -34,18 +33,18 @@ const paymentHistorySchema = new mongoose.Schema(
     currentProduct: {
       type: String,
     },
-    
+
     amount: {
       type: Number,
     },
 
     stripeProductId: {
-      ref: 'product', 
+      ref: 'product',
       type: String,
     },
 
     isRefund: {
-      type: Boolean, 
+      type: Boolean,
       default: false,
     },
 
@@ -53,11 +52,8 @@ const paymentHistorySchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-
-    
   },
   { timestamps: true },
-
 );
 
 const getModel = (connection: any) => {
@@ -67,4 +63,4 @@ const getModel = (connection: any) => {
   return connection.model('paymentsHistory', paymentHistorySchema);
 };
 
-export default { getModel };
+export { getModel };

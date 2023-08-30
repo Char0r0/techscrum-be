@@ -1,20 +1,18 @@
 import mongoose from 'mongoose';
 
-const productSchema = new mongoose.Schema(
-  {
-    stripeProductId: {
-      type: String,
-    },
-
-    productName: {
-      type: String,
-    },
-
-    productPrice: {
-      type: String,
-    },
+const productSchema = new mongoose.Schema({
+  stripeProductId: {
+    type: String,
   },
-);
+
+  productName: {
+    type: String,
+  },
+
+  productPrice: {
+    type: String,
+  },
+});
 
 const getModel = (connection: any) => {
   if (!connection) {
@@ -23,4 +21,4 @@ const getModel = (connection: any) => {
   return connection.model('product', productSchema);
 };
 
-export default { getModel };
+export { getModel };

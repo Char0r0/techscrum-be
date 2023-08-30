@@ -1,8 +1,6 @@
-export {};
-
-const { tenantConnection, dataConnectionPool } = require('../utils/dbContext');
-const mongoose = require('mongoose');
-const Tenant = require('../model/tenants');
+import { tenantConnection, dataConnectionPool } from '../utils/dbContext';
+import mongoose from 'mongoose';
+import * as Tenant from '../model/tenants';
 import config from '../../app/config/app';
 const PUBLIC_DB = 'publicdb';
 mongoose.set('strictQuery', false);
@@ -14,10 +12,10 @@ const options = {
   socketTimeoutMS: 30000,
 };
 
-exports.tenantsDBConnection = async () => {
+const tenantsDBConnection = async () => {
   if (!tenantConnection?.connection) {
     tenantConnection.connection = await mongoose.createConnection(
-      config.tenantsDBConnection, 
+      config.tenantsDBConnection,
       options,
     );
   }
@@ -25,11 +23,11 @@ exports.tenantsDBConnection = async () => {
   await tenantModel.find({});
   return tenantConnection.connection;
 };
-  
-exports.tenantDBConnection = async (tenant: string) => {
+
+const tenantDBConnection = async (tenant: string) => {
   if (!dataConnectionPool || !dataConnectionPool[tenant]!) {
     const dataConnectionMongoose = await mongoose.createConnection(
-      config.publicConnection.replace(PUBLIC_DB, tenant), 
+      config.publicConnection.replace(PUBLIC_DB, tenant),
       options,
     );
     dataConnectionPool[tenant] = dataConnectionMongoose;
@@ -38,7 +36,7 @@ exports.tenantDBConnection = async (tenant: string) => {
     return dataConnectionMongoose;
   }
 
-  return dataConnectionPool[tenant]; 
+  return dataConnectionPool[tenant];
 };
 
-exports.PUBLIC_DB = PUBLIC_DB;
+export { PUBLIC_DB, tenantsDBConnection, tenantDBConnection };

@@ -1,15 +1,14 @@
 /* eslint-disable no-console */
 /* eslint-disable no-secrets/no-secrets */
-export {};
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler } from '../utils/helper';
 import status from 'http-status';
 import * as Tenant from '../model/tenants';
 import config from '../../app/config/app';
 import { isLocalHostAndNoConnectedTenant } from '../utils/tenantHelper';
-const { dataConnectionPool } = require('../utils/dbContext');
+import { dataConnectionPool } from '../utils/dbContext';
 import logger from '../../loaders/logger';
-const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
+import { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } from '../database/connections';
 
 enum Plans {
   Free = 'Free',
@@ -39,9 +38,6 @@ const getConnectDatabase = (tenant: any): string => {
 
 const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   //For more info: https://lucid.app/lucidspark/c24b6e6f-7e1a-439a-a4bf-699edd941d86/edit?viewport_loc=-151%2C-545%2C2560%2C1249%2C0_0&invitationId=inv_052c9ca7-93bd-491e-b621-f97c52fe116f
-  console.log('**********');
-  console.log('V2 connect');
-  console.log('**********');
   try {
     const hasConnectedTenant = config.connectTenantOrigin && config.connectTenantOrigin !== '';
     const domain = hasConnectedTenant
@@ -70,4 +66,4 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
   return next();
 });
 
-module.exports = { saas };
+export { saas };
