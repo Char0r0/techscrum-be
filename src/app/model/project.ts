@@ -74,4 +74,4 @@ const getModel = (connection: any) => {
   return connection.model('projects', projectSchema);
 };
 
-export default { getModel };
+export { getModel };

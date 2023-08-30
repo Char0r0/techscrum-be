@@ -1,8 +1,7 @@
-export {};
-const winston = require('winston');
-const { format, createLogger } = require('winston');
+import winston from 'winston';
+import { format, createLogger } from 'winston';
 const { timestamp, combine, align, printf } = format;
-const path = require('path');
+import path from 'path';
 
 function buildProdLogger(): any {
   return createLogger({
@@ -21,4 +20,4 @@ function buildProdLogger(): any {
   });
 }
 
-module.exports = buildProdLogger;
+export { buildProdLogger };

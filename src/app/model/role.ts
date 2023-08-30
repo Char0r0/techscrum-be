@@ -40,4 +40,4 @@ const getModel = (connection: Mongoose) => {
   return connection.model('roles', roleSchema);
 };
 
-export default { getModel };
+export { getModel };

@@ -24,7 +24,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
   try {
     const existUser: boolean = await isUserActived(email, req.dbConnection);
     if (!existUser) return res.status(status.NOT_FOUND).send();
-    const user = await User.getModel(req.dbConnection).findOne({ email, active:true });
+    const user = await User.getModel(req.dbConnection).findOne({ email, active: true });
 
     const token = jwt.sign({ email }, config.forgotSecret, {
       expiresIn: '30m',

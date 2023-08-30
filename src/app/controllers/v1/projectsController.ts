@@ -2,14 +2,14 @@
 
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
-import Project from '../../model/project';
+import * as Project from '../../model/project';
 import * as User from '../../model/user';
 import status from 'http-status';
 import { Types } from 'mongoose';
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
 import { initProject } from '../../services/projectService';
-import logger from '../../../loaders/logger';
+import { logger } from '../../../loaders/logger';
 //get
 const index = asyncHandler(async (req: any, res: Response) => {
   const errors = validationResult(req);

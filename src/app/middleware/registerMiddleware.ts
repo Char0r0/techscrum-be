@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import * as User from '../model/user';
 import status from 'http-status';
-import logger from '../../loaders/logger';
+import { logger } from '../../loaders/logger';
 import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
   interface Request {
@@ -22,8 +22,10 @@ const authenticationEmailTokenMiddleware = async (
   }
   jwt.verify(token, config.emailSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const result :any = await jwt.verify(token, config.emailSecret);
-    const user = await User.getModel(req.dbConnection).findOne({ email:result.email, activeCode: result.activeCode }).exec();
+    const result: any = await jwt.verify(token, config.emailSecret);
+    const user = await User.getModel(req.dbConnection)
+      .findOne({ email: result.email, activeCode: result.activeCode })
+      .exec();
     if (user && !user.active) {
       req.verifyEmail = result.email;
       return next();

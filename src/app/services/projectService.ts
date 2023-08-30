@@ -1,8 +1,8 @@
 import { Mongoose } from 'mongoose';
-import Project from '../model/project';
+import * as Project from '../model/project';
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-import Role from '../model/role';
+import * as Role from '../model/role';
 
 //Typo error
 

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable no-secrets/no-secrets */
+
 import { Response, Request, NextFunction } from 'express';
 import { asyncHandler } from '../utils/helper';
 import status from 'http-status';
@@ -7,7 +8,7 @@ import * as Tenant from '../model/tenants';
 import config from '../../app/config/app';
 import { isLocalHostAndNoConnectedTenant } from '../utils/tenantHelper';
 import { dataConnectionPool } from '../utils/dbContext';
-import logger from '../../loaders/logger';
+import { logger } from '../../loaders/logger';
 import { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } from '../database/connections';
 
 enum Plans {
@@ -60,6 +61,7 @@ const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction
       message = `\x1b[31mError: Cannot find tenant:(${config.connectTenantOrigin}) in this database (${config.tenantsDBConnection}).\nPlease ensure the CONNECT_TENANT in .env file or database is correct. \n\x1b[31mRESTART SERVER AFTER CHANGE \x1b[0m\n`;
       console.error(message);
     }
+
     logger.error(message ?? e);
     return res.sendStatus(status.INTERNAL_SERVER_ERROR);
   }

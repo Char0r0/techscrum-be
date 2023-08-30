@@ -6,37 +6,37 @@ import status from 'http-status';
 const Tenant = require('../../model/tenants');
 import * as User from '../../model/user';
 const { emailRegister } = require('../../services/registerServiceV2');
-import logger from '../../../loaders/logger';
+import { logger } from '../../../loaders/logger';
 const { tenantsDBConnection } = require('../../database/connections');
 import config from '../../config/app';
 
-export const invalidSubdomains : { [key: string]: boolean } = { 
-  'localhost' : true, 
-  'local': true,
-  'dev': true, 
-  'staging': true,
-  'uat': true, 
-  'testing': true, 
-  'test': true, 
-  'develop': true,
-  'qat': true,
-  'qa': true,
-  'www': true, 
+export const invalidSubdomains: { [key: string]: boolean } = {
+  localhost: true,
+  local: true,
+  dev: true,
+  staging: true,
+  uat: true,
+  testing: true,
+  test: true,
+  develop: true,
+  qat: true,
+  qa: true,
+  www: true,
   'api-dev': true,
   'api-staging': true,
-  'api': true,
+  api: true,
   'api-develop': true,
   'api-uat': true,
   'api-qa': true,
   'api-qat': true,
 };
 
-const canRegisterCompany = (company:string) => {
+const canRegisterCompany = (company: string) => {
   if (invalidSubdomains[company]) {
     return false;
   }
   return true;
-};  
+};
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   // check Validation
@@ -46,13 +46,18 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   }
   const { email, company } = req.body;
   if (!canRegisterCompany(company)) {
-    res.send(status.BAD_REQUEST).json({ errorMessage: 'Invalid company name. ' + Object.keys(invalidSubdomains).join(' ') + ' are not allowed.' });
+    res
+      .send(status.BAD_REQUEST)
+      .json({
+        errorMessage:
+          'Invalid company name. ' + Object.keys(invalidSubdomains).join(' ') + ' are not allowed.',
+      });
   }
   let tenantModel;
   let newTenants;
   let tenantsUrl = `${config.protocol}${company}.${config.mainDomain}`;
   const tenantsDbConnection = await tenantsDBConnection();
- 
+
   try {
     // create new Tenant
     tenantModel = await Tenant.getModel(tenantsDbConnection);
