@@ -1,5 +1,4 @@
-import winston from 'winston';
-import { format, createLogger } from 'winston';
+import winston, { format, createLogger } from 'winston';
 const { timestamp, combine, align, printf } = format;
 import path from 'path';
 

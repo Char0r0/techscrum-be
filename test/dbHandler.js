@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const mongod = new MongoMemoryServer();
-const tenantgod = new MongoMemoryServer();
+const tenantMongod = new MongoMemoryServer();
 
 /**
  * Connect to the in-memory database.
@@ -10,10 +10,10 @@ const tenantgod = new MongoMemoryServer();
 const connect = async () => {
   // Start both database services in parallel
   await mongod.start();
-  await tenantgod.start();
+  await tenantMongod.start();
   // Get the URIs
   const uri = mongod.getUri();
-  const tenantUri = tenantgod.getUri();
+  const tenantUri = tenantMongod.getUri();
 
   // Connect to the tenants database using createConnection
   const tenantConnection = await mongoose.createConnection(tenantUri, {

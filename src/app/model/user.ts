@@ -240,10 +240,11 @@ userSchema.methods.activeAccount = function () {
   user.save();
 };
 
-export const getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
 
   return connection.model('users', userSchema);
 };
+export { getModel };
