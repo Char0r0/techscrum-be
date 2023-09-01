@@ -2,7 +2,7 @@ import { invalidSubdomains } from '../controllers/v1/registerV2Controller';
 
 const aws = require('aws-sdk');
 import config from '../config/app';
-import logger from '../../loaders/logger';
+import { logger } from '../../loaders/logger';
 import awsConfig from '../config/aws';
 
 aws.config.update({
@@ -47,11 +47,7 @@ const emailSenderTemplate = (
   });
 };
 
-export const subscriptionSender = (
-  email: string,
-  validationCode: string,
-  domain: string = '',
-) => {
+export const subscriptionSender = (email: string, validationCode: string, domain: string = '') => {
   const templateData = {
     name: email,
     appName: 'TECHSCRUMAPP',
@@ -87,12 +83,7 @@ export const emailRecipientTemplate = (
   return ses.sendTemplatedEmail(params).promise();
 };
 
-
-export const emailSender = (
-  email: string,
-  validationCode: string,
-  domain: string = '',
-) => {
+export const emailSender = (email: string, validationCode: string, domain: string = '') => {
   // Create sendEmail params
   const templateData = {
     name: email,
@@ -151,11 +142,14 @@ export const forgetPassword = (email: string, name: string, token: string, domai
 };
 
 export const getDomain = (companyHost: string, originHost: string) => {
-  if (config.environment.toLowerCase() === 'production' || config.environment.toLowerCase() === 'prod') {
+  if (
+    config.environment.toLowerCase() === 'production' ||
+    config.environment.toLowerCase() === 'prod'
+  ) {
     if (Object.keys(invalidSubdomains).join('. ').includes(companyHost)) {
       throw new Error('Invalid Domain');
     }
-    return companyHost;  
+    return companyHost;
   }
   return originHost;
 };

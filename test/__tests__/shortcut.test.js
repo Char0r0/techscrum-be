@@ -2,7 +2,7 @@ const request = require('supertest');
 const dbHandler = require('../dbHandler');
 const User = require('../../src/app/model/user');
 const mongoose = require('mongoose');
-const Project = require('../../src/app/model/project');
+import * as Project from '../../src/app/model/project';
 const sinon = require('sinon');
 const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
 let application = null;

@@ -25,9 +25,11 @@ const permissionSchema = new mongoose.Schema<IPermission>(
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: Mongoose) => {
+const getModel = (connection: Mongoose) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('permissions', permissionSchema);
 };
+
+export { getModel };

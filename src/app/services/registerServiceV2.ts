@@ -1,6 +1,6 @@
 const emailSenderUtils = require('../utils/emailSender');
 import jwt from 'jsonwebtoken';
-import logger from '../../loaders/logger';
+import { logger } from '../../loaders/logger';
 const mongoose = require('mongoose');
 import * as User from '../model/user';
 import config from '../config/app';
@@ -35,7 +35,6 @@ exports.emailRegister = async (
   }
 
   try {
-  
     //TODO: fix
     if (!newUser) {
       throw new Error('RegisterService Cannot find user');

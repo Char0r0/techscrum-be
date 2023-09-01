@@ -61,6 +61,5 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   );
 
   const result = replaceId(boardTasks);
-
   res.status(status.OK).json(result[0]);
 });

@@ -1,12 +1,14 @@
-const request = require('supertest');
-const dbHandler = require('../dbHandler');
-const User = require('../../src/app/model/user');
-const mongoose = require('mongoose');
-const Task = require('../../src/app/model/task');
-const sinon = require('sinon');
-const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
+import request from 'supertest';
+import dbHandler from '../dbHandler';
+import * as User from '../../src/app/model/user';
+import mongoose from 'mongoose';
+import * as Task from '../../src/app/model/task';
+import sinon from 'sinon';
+import * as sassMiddleware from '../../src/app/middleware/saasMiddlewareV2';
+
 let application = null;
 let dbConnection = '';
+let tenantConnection = '';
 
 const userId = new mongoose.Types.ObjectId();
 const taskId = new mongoose.Types.ObjectId();
@@ -36,12 +38,16 @@ const task = {
 const activity = { operation: 'created', userId: userId, taskId: taskId };
 
 beforeAll(async () => {
-  dbConnection = await dbHandler.connect();
+  let result = await dbHandler.connect();
+
+  dbConnection = result.mainConnection;
+  tenantConnection = result.tenantConnection;
   await dbHandler.clearDatabase();
-  await User.getModel(dbConnection).create(user);
-  await Task.getModel(dbConnection).create(task);
-  sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
+  await User.getModel(tenantConnection).create(user);
+  await Task.getModel(tenantConnection).create(task);
+  sinon.stub(sassMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
+    req.tenantsConnection = tenantConnection;
     return next();
   });
   const app = require('../../src/loaders/express');
@@ -49,35 +55,37 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  saasMiddleware.saas.restore();
+  sassMiddleware.saas.restore();
   await dbHandler.closeDatabase();
 });
 
 describe('Create and Get Activity Test', () => {
   it('should create shortcut', async () => {
     const res = await request(application)
-      .post('/api/v1/activities')
+      .post('/api/v2/activities')
       .send({ ...activity });
     expect(res.statusCode).toEqual(200);
   });
   it('should get existing activities', async () => {
-    const res = await request(application).get(`/api/v1/activities/${taskId}`).send();
+    const res = await request(application).get(`/api/v2/activities/${taskId}`).send();
     expect(res.statusCode).toEqual(200);
   });
 });
 
 describe('Delete Activity Test', () => {
   it('Should delete activity', async () => {
-    const res = await request(application).delete(`/api/v1/activities/${taskId}`).send();
+    const res = await request(application).delete(`/api/v2/activities/${taskId}`).send();
     expect(res.statusCode).toEqual(200);
   });
   it('should return deleted activities', async () => {
-    const res = await request(application).get(`/api/v1/activities/${taskId}`).send();
+    const res = await request(application).get(`/api/v2/activities/${taskId}`).send();
     const deletedActivity = {
       ...activity,
       isDeleted: true,
-      userId: { _id: userId },
+      taskId: taskId.toString(),
+      userId: { _id: userId.toString() },
     };
+
     expect(res.body).toMatchObject([deletedActivity]);
   });
 });

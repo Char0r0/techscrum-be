@@ -1,14 +1,15 @@
-import { NextFunction, Response, Request  } from 'express';
-
+import { NextFunction, Response, Request } from 'express';
 import * as User from '../model/user';
-const Tenant = require('../model/tenants');
-const Product = require('../model/product');
-const PaymentHistory = require('../model/paymentHistory');
-const Invoice = require('../model/invoice');
+import * as Tenant from '../model/tenants';
+import * as Product from '../model/product';
+import * as PaymentHistory from '../model/paymentHistory';
+import * as Invoice from '../model/invoice';
 import config from '../config/app';
 
-export const asyncHandler = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
-  return Promise.resolve(fn(req, res, next)).catch(next);
+export const asyncHandler = (fn: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    return Promise.resolve(fn(req, res, next)).catch(next);
+  };
 };
 
 export const shouldExcludeDomainList = (host: string | undefined) => {
@@ -59,4 +60,3 @@ export const createInvoiceModel = async (req: Request) => {
   const invoiceModel = await Invoice.getModel(req.tenantsConnection);
   return invoiceModel;
 };
-

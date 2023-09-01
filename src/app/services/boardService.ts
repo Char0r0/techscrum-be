@@ -16,10 +16,15 @@ export const getBoardTasks = async (
   tenantConnection: Mongoose,
 ) => {
   const boardModel = Board.getModel(dbConnection);
+
   const taskModel = Task.getModel(dbConnection);
+
   const statusModel = Status.getModel(dbConnection);
+
   const userModel = User.getModel(tenantConnection);
+
   const labelModel = Label.getModel(dbConnection);
+
   const projectModel = Project.getModel(dbConnection);
 
   const boardTasks = await boardModel.find({ _id: boardId }).populate({

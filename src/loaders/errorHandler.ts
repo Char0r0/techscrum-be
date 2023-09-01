@@ -1,4 +1,4 @@
-const logger = require('./logger');
+import { logger } from './logger';
 
 class ErrorHandler {
   public handleError(error: Error): void {

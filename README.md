@@ -6,6 +6,12 @@ For more info please refer to
 
 - https://lilac-dancer-737.notion.site/Backend-8d15124cec444344bbd41935ed697b1e
 
+#### Master
+[![CircleCI](https://dl.circleci.com/status-badge/img/bb/010001/be.techscrum/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/bb/010001/be.techscrum/tree/master)
+
+#### Develop
+[![CircleCI](https://dl.circleci.com/status-badge/img/bb/010001/be.techscrum/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/bb/010001/be.techscrum/tree/develop)
+
 ### Tech Stack
 
 - Express (Back end web application framework)

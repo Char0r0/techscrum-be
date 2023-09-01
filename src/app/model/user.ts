@@ -1,15 +1,12 @@
-import { NextFunction } from 'express';
-import { Types } from 'mongoose';
-
+import { CallbackWithoutResultAndOptionalError, Schema, Types } from 'mongoose';
 import jwt from 'jsonwebtoken';
 import config from '../config/app';
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const { randomStringGenerator } = require('../utils/randomStringGenerator');
-import logger from '../../loaders/logger';
+import bcrypt from 'bcrypt';
+import { randomStringGenerator } from '../utils/randomStringGenerator';
+import { logger } from '../../loaders/logger';
 const DEFAULT_IMG_URL =
   'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__480.png';
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
   {
     email: {
       type: String,
@@ -102,12 +99,12 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
-    // this is pointing to the current subscription plan. 
-    stripePaymentIntentId: {  
+    // this is pointing to the current subscription plan.
+    stripePaymentIntentId: {
       type: String,
-      default: null, 
+      default: null,
     },
-    
+
     // point out current payment History (current invoice)
     currentInvoice: {
       ref: 'invoice',
@@ -143,7 +140,7 @@ const userSchema = new mongoose.Schema(
 
     currentChargeStartDate: {
       type: String,
-    }, 
+    },
 
     currentChargeEndDate: {
       type: String,
@@ -186,7 +183,7 @@ userSchema.statics.saveInfo = async function (email: string, name: string, passw
   return user;
 };
 
-userSchema.pre('save', async function (this: any, next: NextFunction) {
+userSchema.pre('save', async function (this: any, next: CallbackWithoutResultAndOptionalError) {
   const user = this;
   if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
@@ -215,15 +212,15 @@ userSchema.methods.generateAuthToken = async function () {
     expiresIn: '48h',
   });
   if (user.refreshToken == null || user.refreshToken === undefined || user.refreshToken === '') {
-    const randomeString = randomStringGenerator(10);
+    const randomString = randomStringGenerator(10);
     const refreshToken = jwt.sign(
-      { id: user._id, refreshToken: randomeString },
+      { id: user._id, refreshToken: randomString },
       config.accessSecret,
       {
         expiresIn: '360h',
       },
     );
-    user.refreshToken = randomeString;
+    user.refreshToken = randomString;
     await user.save();
     return { token, refreshToken: refreshToken };
   }
@@ -243,9 +240,11 @@ userSchema.methods.activeAccount = function () {
   user.save();
 };
 
-export const getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
+
   return connection.model('users', userSchema);
 };
+export { getModel };
