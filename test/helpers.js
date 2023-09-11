@@ -16,7 +16,6 @@ export const setup = async () => {
   await dbHandler.clearDatabase();
   await seed(dbConnection);
 
-
   authStub = sinon
     .stub(authMiddleware, 'authenticationTokenMiddleware')
     .callsFake(function (req, res, next) {
@@ -43,6 +42,3 @@ export const restore = async () => {
   await sassStub.restore();
   await dbHandler.closeDatabase();
 };
-
-
-

@@ -7,7 +7,6 @@ const { STATUS_SEED } = require('./fixtures/statuses');
 const { getTask } = require('./fixtures/task');
 const { SPRINT_SEED } = require('./fixtures/sprint');
 
-
 module.exports = async (dbConnection) => {
   await Board.getModel(dbConnection).create(BOARD_SEED);
   await Status.getModel(dbConnection).create(STATUS_SEED);
