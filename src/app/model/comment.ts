@@ -1,6 +1,4 @@
-export {};
-const mongoose = require('mongoose');
-const { Types } = require('mongoose');
+import mongoose, { Types } from 'mongoose';
 
 const commentsSchema = new mongoose.Schema(
   {
@@ -25,9 +23,11 @@ const commentsSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: any) => {
+const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('comments', commentsSchema);
 };
+
+export { getModel };

@@ -1,20 +1,24 @@
-const request = require('supertest');
-const sinon = require('sinon');
-const dbHandler = require('../dbHandler');
-const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
-const User = require('../../src/app/model/user');
-import Project from '../../src/app/model/project';
-const Task = require('../../src/app/model/task');
-const Comment = require('../../src/app/model/comment');
-const bcrypt = require('bcrypt');
+import request from 'supertest';
+import sinon from 'sinon';
+import dbHandler from '../dbHandler';
+import * as saasMiddleware from '../../src/app/middleware/saasMiddlewareV2';
+import * as User from '../../src/app/model/user';
+import * as Project from '../../src/app/model/project';
+import * as Task from '../../src/app/model/task';
+import * as Comment from '../../src/app/model/comment';
+import bcrypt from 'bcrypt';
+
 let application = null;
 let dbConnection = '';
+let tenantConnection = '';
 
 beforeAll(async () => {
-  dbConnection = await dbHandler.connect();
+  let result = await dbHandler.connect();
+  dbConnection = result.mainConnection;
+  tenantConnection = result.tenantConnection;
   await dbHandler.clearDatabase();
 
-  await User.getModel(dbConnection).create({
+  await User.getModel(tenantConnection).create({
     email: 'test@gamil.com',
     password: await bcrypt.hash('testPassword', 8),
     active: true,
@@ -37,11 +41,16 @@ beforeAll(async () => {
 
   sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
+    req.tenantsConnection = tenantConnection;
     return next();
   });
 
-  const app = require('../../src/loaders/express');
-  application = app();
+  async function loadApp() {
+    const appModule = await import('../../src/loaders/express');
+    const app = appModule.default;
+    application = app();
+  }
+  await loadApp();
 });
 
 afterAll(async () => {
@@ -57,7 +66,7 @@ describe('Create Comment Test', () => {
       content: 'new comment',
     };
     const res = await request(application)
-      .post('/api/v1/comments')
+      .post('/api/v2/comments')
       .send({ ...newComment });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toMatchObject({ ...newComment });
@@ -65,26 +74,37 @@ describe('Create Comment Test', () => {
   it('should return error code 422', async () => {
     const newComment = { taskId: undefined, senderId: undefined, content: 'New Comment' };
     const res = await request(application)
-      .post('/api/v1/comments')
+      .post('/api/v2/comments')
       .send({ ...newComment });
     expect(res.statusCode).toEqual(422);
   });
 });
+
+describe('Get Comment Test', () => {
+  it('should get comment', async () => {
+    const id = '62f3664589e47f4d0b7e5327';
+    const res = await request(application).get(`/api/v2/comments/${id}`);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body[0].id).toEqual( id );
+  });
+});
+
 describe('Update Comment Test', () => {
   it('should update comment test', async () => {
     const id = '62f3664589e47f4d0b7e5327';
     const newComment = { content: 'Updated Comment' };
     const res = await request(application)
-      .put(`/api/v1/comments/${id}`)
+      .put(`/api/v2/comments/${id}`)
       .send({ ...newComment });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toMatchObject({ ...newComment });
+    
   });
   it('should return error code 404', async () => {
     const id = undefined;
     const newComment = { content: undefined };
     const res = await request(application)
-      .post(`/api/v1/comments/${id}`)
+      .post(`/api/v2/comments/${id}`)
       .send({ ...newComment });
     expect(res.statusCode).toEqual(404);
   });
@@ -92,7 +112,7 @@ describe('Update Comment Test', () => {
     const id = '62f3664589e47f4d0b7e5327';
     const newComment = undefined;
     const res = await request(application)
-      .post(`/api/v1/comments/${id}`)
+      .post(`/api/v2/comments/${id}`)
       .send({ ...newComment });
     expect(res.statusCode).toEqual(404);
   });
@@ -100,12 +120,12 @@ describe('Update Comment Test', () => {
 describe('Delete Comment Test', () => {
   it('should delete comment', async () => {
     const id = '62f3664589e47f4d0b7e5327';
-    const res = await request(application).delete(`/api/v1/comments/${id}`);
+    const res = await request(application).delete(`/api/v2/comments/${id}`);
     expect(res.statusCode).toEqual(204);
   });
   it('should return 404', async () => {
     const id = '62f3664589e47f4d0b7e5328';
-    const res = await request(application).delete(`/api/v1/comments/${id}`);
+    const res = await request(application).delete(`/api/v2/comments/${id}`);
     expect(res.statusCode).toEqual(404);
   });
 });
