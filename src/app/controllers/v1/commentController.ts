@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
-const comment = require('../../model/comment');
+import * as comment from '../../model/comment';
 import * as User from '../../model/user';
-const { replaceId } = require('../../services/replaceService');
+import { replaceId } from '../../services/replaceService';
+
 
 exports.show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
