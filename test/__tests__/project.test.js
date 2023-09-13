@@ -1,6 +1,7 @@
 //62e4b5606fb0da0a12dcfe67
 import request from 'supertest';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import sinon from 'sinon';
 import * as authMiddleware from '../../src/app/middleware/authMiddleware';
 import * as saasMiddleware from '../../src/app/middleware/saasMiddlewareV2';
@@ -8,21 +9,37 @@ import dbHandler from '../dbHandler';
 import * as User from '../../src/app/model/user';
 import * as Project from '../../src/app/model/project';
 import * as permissionMiddleware from '../../src/app/middleware/permissionMiddleware';
-import { PROJECT_SEED, PROJECT_USER_SEED }  from '../fixtures/project';
 let application = null;
 let dbConnection = '';
 let tenantConnection = '';
 let projectId = new mongoose.Types.ObjectId() ;    
-
+let projectSeed = null;
+let projectUserSeed = null;
 beforeAll(async () => {
 
+  projectSeed = {
+    name: 'test7',
+    key: 'key123',
+    projectLeadId: 'projectLead1',
+    ownerId: '62e8d28a182f4561a92f6aed',
+    boardId: 'board123',
+    tenantId:'62e333606fb0da0a12dcfe78',
+    isDelete: false,
+  };
+
+  projectUserSeed = {
+    email: 'test@gamil.com',
+    password: await bcrypt.hash('1111', 8),
+    active: true,
+  };
+  
   let result = await dbHandler.connect();
   dbConnection = result.mainConnection;
   tenantConnection = result.tenantConnection;
   await dbHandler.clearDatabase();
 
-  await User.getModel(tenantConnection).create(PROJECT_USER_SEED);
-  await Project.getModel(dbConnection).create({ ...PROJECT_SEED, _id:projectId });
+  await User.getModel(tenantConnection).create(projectUserSeed);
+  await Project.getModel(dbConnection).create({ ...projectSeed, _id:projectId });
 
   sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
@@ -41,7 +58,6 @@ beforeAll(async () => {
         return next();
       };
     });
-
 
   // after you can create app:
   async function loadApp() {
@@ -72,7 +88,6 @@ describe('Get One project', () => {
       .get(`/api/v2/projects/${projectId}`).expect(200);
   });
 
-
   describe('Create Project Test', () => {
     it('should create project', async () => {
       const newProject = {
@@ -102,7 +117,6 @@ describe('Get One project', () => {
       expect(res.statusCode).toEqual(201);
       expect(res.body).toMatchObject(expectNewProject);
     });
-
 
     it('should return error code 422', async () => {
       const newProject = { name: undefined,  key:'123', userId:'62e8d28a182f4561a92f6aed' };
