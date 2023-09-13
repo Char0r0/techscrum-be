@@ -71,69 +71,93 @@ describe('Get One project', () => {
     return request(application)
       .get(`/api/v2/projects/${projectId}`).expect(200);
   });
-});
 
-describe('Create Project Test', () => {
-  it('should create project', async () => {
-    const newProject = {
-      name:'new project',
-      key:'key123',
-      ownerId: '62e8d28a182f4561a92f6aed',
-      projectLeadId: new mongoose.Types.ObjectId(),
-      assigneeId: '62e8d28a182f4561a92f6aed',
-      iconUrl:'123331',
-      description:'1234',
-      userId: '62e8d28a182f4561a92f6aed',
-    };
 
-    const expectNewProject = {
-      name:'new project',
-      key:'key123',
-      ownerId: '62e8d28a182f4561a92f6aed',
-      projectLeadId: newProject.projectLeadId.toString(),
-      assigneeId: '62e8d28a182f4561a92f6aed',
-      iconUrl:'123331',
-      description:'1234',
-    };
+  describe('Create Project Test', () => {
+    it('should create project', async () => {
+      const newProject = {
+        name:'new project',
+        key:'key123',
+        ownerId: '62e8d28a182f4561a92f6aed',
+        projectLeadId: new mongoose.Types.ObjectId(),
+        assigneeId: '62e8d28a182f4561a92f6aed',
+        iconUrl:'123331',
+        description:'1234',
+        userId: '62e8d28a182f4561a92f6aed',
+      };
 
-    const res = await request(application)
-      .post('/api/v2/projects')
-      .send({ ...newProject });
-    expect(res.statusCode).toEqual(201);
-    expect(res.body).toMatchObject(expectNewProject);
+      const expectNewProject = {
+        name:'new project',
+        key:'key123',
+        ownerId: '62e8d28a182f4561a92f6aed',
+        projectLeadId: newProject.projectLeadId.toString(),
+        assigneeId: '62e8d28a182f4561a92f6aed',
+        iconUrl:'123331',
+        description:'1234',
+      };
+
+      const res = await request(application)
+        .post('/api/v2/projects')
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(201);
+      expect(res.body).toMatchObject(expectNewProject);
+    });
+
+
+    it('should return error code 422', async () => {
+      const newProject = { name: undefined,  key:'123', userId:'62e8d28a182f4561a92f6aed' };
+      const res = await request(application)
+        .post('/api/v2/projects')
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(422);
+    },
+    );
+
+    it('should return error code 422', async () => {
+      const newProject = { name: '123', key:undefined, userId:'62e8d28a182f4561a92f6aed' };
+      const res = await request(application)
+        .post('/api/v2/projects')
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(422);
+    },
+    );
+
+    it('should return error code 422', async () => {
+      const newProject = { name: undefined, key:undefined, userId:undefined };
+      const res = await request(application)
+        .post('/api/v2/projects')
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(422);
+    },
+    );
+  
+    it('should return error code 500', async () => {
+      const newProject = { name: '123', key:'123', userId: undefined };
+      const res = await request(application)
+        .post('/api/v2/projects')
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(500);
+    });
   });
 
+  describe('Update Project Test', () => {
+    it('should update project test', async () => {
+      const newProject = { name: 'Updated Project' };
+      const res = await request(application)
+        .put(`/api/v2/projects/${projectId}`)
+        .send({ ...newProject });
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toMatchObject({ ...newProject });
+    },
+    );
+  });
 
-  it('should return error code 422', async () => {
-    const newProject = { name: undefined, key:undefined, roles: undefined, ownerId: undefined, boardId: undefined };
-    const res = await request(application)
-      .post('/api/v2/projects')
-      .send({ ...newProject });
-    expect(res.statusCode).toEqual(422);
-  },
-  );
+  describe('Delete Project Test', () => {
+    it('should delete project test', async () => {
+      const res = await request(application)
+        .delete(`/api/v2/projects/${projectId}`)
+        .send();
+      expect(res.statusCode).toEqual(204);
+    });
+  });
 });
-
-describe('Update Project Test', () => {
-  it('should update project test', async () => {
-    const newProject = { name: 'Updated Project' };
-    const res = await request(application)
-      .put(`/api/v2/projects/${projectId}`)
-      .send({ ...newProject });
-    expect(res.statusCode).toEqual(200);
-    expect(res.body).toMatchObject({ ...newProject });
-  },
-  );
-});
-
-describe('Delete Project Test', () => {
-  it('should delete project test', async () => {
-    const res = await request(application)
-      .delete(`/api/v2/projects/${projectId}`)
-      .send();
-    expect(res.statusCode).toEqual(204);
-  },
-  );
-});
-
-
