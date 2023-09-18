@@ -1,9 +1,9 @@
-const request = require('supertest');
-const { SPRINT_SEED } = require('../fixtures/sprint');
-const { setup, restore } = require('../helpers');
+import request from 'supertest';
+import { SPRINT_SEED } from '../fixtures/sprint';
+import { setup, restore } from '../helpers';
 
 let application = null;
-const baseURL = '/api/v1/sprints';
+const baseURL = '/api/v2/sprints';
 
 beforeAll(async () => {
   const { app } = await setup();
@@ -23,7 +23,6 @@ const sprintInfo = {
 describe('POST sprint', () => {
   it('should create a sprint if the least info is provided', async () => {
     const res = await request(application).post(baseURL).send(sprintInfo);
-
     expect(res.statusCode).toBe(201);
     expect(res.body).toEqual({
       __v: 0,
@@ -96,31 +95,20 @@ describe('UPDATE sprint', () => {
         name: 'updated name',
         description: 'updated description',
       });
-
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
       __v: 0,
-      _id: '63463fb9788a44fa544b4a9a',
-      boardId: {
-        _id: '6350d443bddbe8fed0138ffd',
-        createdAt: expect.any(String),
-        taskStatus: [
-          '6350d443bddbe8fed0138ff4',
-          '6350d443bddbe8fed0138ff5',
-          '6350d443bddbe8fed0138ff6',
-          '6350d443bddbe8fed0138ff7',
-        ],
-        title: 'test board',
-        updatedAt: expect.any(String),
-      },
       createdAt: expect.any(String),
+      startDate: expect.any(String),
       description: 'updated description',
       endDate: null,
-      isComplete: false,
+      id: '63463fb9788a44fa544b4a9a',
+      boardId: '6350d443bddbe8fed0138ffd',
+      currentSprint: false,
+      projectId: '6350d443bddbe8fed0138ffe',
       name: 'updated name',
-      projectId: null,
-      startDate: expect.any(String),
       taskId: [],
+      isComplete: false,
       updatedAt: expect.any(String),
     });
   });
