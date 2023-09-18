@@ -1,12 +1,13 @@
-const request = require('supertest');
-const dbHandler = require('../dbHandler');
-const User = require('../../src/app/model/user');
-const mongoose = require('mongoose');
+import request from 'supertest';
+import dbHandler from '../dbHandler';
+import * as User from '../../src/app/model/user';
+import mongoose from 'mongoose';
 import * as Project from '../../src/app/model/project';
-const sinon = require('sinon');
-const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
+import sinon from 'sinon';
+import * as saasMiddleware from '../../src/app/middleware/saasMiddlewareV2';
 let application = null;
 let dbConnection = '';
+let tenantConnection = '';
 
 const userId = new mongoose.Types.ObjectId();
 const projectId = new mongoose.Types.ObjectId();
@@ -30,18 +31,25 @@ const project = {
 };
 
 beforeAll(async () => {
-  dbConnection = await dbHandler.connect();
+  let result = await dbHandler.connect();
+  dbConnection = result.mainConnection;
+  tenantConnection = result.tenantConnection;
   await dbHandler.clearDatabase();
   await User.getModel(dbConnection).create(user);
   await Project.getModel(dbConnection).create(project);
 
   sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
+    req.tenantsConnection = tenantConnection;
     return next();
   });
 
-  const app = require('../../src/loaders/express');
-  application = app();
+  async function loadApp() {
+    const appModule = await import('../../src/loaders/express');
+    const app = appModule.default;
+    application = app();
+  }
+  await loadApp();
 });
 
 afterAll(async () => {
@@ -53,7 +61,7 @@ describe('Create Shortcut Test', () => {
   it('should create shortcut', async () => {
     const shortcut = { shortcutLink: 'https://www.google.com', name: 'Google' };
     const res = await request(application)
-      .post(`/api/v1/projects/${projectId}/shortcuts`)
+      .post(`/api/v2/projects/${projectId}/shortcuts`)
       .send({ ...shortcut });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual(expect.objectContaining({ ...shortcut }));
@@ -62,7 +70,7 @@ describe('Create Shortcut Test', () => {
   it('should return 403 if provided a link without http://', async () => {
     const shortcut = { shortcutLink: 'go.com', name: 'go' };
     const res = await request(application)
-      .post(`/api/v1/projects/${projectId}/shortcuts`)
+      .post(`/api/v2/projects/${projectId}/shortcuts`)
       .send({ ...shortcut });
     expect(res.statusCode).toEqual(403);
   });
@@ -70,7 +78,7 @@ describe('Create Shortcut Test', () => {
   it('should return 422', async () => {
     const shortcut = { shortcutLink: undefined, name: undefined };
     const res = await request(application)
-      .post(`/api/v1/projects/${projectId}/shortcuts`)
+      .post(`/api/v2/projects/${projectId}/shortcuts`)
       .send({ ...shortcut });
     expect(res.statusCode).toEqual(422);
   });
@@ -79,7 +87,7 @@ describe('Update Shortcut Test', () => {
   it('should update shortcut', async () => {
     const newShortcut = { shortcutLink: 'https://www.steinsgate.jp/', name: 'Steins Gate' };
     const res = await request(application)
-      .put(`/api/v1/projects/${projectId}/shortcuts/${shortcutId}`)
+      .put(`/api/v2/projects/${projectId}/shortcuts/${shortcutId}`)
       .send({ ...newShortcut });
     expect(res.statusCode).toEqual(200);
   });
@@ -88,7 +96,7 @@ describe('Update Shortcut Test', () => {
     const wrongShortcutId = '62ee2acf9ec184ff866da4e3';
     const WrongProjectId = '62edd13ce3af744361a45fed';
     const res = await request(application)
-      .put(`/api/v1/projects/${WrongProjectId}/shortcuts/${wrongShortcutId}`)
+      .put(`/api/v2/projects/${WrongProjectId}/shortcuts/${wrongShortcutId}`)
       .send({ ...newShortcut });
     expect(res.statusCode).toEqual(409);
   });
@@ -96,7 +104,7 @@ describe('Update Shortcut Test', () => {
     const shortcut = { shortcutLink: undefined, name: undefined };
     const wrongShortcutId = '62ee2c4641dbc06481a70e03';
     const res = await request(application)
-      .put(`/api/v1/projects/${projectId}/shortcuts/${wrongShortcutId}`)
+      .put(`/api/v2/projects/${projectId}/shortcuts/${wrongShortcutId}`)
       .send({ ...shortcut });
     expect(res.statusCode).toEqual(422);
   });
@@ -104,13 +112,13 @@ describe('Update Shortcut Test', () => {
 describe('Destroy Shortcut Test', () => {
   it('should delete shortcut', async () => {
     const res = await request(application).delete(
-      `/api/v1/projects/${projectId}/shortcuts/${shortcutId}`,
+      `/api/v2/projects/${projectId}/shortcuts/${shortcutId}`,
     );
     expect(res.statusCode).toEqual(200);
   });
   it('should return NOT_FOUND', async () => {
     const res = await request(application).delete(
-      `/api/v1/projects/${projectId}/shortcuts/${shortcutId}`,
+      `/api/v2/projects/${projectId}/shortcuts/${shortcutId}`,
     );
     expect(res.statusCode).toEqual(404);
   });
