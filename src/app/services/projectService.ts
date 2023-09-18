@@ -1,8 +1,9 @@
 import { Mongoose } from 'mongoose';
-const Project = require('../model/project');
+import * as Project from '../model/project';
 import * as Board from '../model/board';
 import * as Status from '../model/status';
-const Role = require('../model/role');
+import * as Role from '../model/role';
+
 //Typo error
 
 export const initProject = async (

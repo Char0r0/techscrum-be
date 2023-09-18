@@ -92,7 +92,6 @@ router.put(
   registerV2Controller.store,
 );
 
-
 router.post('/domains/owner', domainController.getOwnerDomain);
 
 router.get('/', (req: any, res: any) => {
@@ -252,7 +251,7 @@ router.delete(
   authenticationTokenMiddleware,
   permissionMiddleware.permission('delete:projects'),
   projectValidation.remove,
-  projectsController.delete,
+  projectsController.deleteOne,
 );
 //TODO: s
 router.post('/projects/:id/shortcuts', shortcutValidation.store, shortcutControllers.store);

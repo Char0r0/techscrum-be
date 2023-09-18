@@ -1,11 +1,6 @@
-const dataConnectionPool = {};
-const tenantConnection = {};
-const domainConnection = {};
-// ----------------v2-----------------------
-const userConnection = {};
+const dataConnectionPool: { [key: string]: any } = {};
+const tenantConnection: { [key: string]: any } = {};
+const domainConnection: { [key: string]: any } = {};
+const userConnection: { [key: string]: any } = {};
 
-exports.dataConnectionPool = dataConnectionPool;
-exports.tenantConnection = tenantConnection;
-exports.domainConnection = domainConnection;
-// ----------------v2-----------------------
-exports.userConnection = userConnection;
+export { dataConnectionPool, tenantConnection, domainConnection, userConnection };

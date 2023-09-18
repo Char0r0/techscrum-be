@@ -1,23 +1,24 @@
-export {};
 import { Response, Request, NextFunction } from 'express';
+import * as Role from '../model/role';
+import * as Permission from '../model/permission';
+import * as Project from '../model/project';
 
-const Role = require('../model/role');
-const Permission = require('../model/permission');
-const Project = require('../model/project');
-
-const getProjectRoleId = (projectId:string, projectRole:any) =>{
+const getProjectRoleId = (projectId: string, projectRole: any) => {
   let roleId = null;
-  projectRole.forEach((element: { projectId: { toString: () => string; }; roleId: any; }) => {
+  projectRole.forEach((element: { projectId: { toString: () => string }; roleId: any }) => {
     if (element.projectId.toString() === projectId.toString()) {
-      roleId =  element.roleId;
+      roleId = element.roleId;
     }
   });
   return roleId;
 };
 
-const hasPermission = async (role:any, slug:string, req:Request) =>{
-  const permissionPopulate = await role.populate({ path: 'permission', Model: Permission.getModel(req.dbConnection) });
-  permissionPopulate.permission.forEach((element: { slug: string; }) => {
+const hasPermission = async (role: any, slug: string, req: Request) => {
+  const permissionPopulate = await role.populate({
+    path: 'permission',
+    Model: Permission.getModel(req.dbConnection),
+  });
+  permissionPopulate.permission.forEach((element: { slug: string }) => {
     if (element.slug === slug) {
       return true;
     }
@@ -25,18 +26,17 @@ const hasPermission = async (role:any, slug:string, req:Request) =>{
   return false;
 };
 
-
-const checkIsOwner = async (projectId: string, userId: string, req:Request) => {
+const checkIsOwner = async (projectId: string, userId: string, req: Request) => {
   const project = await Project.getModel(req.dbConnection).findById(projectId);
   return project.ownerId.toString() === userId;
 };
 
-const permission = (slug: string) =>{ 
+const permission = (slug: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const user:any = req.user;
+    const user: any = req.user;
     const projectId = req.params.id || req.params.projectId;
     const projectRole = user.projectsRoles;
-    if (user.isAdmin || await checkIsOwner(projectId, user.id, req)) {
+    if (user.isAdmin || (await checkIsOwner(projectId, user.id, req))) {
       next();
       return;
     }
@@ -59,7 +59,6 @@ const permission = (slug: string) =>{
     }
     next();
   };
-
 };
 
-module.exports = { permission };
+export { permission };

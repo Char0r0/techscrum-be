@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-const project = require('../../model/project');
+import * as project from '../../model/project';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
-const mongoose = require('mongoose');
-const URL = require('url').URL;
+import mongoose from 'mongoose';
+import { URL } from 'url';
 exports.store = async (req: Request, res: Response) => {
   const validateUrl = (url: string) => {
     try {

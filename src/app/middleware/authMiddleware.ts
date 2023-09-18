@@ -17,7 +17,7 @@ declare module 'express-serve-static-core' {
 const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  const authType =  authHeader?.split(' ')[0];
+  const authType = authHeader?.split(' ')[0];
   const authToken = authHeader?.split(' ')[1];
 
   if (!authHeader || !authToken) return res.sendStatus(401);
@@ -25,7 +25,7 @@ const authenticationTokenMiddleware = (req: Request, res: Response, next: NextFu
   if (authType === 'Bearer') {
     jwt.verify(authToken, config.accessSecret, async (err: any) => {
       if (err) return res.status(status.FORBIDDEN).send();
-      const verifyUser:any = jwt.verify(authToken, config.accessSecret);
+      const verifyUser: any = jwt.verify(authToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
@@ -57,7 +57,7 @@ const authenticationTokenValidationMiddleware = (
   if (authType === 'Bearer') {
     jwt.verify(authToken, config.accessSecret, async (err: any) => {
       if (err) return next();
-      const verifyUser:any = jwt.verify(authToken, config.accessSecret);
+      const verifyUser: any = jwt.verify(authToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({ _id: verifyUser.id });
       if (!user) {
@@ -90,7 +90,7 @@ const authenticationRefreshTokenMiddleware = async (
   if (authType === 'Bearer') {
     jwt.verify(authRefreshToken, config.accessSecret, async (err: any) => {
       if (err) return next();
-      const verifyUser:any = jwt.verify(authRefreshToken, config.accessSecret);
+      const verifyUser: any = jwt.verify(authRefreshToken, config.accessSecret);
       const userDb = await User.getModel(req.tenantsConnection);
       const user = await userDb.findOne({
         _id: verifyUser.id,
@@ -116,7 +116,7 @@ const authenticationRefreshTokenMiddleware = async (
   res.status(status.FORBIDDEN).send();
 };
 
-module.exports = {
+export {
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,

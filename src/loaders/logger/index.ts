@@ -1,12 +1,12 @@
-export {};
-const buildDevLogger = require('./winston/devLogger');
-const buildProdLogger = require('./winston/prodLogger');
+import { buildDevLogger } from './winston/devLogger';
+import { buildProdLogger } from './winston/prodLogger';
+import { Logger } from 'winston';
 
-let logger: any = null;
+let logger: Logger;
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') {
   logger = buildDevLogger();
 } else {
   logger = buildProdLogger();
 }
 
-export default logger;
+export { logger };

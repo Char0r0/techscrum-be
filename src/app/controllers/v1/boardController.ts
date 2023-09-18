@@ -14,7 +14,6 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
   }
   const boardId = req.params.id;
   const { inputFilter, userFilter, taskTypeFilter, labelFilter } = req.params;
-
   if (boardId === 'undefined' || boardId === 'null') {
     res.status(status.NOT_ACCEPTABLE).send({});
     return;
@@ -49,7 +48,6 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     const labelIds = labelFilter.split('-');
     labels = { tags: { $all: labelIds } };
   }
-
   let boardTasks = await getBoardTasks(
     boardId,
     input,
@@ -59,8 +57,6 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
     req.dbConnection,
     req.tenantsConnection,
   );
-
   const result = replaceId(boardTasks);
-
   res.status(status.OK).json(result[0]);
 });

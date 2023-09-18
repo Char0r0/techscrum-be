@@ -1,5 +1,4 @@
-export {};
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import { Types } from 'mongoose';
 const Schema = mongoose.Schema;
 
@@ -49,12 +48,12 @@ const tenantSchema = new Schema(
       },
     ],
 
-    // this is pointing to the current subscription plan. 
-    stripePaymentIntentId: {  
+    // this is pointing to the current subscription plan.
+    stripePaymentIntentId: {
       type: String,
-      default: null, 
+      default: null,
     },
-    
+
     // point out current payment History (current invoice)
     currentInvoice: {
       ref: 'invoice',
@@ -90,7 +89,7 @@ const tenantSchema = new Schema(
 
     currentChargeStartDate: {
       type: String,
-    }, 
+    },
 
     currentChargeEndDate: {
       type: String,
@@ -103,9 +102,9 @@ const tenantSchema = new Schema(
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: any) => {
+export function getModel(connection: any) {
   if (!connection) {
     throw new Error('No connection');
   }
   return connection.model('tenants', tenantSchema);
-};
+}
