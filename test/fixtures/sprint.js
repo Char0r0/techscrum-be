@@ -7,6 +7,4 @@ const SPRINT_SEED = {
   projectId: '6350d443bddbe8fed0138ffe',
 };
 
-module.exports = {
-  SPRINT_SEED,
-};
+export { SPRINT_SEED };
