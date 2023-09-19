@@ -1,7 +1,7 @@
-const request = require('supertest');
-const { setup, restore } = require('../helpers');
-const { BOARD_SEED } = require('../fixtures/board');
-const { STATUS_TEST } = require('../fixtures/statuses');
+import request from 'supertest';
+import { setup, restore } from '../helpers';
+import { BOARD_SEED } from '../fixtures/board';
+import { STATUS_TEST } from '../fixtures/statuses';
 
 let application = null;
 
@@ -16,13 +16,13 @@ afterAll(async () => {
 
 describe('Test statuses', () => {
   it('should get all statuses', async () => {
-    const res = await request(application).get(`/api/v1/boards/${BOARD_SEED._id}/statuses`);
+    const res = await request(application).get(`/api/v2/boards/${BOARD_SEED._id}/statuses`);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual(STATUS_TEST);
   });
 
   it('should response with 404 if no boardId provided', async () => {
-    const res = await request(application).get('/api/v1/boards//statuses');
+    const res = await request(application).get('/api/v2/boards//statuses');
     expect(res.statusCode).toEqual(404);
   });
 });
