@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import { findTasks } from '../../services/taskService';
 import { asyncHandler } from '../../utils/helper';
-const Task = require('../../model/task');
-const mongoose = require('mongoose');
-const Status = require('../../model/status');
-const Sprint = require('../../model/sprint');
-const Project = require('../../model/project');
-const httpStatus = require('http-status');
+import * as Task from '../../model/task';
+import * as Status from '../../model/status';
+import * as Sprint from '../../model/sprint';
+import * as Project from '../../model/project';
+import mongoose from 'mongoose';
+import httpStatus from 'http-status';
 import { validationResult } from 'express-validator';
 
 declare module 'express-serve-static-core' {
@@ -161,7 +161,7 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
 
   // delete task from Task collection
   const task = await Task.getModel(req.dbConnection).findOneAndDelete({
-    _id: mongoose.Types.ObjectId(req.params.id),
+    _id: new mongoose.Types.ObjectId(req.params.id),
   });
   if (!task) return res.status(404).send();
 

@@ -1,8 +1,6 @@
-export {};
-
-const Role = require('../model/role');
-const Permission = require('../model/permission');
-const Type = require('../model/type');
+import * as Role from '../model/role';
+import * as Permission from '../model/permission';
+import * as Type from '../model/type';
 
 const TASK_TYPES = [
   {
@@ -27,7 +25,7 @@ const TASK_TYPES = [
   },
 ];
 
-const createTaskType = async (dbConnection: string) => {
+export const createTaskType = async (dbConnection: string) => {
   const type = Type.getModel(dbConnection);
 
   for (const objType of TASK_TYPES) {
@@ -40,7 +38,7 @@ const createTaskType = async (dbConnection: string) => {
   }
 };
 
-exports.init = async (dbConnection: any) => {
+export const init = async (dbConnection: any) => {
   const role = Role.getModel(dbConnection);
   const permission = Permission.getModel(dbConnection);
 
@@ -210,4 +208,3 @@ exports.init = async (dbConnection: any) => {
 };
 
 
-exports.createTaskType = createTaskType;
