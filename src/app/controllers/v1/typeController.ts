@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { replaceId } from '../../services/replaceService';
 import  * as Type from '../../model/type';
-const database = require('../../database/init');
+import  * as database from '../../database/init';
 
 export const index = async (req: Request, res: Response) => {
   const typeModel = Type.getModel(req.dbConnection);

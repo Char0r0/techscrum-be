@@ -31,7 +31,7 @@ typeSchema.methods.toJSON = function () {
   return typeObject;
 };
 
-export const  getModel = (connection: any) => {
+export const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
