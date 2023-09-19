@@ -1,7 +1,4 @@
-export {};
-import { Types } from 'mongoose';
-
-const mongoose = require('mongoose');
+import mongoose, { Types }  from 'mongoose';
 
 const sprintSchema = new mongoose.Schema(
   {
@@ -49,7 +46,7 @@ const sprintSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
