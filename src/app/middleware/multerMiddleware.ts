@@ -23,5 +23,6 @@ const storage = multerS3({
   },
 });
 
-const upload = multer({ storage });
-module.exports = upload;
+export const upload = multer({ storage });
+
+

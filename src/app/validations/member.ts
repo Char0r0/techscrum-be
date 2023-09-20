@@ -1,4 +1,3 @@
-export {};
 const { param, body } = require('express-validator');
 
 const update = [
@@ -15,8 +14,4 @@ const invite = [
   body('email').notEmpty().isString(),
 ];
 
-module.exports = {
-  update,
-  remove,
-  invite,
-};
+export { update, remove, invite };

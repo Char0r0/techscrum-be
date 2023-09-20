@@ -8,7 +8,7 @@ import * as User from '../../model/user';
 const Project = require('../../model/project');
 const Task = require('../../model/task');
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
@@ -45,7 +45,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
@@ -82,7 +82,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
@@ -114,7 +114,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);

@@ -8,7 +8,7 @@ import { validationResult } from 'express-validator';
 const { replaceId } = require('../../services/replaceService');
 const { Types } = require('mongoose');
 
-exports.index = async (req: Request, res: Response, next: NextFunction) => {
+export const index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -30,7 +30,7 @@ exports.index = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.getRoleById = async (req: Request, res: Response, next: NextFunction) => {
+export const getRoleById = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -56,7 +56,7 @@ exports.getRoleById = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
-exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
+export const addNewRole = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -79,7 +79,7 @@ exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
   res.sendStatus(status.UNPROCESSABLE_ENTITY);
 });
 
-exports.update = async (req: Request, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -98,7 +98,7 @@ exports.update = async (req: Request, res: Response) => {
   res.send(replaceId(updatedProject));
 };
 
-exports.delete = async (req: Request, res: Response) => {
+export const destroy = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -113,7 +113,7 @@ exports.delete = async (req: Request, res: Response) => {
   res.send(replaceId(updateProject));
 };
 
-exports.getDefaultRoles = async (req: Request, res: Response) => {
+export const getDefaultRoles = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

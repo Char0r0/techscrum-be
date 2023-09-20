@@ -3,7 +3,7 @@ import { validationResult } from 'express-validator';
 import { emailRecipientTemplate } from '../../utils/emailSender';
 import config from '../../config/app';
 
-exports.contactForm = async (req: Request, res: Response) => {
+export const contactForm = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ message: 'error1:', errors: errors });

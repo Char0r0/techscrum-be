@@ -4,7 +4,7 @@ import status from 'http-status';
 import * as Activity from '../../model/activity';
 import * as User from '../../model/user';
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -22,7 +22,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -46,7 +46,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);

@@ -15,7 +15,7 @@ import { authenticationForgetPasswordMiddleware } from '../../middleware/forgetP
 import * as loginControllerV2 from '../../controllers/v1/loginControllerV2';
 import * as loginValidation from '../../validations/login';
 // const registerController = require('../../controllers/v1/registerController');
-import  * as registerValidation from '../../validations/register';
+import * as registerValidation from '../../validations/register';
 import * as forgetPasswordController from '../../controllers/v1/forgetPasswordController';
 import * as forgetPasswordValidation from '../../validations/forgetPassword';
 import * as boardController from '../../controllers/v1/boardController';
@@ -31,25 +31,25 @@ import * as accountSettingValidation from '../../validations/accountSetting';
 import * as shortcutControllers from '../../controllers/v1/shortcutController';
 import * as shortcutValidation from '../../validations/shortcut';
 import * as labelController from '../../controllers/v1/labelController';
-const labelValidation = require('../../validations/label');
-const multerMiddleware = require('../../middleware/multerMiddleware');
-const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
-const userPageControllers = require('../../controllers/v1/userPageController');
-const userPageValidation = require('../../validations/userPage');
-const permissionMiddleware = require('../../middleware/permissionMiddleware');
-const memberController = require('../../controllers/v1/memberController');
-const memberValidation = require('../../validations/member');
-const roleController = require('../../controllers/v1/roleController');
-const roleValidation = require('../../validations/role');
-const permissionController = require('../../controllers/v1/permissionController');
-const typeController = require('../../controllers/v1/typeController');
-const contactController = require('../../controllers/v1/contactController');
-const contactValidation = require('../../validations/contact');
-const emailUsController = require('../../controllers/v1/emailUsController');
-const database = require('../../database/init');
-const domainController = require('../../controllers/v1/domainsController');
-const activityControllers = require('../../controllers/v1/activityController');
-const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
+import * as labelValidation from '../../validations/label';
+import * as multerMiddleware  from '../../middleware/multerMiddleware';
+import * as saasMiddlewareV2 from '../../middleware/saasMiddlewareV2';
+import * as userPageControllers from '../../controllers/v1/userPageController';
+import * as userPageValidation from '../../validations/userPage';
+import * as permissionMiddleware from '../../middleware/permissionMiddleware';
+import * as memberController from '../../controllers/v1/memberController';
+import * as memberValidation from '../../validations/member';
+import * as roleController from '../../controllers/v1/roleController';
+import * as roleValidation from '../../validations/role';
+import * as permissionController from '../../controllers/v1/permissionController';
+import * as typeController from '../../controllers/v1/typeController';
+import * as contactController from '../../controllers/v1/contactController';
+import * as contactValidation from '../../validations/contact';
+import * as emailUsController from '../../controllers/v1/emailUsController';
+import * as database from '../../database/init';
+import * as domainController from '../../controllers/v1/domainsController';
+import * as activityControllers from '../../controllers/v1/activityController';
+import * as dailyScrumControllers from '../../controllers/v1/dailyScrumController';
 const dailyScrumValidations = require('../../validations/dailyScrum');
 const paymentController = require('../../controllers/v1/paymentController');
 const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
@@ -66,6 +66,7 @@ import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
 import { config } from '../../config/app';
 import { stringToBoolean } from '../../utils/stringToBoolean';
+
 
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
@@ -273,12 +274,12 @@ router.put(
 router.delete(
   '/projects/:projectId/members/:userId',
   memberValidation.remove,
-  memberController.delete,
+  memberController.destory,
 );
 router.post(
   '/projects/:projectId/members/invite',
   memberValidation.invite,
-  memberController.invite,
+  memberController.inviteOne,
 );
 
 // roleV2
@@ -310,10 +311,10 @@ router.delete(
   '/projects/:projectId/roles/:roleId',
   roleValidation.projectAndRole,
   authenticationTokenMiddleware,
-  roleController.delete,
+  roleController.destroy,
 );
 
-router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
+router.post('/uploads', multerMiddleware.upload.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
 
