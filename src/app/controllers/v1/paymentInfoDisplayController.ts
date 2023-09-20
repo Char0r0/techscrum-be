@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { checkIsUserSubscribePlan, getBillingOverviewInformation, getStatusOfUserCurrentPlan, getUserInvoiceHistory } from '../../services/paymentInfoDisplayService';
 
-exports.getBillingOverviewInfo = async (req: Request, res: Response, next: NextFunction) => {
+export const getBillingOverviewInfo = async (req: Request, res: Response, next: NextFunction) => {
   const domainURL = req.headers.origin;
   try {
     const billingInfo = await getBillingOverviewInformation(req, domainURL);
@@ -11,7 +11,7 @@ exports.getBillingOverviewInfo = async (req: Request, res: Response, next: NextF
   }
 };
 
-exports.isUserFreeTrial = async (req: Request, res: Response, next: NextFunction) => {
+export const isUserFreeTrial = async (req: Request, res: Response, next: NextFunction) => {
   const domainURL = req.headers.origin;
   try {
     const isFreeTrial = await getStatusOfUserCurrentPlan(req, domainURL);
@@ -21,18 +21,18 @@ exports.isUserFreeTrial = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-exports.isUserSubscribePlan = async (req: Request, res: Response, next: NextFunction) => { 
+export const isUserSubscribePlan = async (req: Request, res: Response, next: NextFunction) => { 
   const domainURL = req.headers.origin;
   try {
-    const isUserSubscribePlan = await checkIsUserSubscribePlan(req, domainURL);
-    res.send(isUserSubscribePlan);
+    const userSubscriptionStatus = await checkIsUserSubscribePlan(req, domainURL);
+    res.send(userSubscriptionStatus);
   } catch (e) {
     next(e);
   }
 };
 
 
-exports.getInvoice = async (req: Request, res: Response, next: NextFunction) => {
+export const getInvoice = async (req: Request, res: Response, next: NextFunction) => {
   const domainURL = req.headers.origin;
   try {
     const userInvoice = await getUserInvoiceHistory(req, domainURL);
