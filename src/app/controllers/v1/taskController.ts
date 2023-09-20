@@ -17,7 +17,7 @@ declare module 'express-serve-static-core' {
 }
 
 // GET ONE
-exports.show = asyncHandler(async (req: Request, res: Response) => {
+export const show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
@@ -34,7 +34,7 @@ exports.show = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // GET TASKS BY PROJECT
-exports.tasksByProject = asyncHandler(async (req: Request, res: Response) => {
+export const tasksByProject = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors });
@@ -53,7 +53,7 @@ exports.tasksByProject = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //POST
-exports.store = asyncHandler(async (req: Request, res: Response) => {
+export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY).json({ errors: errors.array() });
@@ -104,7 +104,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //PUT
-exports.update = asyncHandler(async (req: Request, res: Response) => {
+export const update = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
@@ -153,7 +153,7 @@ exports.update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // DELETE HARD
-exports.delete = asyncHandler(async (req: Request, res: Response) => {
+export const destroy = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
@@ -179,7 +179,7 @@ exports.delete = asyncHandler(async (req: Request, res: Response) => {
 });
 
 // DELETE SOFT, TOGGLE isActive
-exports.toggleActivate = asyncHandler(async (req: Request, res: Response) => {
+export const toggleActivate = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);

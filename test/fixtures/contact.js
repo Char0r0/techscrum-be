@@ -16,7 +16,4 @@ const validForm = {
   title: "I'm confused about how something works",
 };
 
-module.exports = {
-  invalidForm,
-  validForm,
-};
+export { invalidForm, validForm };

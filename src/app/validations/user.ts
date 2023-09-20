@@ -1,8 +1,5 @@
-export {};
-const { param } = require('express-validator');
+import { param } from 'express-validator';
 
 const show = [param('id').notEmpty().isString()];
 
-module.exports = {
-  show,
-};
+export { show };

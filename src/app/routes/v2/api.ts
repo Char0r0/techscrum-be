@@ -1,32 +1,30 @@
-const express = require('express');
-const router = new express.Router();
-const projectsController = require('../../controllers/v1/projectsController');
-const projectValidation = require('../../validations/project');
-const tenantValidations = require('../../validations/tenant');
-const tenantControllers = require('../../controllers/v1/tenantController');
-const {
+import express from 'express';
+const router = express.Router();
+import * as  projectsController from '../../controllers/v1/projectsController';
+import * as projectValidation from '../../validations/project';
+import * as tenantValidations from '../../validations/tenant';
+import * as tenantControllers from '../../controllers/v1/tenantController';
+import {
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-} = require('../../middleware/authMiddleware');
-const { authenticationEmailTokenMiddlewareV2 } = require('../../middleware/registerMiddlewareV2');
-const {
-  authenticationForgetPasswordMiddleware,
-} = require('../../middleware/forgetPasswordMiddleware');
-const loginController = require('../../controllers/v1/loginController');
-const loginControllerV2 = require('../../controllers/v1/loginControllerV2');
-const loginValidation = require('../../validations/login');
+} from '../../middleware/authMiddleware';
+import { authenticationEmailTokenMiddlewareV2 } from '../../middleware/registerMiddlewareV2';
+import { authenticationForgetPasswordMiddleware } from '../../middleware/forgetPasswordMiddleware';
+// import * as loginController from '../../controllers/v1/loginController';
+import * as loginControllerV2 from '../../controllers/v1/loginControllerV2';
+import * as loginValidation from '../../validations/login';
 // const registerController = require('../../controllers/v1/registerController');
-const registerValidation = require('../../validations/register');
-const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
-const forgetPasswordValidation = require('../../validations/forgetPassword');
-const boardController = require('../../controllers/v1/boardController');
-const boardValidation = require('../../validations/board');
-const taskController = require('../../controllers/v1/taskController');
-const taskValidation = require('../../validations/task');
-const userControllers = require('../../controllers/v1/userController');
-const userValidation = require('../../validations/user');
-const commentControllers = require('../../controllers/v1/commentController');
+import  * as registerValidation from '../../validations/register';
+import * as forgetPasswordController from '../../controllers/v1/forgetPasswordController';
+import * as forgetPasswordValidation from '../../validations/forgetPassword';
+import * as boardController from '../../controllers/v1/boardController';
+import * as boardValidation from '../../validations/board';
+import * as taskController from '../../controllers/v1/taskController';
+import * as taskValidation from '../../validations/task';
+import * as userControllers from '../../controllers/v1/userController';
+import * as userValidation from '../../validations/user';
+import * as commentControllers from '../../controllers/v1/commentController';
 const commentValidation = require('../../validations/comment');
 const accountSettingControllers = require('../../controllers/v1/accountSettingController');
 const accountSettingValidation = require('../../validations/accountSetting');
@@ -195,7 +193,7 @@ router.get(
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
-router.delete('/tasks/:id', taskValidation.remove, taskController.delete);
+router.delete('/tasks/:id', taskValidation.remove, taskController.destroy);
 //TODO: s
 router.put(
   '/account/me',
@@ -222,7 +220,7 @@ router.post(
   '/auto-fetch-userInfo',
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-  loginController.autoFetchUserInfo,
+  loginControllerV2.autoFetchUserInfo,
 );
 
 router.get('/projects', authenticationTokenMiddleware, projectsController.index);
