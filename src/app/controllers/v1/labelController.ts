@@ -8,13 +8,13 @@ const Label = require('../../model/label');
 const Task = require('../../model/task');
 const mongoose = require('mongoose');
 
-exports.index = async (req: Request, res: Response) => {
+export const index = async (req: Request, res: Response) => {
   const labelModel = Label.getModel(req.dbConnection);
   const result = await labelModel.find();
   res.send(replaceId(result));
 };
 
-exports.store = async (req: Request, res: Response) => {
+export const store = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -42,7 +42,7 @@ exports.store = async (req: Request, res: Response) => {
 };
 
 // put
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -64,7 +64,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 //delete
-exports.delete = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -80,7 +80,7 @@ exports.delete = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 
-exports.remove =  async (req: Request, res: Response) => {
+export const remove =  async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

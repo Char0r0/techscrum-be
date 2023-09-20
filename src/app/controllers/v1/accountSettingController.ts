@@ -11,7 +11,7 @@ interface IUser {
   password?: string;
 }
 
-exports.updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -40,7 +40,7 @@ exports.updatePassword = async (req: Request, res: Response, next: NextFunction)
   res.sendStatus(status.UNPROCESSABLE_ENTITY);
 };
 
-exports.update = async (req: Request, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -79,7 +79,7 @@ exports.update = async (req: Request, res: Response) => {
   res.send(updateUser);
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

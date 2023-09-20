@@ -25,12 +25,12 @@ import * as taskValidation from '../../validations/task';
 import * as userControllers from '../../controllers/v1/userController';
 import * as userValidation from '../../validations/user';
 import * as commentControllers from '../../controllers/v1/commentController';
-const commentValidation = require('../../validations/comment');
-const accountSettingControllers = require('../../controllers/v1/accountSettingController');
-const accountSettingValidation = require('../../validations/accountSetting');
-const shortcutControllers = require('../../controllers/v1/shortcutController');
-const shortcutValidation = require('../../validations/shortcut');
-const labelController = require('../../controllers/v1/labelController');
+import * as commentValidation from '../../validations/comment';
+import * as accountSettingControllers from '../../controllers/v1/accountSettingController';
+import * as accountSettingValidation from '../../validations/accountSetting';
+import * as shortcutControllers from '../../controllers/v1/shortcutController';
+import * as shortcutValidation from '../../validations/shortcut';
+import * as labelController from '../../controllers/v1/labelController';
 const labelValidation = require('../../validations/label');
 const multerMiddleware = require('../../middleware/multerMiddleware');
 const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
@@ -335,7 +335,7 @@ router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelValidation.store, labelController.store);
 router.delete('/tasks/:taskId/labels/:labelId', labelValidation.eliminate, labelController.remove);
 router.put('/labels/:id', labelValidation.update, labelController.update);
-router.delete('/labels/:id', labelValidation.remove, labelController.delete);
+router.delete('/labels/:id', labelValidation.remove, labelController.destroy);
 
 // backlogs
 router.get('/projects/:projectId/backlogs', backlogController.index);
