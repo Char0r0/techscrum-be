@@ -6,7 +6,7 @@ import config from '../../config/app';
 export const contactForm = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ message: 'error1:', errors: errors });
+    return res.status(400).json(errors);
   }
 
   try {
