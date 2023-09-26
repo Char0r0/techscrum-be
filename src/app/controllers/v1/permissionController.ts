@@ -5,7 +5,7 @@ import { validationResult } from 'express-validator';
 const { replaceId } = require('../../services/replaceService');
 
 //get
-exports.index = async (req: Request, res: Response, next: NextFunction) => {
+export const index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);

@@ -89,7 +89,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //Active account
-exports.store = asyncHandler(async (req: Request, res: Response) => {
+export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -112,7 +112,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //Verify Email by token
-exports.verify = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const verify = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

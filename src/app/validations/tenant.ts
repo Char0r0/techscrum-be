@@ -1,5 +1,4 @@
-export {};
-const { check } = require('express-validator');
+import { check } from 'express-validator';
 
 const store = [
   // username must be an email
@@ -12,7 +11,4 @@ const index = [
   check('domain', 'Domain Empty').notEmpty(),
 ];
 
-module.exports = {
-  store,
-  index,
-};
+export { store, index };

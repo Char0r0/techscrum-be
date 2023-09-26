@@ -18,7 +18,7 @@ enum FreeTrialLengths {
   ONE_MONTH = 30,
 }
 
-exports.createPayment = async (req: Request, res: Response, next: NextFunction) => {
+export const createPayment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { planIdentifier, userId, paymentMode, isFreeTrial } = req.body;
     const domainURL = req.headers.origin;

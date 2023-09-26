@@ -13,7 +13,7 @@ declare module 'express-serve-static-core' {
 }
 
 //Emil Register
-exports.forgetPasswordApplication = async (req: Request, res: Response, next: NextFunction) => {
+export const forgetPasswordApplication = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -38,7 +38,7 @@ exports.forgetPasswordApplication = async (req: Request, res: Response, next: Ne
   }
 };
 
-exports.getUserEmail = async (req: Request, res: Response) => {
+export const getUserEmail = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -47,7 +47,7 @@ exports.getUserEmail = async (req: Request, res: Response) => {
   return res.status(status.OK).send({ email: req.email });
 };
 
-exports.updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

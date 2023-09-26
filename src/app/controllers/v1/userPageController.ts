@@ -3,7 +3,7 @@ import * as User from '../../model/user';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
 
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

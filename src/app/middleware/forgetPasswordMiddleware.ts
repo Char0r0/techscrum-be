@@ -8,7 +8,7 @@ declare module 'express-serve-static-core' {
   }
 }
 
-const authenticationForgetPasswordMiddleware = async (
+export const authenticationForgetPasswordMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -22,4 +22,4 @@ const authenticationForgetPasswordMiddleware = async (
   });
 };
 
-module.exports = { authenticationForgetPasswordMiddleware };
+

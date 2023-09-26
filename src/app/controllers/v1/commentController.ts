@@ -6,7 +6,7 @@ import * as User from '../../model/user';
 import { replaceId } from '../../services/replaceService';
 
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -25,7 +25,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -48,7 +48,7 @@ exports.store = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
@@ -71,7 +71,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);

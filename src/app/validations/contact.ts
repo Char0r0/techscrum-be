@@ -1,4 +1,3 @@
-export {};
 const { param, body } = require('express-validator');
 
 const store = [param('fullName').notEmpty().isString()];
@@ -24,7 +23,4 @@ const contactForm = [
     .withMessage('Title is not a valid one'),
 ];
 
-module.exports = {
-  store,
-  contactForm,
-};
+export { store, contactForm };

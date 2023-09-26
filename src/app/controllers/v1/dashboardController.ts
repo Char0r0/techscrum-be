@@ -8,7 +8,7 @@ import { openai } from '../../services/openAiService';
 import { getDashboardCounts } from '../../services/dashboardService';
 import { GPT_MODEL, USER_ROLE } from '../../config/openAi';
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
@@ -40,7 +40,7 @@ exports.show = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-exports.showDailyScrums = async (req: Request, res: Response, next: NextFunction) => {
+export const showDailyScrums = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
@@ -64,7 +64,7 @@ exports.showDailyScrums = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-exports.generatePDF = async (req: Request, res: Response, next: NextFunction) => {
+export const generatePDF = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);

@@ -5,7 +5,7 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 import mongoose from 'mongoose';
 import { URL } from 'url';
-exports.store = async (req: Request, res: Response) => {
+export const store = async (req: Request, res: Response) => {
   const validateUrl = (url: string) => {
     try {
       new URL(url);
@@ -43,7 +43,7 @@ exports.store = async (req: Request, res: Response) => {
     res.sendStatus(status.FORBIDDEN);
   }
 };
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -66,7 +66,7 @@ exports.update = async (req: Request, res: Response, next: NextFunction) => {
     next(e);
   }
 };
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

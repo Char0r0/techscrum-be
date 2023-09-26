@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import * as User from '../model/user';
-const Tenant = require('../model/tenants');
+import * as Tenant from '../model/tenants';
 import status from 'http-status';
 import config from '../../app/config/app';
 declare module 'express-serve-static-core' {
@@ -41,4 +41,4 @@ const authenticationEmailTokenMiddlewareV2 = async (
   });
 };
 
-module.exports = { authenticationEmailTokenMiddlewareV2 };
+export { authenticationEmailTokenMiddlewareV2 };

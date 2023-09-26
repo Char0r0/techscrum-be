@@ -3,7 +3,7 @@ import { checkoutSessionCompleted, invoiceFinalized, invoicePaymentSucceed, subs
 
 import config from '../../config/app';
 
-exports.stripeController = async (req: Request, res: Response) => {
+export const stripeController = async (req: Request, res: Response) => {
   let event: any;
   
   const secret = config.stripeSecret;

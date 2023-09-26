@@ -4,7 +4,7 @@ import status from 'http-status';
 import aws from 'aws-sdk';
 import config from '../../config/app';
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);

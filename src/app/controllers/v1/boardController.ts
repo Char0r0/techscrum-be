@@ -7,7 +7,7 @@ import escapeStringRegexp from 'escape-string-regexp';
 import status from 'http-status';
 
 // GET one
-exports.show = asyncHandler(async (req: Request, res: Response) => {
+export const show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

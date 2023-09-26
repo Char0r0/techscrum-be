@@ -12,4 +12,5 @@ const showDailyScrums = [
 
 const generatePDF = [generateIdValidationRule('param', 'projectId', true)];
 
-module.exports = { show, showDailyScrums, generatePDF };
+export { show, showDailyScrums, generatePDF };
+

@@ -4,11 +4,11 @@ import { isLocalHostAndNoConnectedTenant } from '../../utils/tenantHelper';
 const Tenant = require('../../model/tenants');
 const { tenantsDBConnection } = require('../../database/connections');
 
-exports.index = (req: Request, res: Response) => {
+export const index = (req: Request, res: Response) => {
   res.send(shouldExcludeDomainList(req.headers.origin));
 };
 
-exports.getOwnerDomain = async (req: Request, res: Response) => {
+export const getOwnerDomain = async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
     const domainURL = req.headers.origin;
@@ -25,7 +25,7 @@ exports.getOwnerDomain = async (req: Request, res: Response) => {
 };
 
 
-exports.isValidDomain = async (req: Request, res : Response) => {
+export const isValidDomain = async (req: Request, res : Response) => {
   try {
     const tenantsConnection = await tenantsDBConnection();
     const domainURL = req.headers.origin;
