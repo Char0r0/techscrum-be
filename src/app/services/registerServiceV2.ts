@@ -13,7 +13,7 @@ export const emailRegister = async (
 ) => {
   if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
-    return null;
+    throw new Error('Missing email secret in env');
   }
   const userModel = User.getModel(resUserDbConnection);
   const targetUser = await userModel.findOne({ email });
