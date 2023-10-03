@@ -24,7 +24,7 @@ export const createPayment = async (req: Request, res: Response, next: NextFunct
     const domainURL = req.headers.origin;
     
     if (!domainURL) {
-      return new Error('Domain URL is not found');
+      throw new Error('Domain URL is not found');
     }
 
     let freeTrialCheck: boolean = isFreeTrial;
