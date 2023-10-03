@@ -1,4 +1,3 @@
-export {};
 const mongoose = require('mongoose');
 
 const labelSchema = new mongoose.Schema(
@@ -22,7 +21,7 @@ labelSchema.methods.toJSON = function () {
   return taskObject;
 };
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: any) => {
 
   if (!connection) {
     throw new Error('No connection');

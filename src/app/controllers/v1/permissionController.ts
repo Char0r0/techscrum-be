@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-const Permission = require('../../model/permission');
+import * as Permission from '../../model/permission';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
-const { replaceId } = require('../../services/replaceService');
+import { replaceId } from '../../services/replaceService';
 
 //get
 export const index = async (req: Request, res: Response, next: NextFunction) => {

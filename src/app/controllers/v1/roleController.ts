@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { asyncHandler } from '../../utils/helper';
-const Permission = require('../../model/permission');
-const Project = require('../../model/project');
-const Role = require('../../model/role');
+import * as Permission from '../../model/permission';
+import * as Project from '../../model/project';
+import * as Role from '../../model/role';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
-const { replaceId } = require('../../services/replaceService');
-const { Types } = require('mongoose');
+import { replaceId } from '../../services/replaceService';
+import { Types } from 'mongoose';
+
 
 export const index = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -65,7 +66,7 @@ export const addNewRole = asyncHandler(async (req: Request, res: Response) => {
   const { roleName, permissions } = req.body;
   if (Types.ObjectId.isValid(projectId)) {
     const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
-      Types.ObjectId(projectId),
+      new Types.ObjectId(projectId),
       {
         $push: {
           roles: [{ name: roleName, slug: roleName, permission: permissions }],

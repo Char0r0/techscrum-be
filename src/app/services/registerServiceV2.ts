@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 import * as User from '../model/user';
 import config from '../config/app';
 
-exports.emailRegister = async (
+export const emailRegister = async (
   resUserDbConnection: any,
   email: string,
   newTenants: any,

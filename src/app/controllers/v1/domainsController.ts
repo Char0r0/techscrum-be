@@ -1,8 +1,8 @@
 import { Response, Request } from 'express';
 import { shouldExcludeDomainList } from '../../utils/helper';
 import { isLocalHostAndNoConnectedTenant } from '../../utils/tenantHelper';
-const Tenant = require('../../model/tenants');
-const { tenantsDBConnection } = require('../../database/connections');
+import * as Tenant from '../../model/tenants';
+import { tenantsDBConnection } from '../../database/connections';
 
 export const index = (req: Request, res: Response) => {
   res.send(shouldExcludeDomainList(req.headers.origin));

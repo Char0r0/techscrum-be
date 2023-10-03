@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
-const { randomStringGenerator } = require('../../utils/randomStringGenerator');
+import { randomStringGenerator } from '../../utils/randomStringGenerator';
 import { invite } from '../../utils/emailSender';
 import * as User from '../../model/user';
-const Project = require('../../model/project');
+import * as Project from '../../model/project';
 import status from 'http-status';
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import { logger } from '../../../loaders/logger';
 import config from '../../config/app';
@@ -99,7 +99,7 @@ export const inviteOne = async (req: Request, res: Response) => {
 
     const permission = await userModel.findOne({
       email: email,
-      'projectsRoles.projectId': mongoose.Types.ObjectId(projectId),
+      'projectsRoles.projectId': new mongoose.Types.ObjectId(projectId),
     });
     if (!permission) {
       user = await userModel.findByIdAndUpdate(
