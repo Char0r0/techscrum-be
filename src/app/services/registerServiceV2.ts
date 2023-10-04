@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 import * as User from '../model/user';
 import config from '../config/app';
 
-exports.emailRegister = async (
+export const emailRegister = async (
   resUserDbConnection: any,
   email: string,
   newTenants: any,
@@ -13,7 +13,7 @@ exports.emailRegister = async (
 ) => {
   if (!config?.emailSecret) {
     logger.error('Missing email secret in env');
-    return null;
+    throw new Error('Missing email secret in env');
   }
   const userModel = User.getModel(resUserDbConnection);
   const targetUser = await userModel.findOne({ email });

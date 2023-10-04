@@ -84,7 +84,7 @@ dailyScrumSchema.methods.toJSON = function () {
   return dailyScrumObject;
 };
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }

@@ -3,10 +3,10 @@ import { validationResult } from 'express-validator';
 import { replaceId } from '../../services/replaceService';
 import logger from 'winston';
 import status from 'http-status';
-const DailyScrum = require('../../model/dailyScrum');
+import * as DailyScrum from '../../model/dailyScrum';
 import * as User from '../../model/user';
-const Project = require('../../model/project');
-const Task = require('../../model/task');
+import * as Project from '../../model/project';
+import * as Task from '../../model/task';
 
 export const show = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
-const { isUserActived } = require('../../services/emailCheckService');
+import { isUserActived } from '../../services/emailCheckService';
 import * as User from '../../model/user';
-const { forgetPassword } = require('../../utils/emailSender');
+import { forgetPassword } from '../../utils/emailSender';
 import jwt from 'jsonwebtoken';
 import config from '../../config/app';
 declare module 'express-serve-static-core' {
@@ -30,7 +30,9 @@ export const forgetPasswordApplication = async (req: Request, res: Response, nex
       expiresIn: '30m',
     });
 
-    await forgetPassword(email, user?.name, token);
+
+
+    await forgetPassword(email, user?.name, token, req.headers.origin ?? '');
 
     return res.send(user);
   } catch (e) {

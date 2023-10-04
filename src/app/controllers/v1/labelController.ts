@@ -1,4 +1,3 @@
-export {};
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
@@ -6,7 +5,8 @@ import { replaceId } from '../../services/replaceService';
 import status from 'http-status';
 const Label = require('../../model/label');
 const Task = require('../../model/task');
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 
 export const index = async (req: Request, res: Response) => {
   const labelModel = Label.getModel(req.dbConnection);
@@ -36,7 +36,7 @@ export const store = async (req: Request, res: Response) => {
   }
   const taskModel = Task.getModel(req.dbConnection);
   const task = await taskModel.findById(req.params.taskId);
-  task.tags.push(mongoose.Types.ObjectId(result._id));
+  task.tags.push(new mongoose.Types.ObjectId(result._id));
   task.save();
   return res.send(replaceId(result));
 };
