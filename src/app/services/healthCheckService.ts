@@ -43,7 +43,7 @@ const isValidDomain = async (domain: string) => {
 
 const DB_CONNECTED = 1;
 
-exports.healthCheck = async () => {
+export const healthCheck = async () => {
   const tenantsDbConnection = await tenantsDBConnection();
   const tenantDbConnection = await tenantDBConnection(PUBLIC_DB);
   const domain = config.mainDomain ?? '';

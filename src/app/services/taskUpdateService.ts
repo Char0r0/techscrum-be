@@ -1,14 +1,24 @@
 import { Request } from 'express';
-const Task = require('../model/task');
-const Board = require('../model/board');
+import * as Task from '../model/task';
+import * as Board from '../model/board';
 import * as User from '../model/user';
 
 export const taskUpdate = async (req: Request) => {
   const task = await Task.getModel(req.dbConnection).findOne({ _id: req.params.id });
   if (!task) return {};
 
-  const { title, statusId, typeId, description, storyPoint, dueAt, type, targetIndex, attachmentUrls, assignId } =
-    req.body;
+  const {
+    title,
+    statusId,
+    typeId,
+    description,
+    storyPoint,
+    dueAt,
+    type,
+    targetIndex,
+    attachmentUrls,
+    assignId,
+  } = req.body;
   const board = await Board.getModel(req.dbConnection).findOne({ _id: task.boardId });
 
   if (task.statusId.toString() === statusId) {
@@ -22,7 +32,8 @@ export const taskUpdate = async (req: Request) => {
           element.items = items.reduce(
             (result: [{}], item: { taskId: string; order: number }, index: number) => {
               if (item.taskId.toString() !== task._id.toString()) {
-                if (index === targetIndex && index !== items.length - 1) result.push({ taskId: task._id, order: orderIndex++ });
+                if (index === targetIndex && index !== items.length - 1)
+                  result.push({ taskId: task._id, order: orderIndex++ });
                 result.push({ ...item, order: orderIndex++ });
                 return result;
               }
@@ -79,10 +90,12 @@ export const taskUpdate = async (req: Request) => {
   }
 
   await board.save();
-  const updateTask = await Task.getModel(req.dbConnection).findOneAndUpdate(
-    { _id: req.params.id },
-    { title, typeId, statusId, description, storyPoint, dueAt, type, attachmentUrls, assignId },
-    { new: true },
-  ).populate({ path: 'assignId', Model: User.getModel(req.dbConnection) });
+  const updateTask = await Task.getModel(req.dbConnection)
+    .findOneAndUpdate(
+      { _id: req.params.id },
+      { title, typeId, statusId, description, storyPoint, dueAt, type, attachmentUrls, assignId },
+      { new: true },
+    )
+    .populate({ path: 'assignId', Model: User.getModel(req.dbConnection) });
   return updateTask;
 };

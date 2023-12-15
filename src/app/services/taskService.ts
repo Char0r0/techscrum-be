@@ -1,9 +1,9 @@
 import { Mongoose } from 'mongoose';
-const Task = require('../model/task');
-const Type = require('../model/type');
-const Comment = require('../model/comment');
-const Label = require('../model/label');
-const Status = require('../model/status');
+import * as Task from '../model/task';
+import * as Type from '../model/type';
+import * as Comment from '../model/comment';
+import * as Label from '../model/label';
+import * as Status from '../model/status';
 import * as User from '../model/user';
 import { ITask } from '../types';
 

@@ -1,10 +1,9 @@
 import { Mongoose, ObjectId } from 'mongoose';
-
-const Sprint = require('../model/sprint');
-const Task = require('../model/task');
-const Status = require('../model/status');
+import * as Sprint from '../model/sprint';
+import * as Task from '../model/task';
+import * as Status from '../model/status';
 import * as User from '../model/user';
-const Type = require('../model/type');
+import * as Type from '../model/type';
 
 const populateTasks = function (dbConnection: Mongoose, tenantConnection: Mongoose) {
   return [
@@ -44,7 +43,11 @@ export const findSprints = async (
   }
 };
 
-export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId, tenantConnection: Mongoose) => {
+export const findSprint = async (
+  dbConnection: Mongoose,
+  id: string | ObjectId,
+  tenantConnection: Mongoose,
+) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     const sprint = await sprintModel.findById(id).populate({
@@ -58,7 +61,12 @@ export const findSprint = async (dbConnection: Mongoose, id: string | ObjectId, 
   }
 };
 
-export const updateSprint = async (dbConnection: Mongoose, id: string | ObjectId, updates: any, tenantConnection: Mongoose) => {
+export const updateSprint = async (
+  dbConnection: Mongoose,
+  id: string | ObjectId,
+  updates: any,
+  tenantConnection: Mongoose,
+) => {
   const sprintModel = Sprint.getModel(dbConnection);
   try {
     if (updates.currentSprint) {
