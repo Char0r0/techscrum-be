@@ -1,8 +1,8 @@
 import { Mongoose } from 'mongoose';
 import { StatusName, SupportType } from '../types';
-const Task = require('../model/task');
-const Status = require('../model/status');
-const DailyScrum = require('../model/dailyScrum');
+import * as Task from '../model/task';
+import * as Status from '../model/status';
+import * as DailyScrum from '../model/dailyScrum';
 
 const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => {
   const DailyScrumModel = DailyScrum.getModel(dbConnection);
@@ -99,6 +99,4 @@ const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => 
   };
 };
 
-export {
-  getDashboardCounts,
-};
+export { getDashboardCounts };

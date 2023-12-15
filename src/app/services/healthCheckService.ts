@@ -1,8 +1,8 @@
 export {};
-const aws = require('aws-sdk');
+import aws from 'aws-sdk';
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
 import config from '../config/app';
-const whois = require('whois-json');
+import whois from 'whois-json';
 import awsConfig from '../config/aws';
 import { logger } from '../../loaders/logger';
 

@@ -1,10 +1,10 @@
 import { Mongoose } from 'mongoose';
-const Board = require('../model/board');
-const Task = require('../model/task');
+import * as Board from '../model/board';
+import * as Task from '../model/task';
+import * as Status from '../model/user';
+import * as Label from '../model/label';
+import * as Project from '../model/project';
 import * as User from '../model/user';
-const Status = require('../model/status');
-const Label = require('../model/label');
-const Project = require('../model/project');
 
 export const getBoardTasks = async (
   boardId: string,
