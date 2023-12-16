@@ -6,6 +6,10 @@ import whois from 'whois-json';
 import awsConfig from '../config/aws';
 import { logger } from '../../loaders/logger';
 
+interface RegistrationData {
+  domainStatus?: string | undefined;
+}
+
 aws.config.update({
   region: awsConfig.awsRegion,
   accessKeyId: awsConfig.awsAccessKey,
@@ -23,10 +27,10 @@ const hasAllRequiredTemplates = async () => {
     'contactPageEmailTemplate',
     'ForgotPassword',
   ];
-  const existingTemplates = awsRes.TemplatesMetadata.filter((template: any) =>
+  const existingTemplates = awsRes?.TemplatesMetadata?.filter((template: any) =>
     requiredTemplates.includes(template.TemplateName),
   );
-  return existingTemplates.length === requiredTemplates.length
+  return existingTemplates?.length === requiredTemplates.length
     ? '\x1b[32mSuccess\x1b[0m'
     : '\x1b[31mFailed\x1b[0m';
 };
@@ -37,8 +41,8 @@ const hasSES = async (domain: string) => {
 };
 
 const isValidDomain = async (domain: string) => {
-  const domainData = await whois(domain);
-  return domainData.domainStatus ? '\x1b[32mSuccess\x1b[0m' : '\x1b[31mFailed\x1b[0m';
+  const domainData = (await whois(domain)) as RegistrationData;
+  return domainData?.domainStatus ? '\x1b[32mSuccess\x1b[0m' : '\x1b[31mFailed\x1b[0m';
 };
 
 const DB_CONNECTED = 1;

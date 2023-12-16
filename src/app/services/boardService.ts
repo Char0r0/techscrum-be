@@ -31,7 +31,7 @@ export const getBoardTasks = async (
     path: 'taskStatus',
     model: statusModel,
     select: '-board -createdAt -updatedAt',
-    option: { $sort: { order: 1 } },
+    options: { $sort: { order: 1 } },
     populate: {
       path: 'taskList',
       model: taskModel,

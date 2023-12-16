@@ -40,7 +40,7 @@ export const emailRegister = async (
       throw new Error('RegisterService Cannot find user');
     }
     validationToken = jwt.sign({ id: newUser.id }, config.emailSecret);
-    emailSender(email, `token=${validationToken}`, getDomain(newTenants.origin, origin));
+    emailSender(email, `token=${validationToken}`, getDomain(newTenants.origin, origin || ''));
   } catch (e) {
     logger.error('registerServiceV2 Fail:' + e);
     if (newUser.tenants.length === 0) {
