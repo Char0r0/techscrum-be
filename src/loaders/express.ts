@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const swagger = require('./swagger');
 const { errorHandler } = require('./errorHandler');
 import status from 'http-status';
+import { globalAsyncErrorHandler } from './routes';
 const compression = require('compression');
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -28,7 +29,7 @@ module.exports = () => {
   }
   app.use(helmet());
   // app.use(`${config.api.prefix}/v1`, apiRouterV1);
-  app.use(`${config.api.prefix}/v2`, apiRouterV2);
+  app.use(`${config.api.prefix}/v2`, globalAsyncErrorHandler(apiRouterV2));
   swagger(app);
   app.use((err: Error, req: express.Request, res: express.Response, next: NextFunction) => {
     errorHandler.handleError(err, res);

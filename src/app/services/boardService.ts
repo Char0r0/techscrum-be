@@ -5,6 +5,10 @@ import * as Status from '../model/user';
 import * as Label from '../model/label';
 import * as Project from '../model/project';
 import * as User from '../model/user';
+import escapeStringRegexp from 'escape-string-regexp';
+import { replaceId } from './replaceService';
+import { Request } from 'express';
+import NotFoundError from '../error/notFound';
 
 export const getBoardTasks = async (
   boardId: string,
@@ -61,4 +65,52 @@ export const getBoardTasks = async (
   });
 
   return boardTasks;
+};
+
+export const getBoard = async (req: Request) => {
+  const boardId = req.params.id;
+  const { inputFilter, userFilter, taskTypeFilter, labelFilter } = req.params;
+  if (boardId === 'undefined' || boardId === 'null') {
+    return new NotFoundError('boardId not found');
+  }
+
+  let input = {};
+  let users = {};
+  let taskTypes = {};
+  let labels = {};
+
+  enum Cases {
+    searchAll = 'all',
+  }
+
+  if (inputFilter !== Cases.searchAll) {
+    const escapeRegex = escapeStringRegexp(inputFilter.toString());
+    const regex = new RegExp(escapeRegex, 'i');
+    input = { title: regex };
+  }
+
+  if (userFilter !== Cases.searchAll) {
+    const userIds = userFilter.split('-');
+    users = { assignId: { $in: userIds } };
+  }
+
+  if (taskTypeFilter !== Cases.searchAll) {
+    const taskTypeIds = taskTypeFilter.split('-');
+    taskTypes = { typeId: { $in: taskTypeIds } };
+  }
+
+  if (labelFilter !== Cases.searchAll) {
+    const labelIds = labelFilter.split('-');
+    labels = { tags: { $all: labelIds } };
+  }
+  let boardTasks = await getBoardTasks(
+    boardId,
+    input,
+    users,
+    taskTypes,
+    labels,
+    req.dbConnection,
+    req.tenantsConnection,
+  );
+  return replaceId(boardTasks);
 };

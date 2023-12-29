@@ -1,12 +1,19 @@
-import express, { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import { logger } from '../../loaders/logger';
 
-const router = express.Router();
+const asyncMiddleware = (fn: any) => (req: Request, res: Response, next: NextFunction) => {
+  Promise.resolve(fn(req, res, next)).catch((e) => {
+    logger.error(e.message);
+    res.status(500).send('An internal server error occurred');
+  });
+};
 
-router.post('/register', (req: Request, res: Response): void =>{
-  if (!req.body.firstName) {
-    res.status(400).json('You need to pass first name');
-  }
-  res.status(201).json({ message: 'User is Created' });
-});
-
-export default router;
+export const globalAsyncErrorHandler = (router: any) => {
+  router?.stack?.forEach((item: any) => {
+    const { route } = item;
+    route?.stack?.forEach((routeItem: any) => {
+      routeItem.handle = asyncMiddleware(routeItem.handle);
+    });
+  });
+  return router;
+};
