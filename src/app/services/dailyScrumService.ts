@@ -3,6 +3,14 @@ import { IDailyScrum, IDailyScrumTimeStampModified } from '../types';
 import * as User from '../model/user';
 import * as DailyScrum from '../model/dailyScrum';
 import * as Project from '../model/project';
+import { Request } from 'express';
+import * as Task from '../model/task';
+import { replaceId } from './replaceService';
+import NotFoundError from '../error/notFound';
+import { GPT_MODEL, USER_ROLE } from '../config/openAi';
+import { getDashboardCounts } from './dashboardService';
+import { openai } from './openAiService';
+
 const {
   removeDuplicateDate,
   convertTimestampToDate,
@@ -50,4 +58,122 @@ export const findDailyScrumsByProjectAndUser = async (
   );
 
   return dailyScrumsWithFilteredProgresses;
+};
+
+export const showDailyScrum = async (req: Request) => {
+  const { projectId } = req.params;
+  const { userId } = req.query;
+  const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
+  const userModel = await User.getModel(req.tenantsConnection);
+
+  const results = await DailyScrumModel.find({ project: projectId, user: userId })
+    .populate({
+      path: 'user',
+      model: userModel,
+      select: 'name',
+    })
+    .populate({
+      path: 'project',
+      model: Project.getModel(req.dbConnection),
+      select: ['name', 'key'],
+    })
+    .populate({
+      path: 'task',
+      model: Task.getModel(req.dbConnection),
+      select: 'title',
+    })
+    .exec();
+
+  return replaceId(results);
+};
+
+export const createDailyScrum = async (req: Request) => {
+  const { projectId } = req.params;
+  const newData = {
+    ...req.body,
+    task: req.body.taskId,
+    user: req.body.userId,
+    project: projectId,
+  };
+  const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
+
+  const updatedDailyScrum = await DailyScrumModel.findOneAndUpdate(
+    { task: req.body.taskId },
+    newData,
+    {
+      new: true,
+    },
+  ).exec();
+  if (!updatedDailyScrum) {
+    const newDailyScrum = new DailyScrumModel(newData);
+    await newDailyScrum.save();
+    return replaceId(newDailyScrum);
+  }
+
+  return replaceId(updatedDailyScrum);
+};
+
+export const updateDailyScrum = async (req: Request) => {
+  const { dailyScrumId } = req.params;
+  const { progress, ...rest } = req.body;
+
+  const newDailyScrum = await DailyScrum.getModel(req.dbConnection).findByIdAndUpdate(
+    dailyScrumId,
+    {
+      ...rest,
+      $addToSet: { progresses: progress },
+    },
+    {
+      new: true,
+    },
+  );
+  if (!newDailyScrum) {
+    throw new NotFoundError('Daily Scrum not found');
+  }
+
+  return replaceId(newDailyScrum);
+};
+
+export const deleteDailyScrum = async (req: Request) => {
+  const { projectId } = req.params;
+  const { taskId } = req.query;
+
+  await DailyScrum.getModel(req.dbConnection).deleteMany({
+    projectId: projectId,
+    task: taskId,
+  });
+};
+
+export const showDailyScrumsByProject = async (req: Request) => {
+  const { projectId } = req.params;
+  const { userId } = req.query;
+
+  const result = await findDailyScrumsByProjectAndUser(
+    projectId,
+    userId as string,
+    req.dbConnection,
+    req.tenantsConnection,
+  );
+
+  return replaceId(result);
+};
+
+export const generatePDFByProject = async (req: Request) => {
+  const { projectId } = req.params;
+
+  const dashboardCounts = await getDashboardCounts(projectId, req.dbConnection);
+
+  const response = await openai.createChatCompletion({
+    model: GPT_MODEL,
+    messages: [
+      {
+        role: USER_ROLE,
+        content: `I am a business analyst and please help me generate a formal report based on the following data: ${JSON.stringify(
+          dashboardCounts,
+        )}`,
+      },
+    ],
+  });
+
+  return response?.data?.choices?.[0]?.message;
 };

@@ -1,8 +1,11 @@
+import { Request } from 'express';
 import { Mongoose } from 'mongoose';
 import { StatusName, SupportType } from '../types';
 import * as Task from '../model/task';
 import * as Status from '../model/status';
 import * as DailyScrum from '../model/dailyScrum';
+import { findDailyScrumsByProjectAndUser } from './dailyScrumService';
+import { replaceId } from './replaceService';
 
 const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => {
   const DailyScrumModel = DailyScrum.getModel(dbConnection);
@@ -97,6 +100,26 @@ const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => 
       isCanFinish: isCanFinishDailyScrumsCount,
     },
   };
+};
+
+export const showDashboard = async (req: Request) => {
+  const { projectId } = req.params;
+  const { userId } = req.query;
+
+  const dashboardCounts = await getDashboardCounts(projectId, req.dbConnection);
+
+  // get the `complete` progresses of daily scrums for the project for initial user (who sends the request) - remember `progresses` is orignially an array and is sorted and returned the latest one in toJSON method before sending to front end
+  const dailyScrums = await findDailyScrumsByProjectAndUser(
+    projectId,
+    userId as string,
+    req.dbConnection,
+    req.tenantsConnection,
+  );
+
+  return replaceId({
+    ...dashboardCounts,
+    dailyScrums,
+  });
 };
 
 export { getDashboardCounts };
