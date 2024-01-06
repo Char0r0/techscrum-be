@@ -273,7 +273,7 @@ router.put(
 router.delete(
   '/projects/:projectId/members/:userId',
   memberValidation.remove,
-  memberController.destory,
+  memberController.destroy,
 );
 router.post(
   '/projects/:projectId/members/invite',
