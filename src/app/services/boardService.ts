@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
 import * as Board from '../model/board';
 import * as Task from '../model/task';
-import * as Status from '../model/user';
+import * as Status from '../model/status';
 import * as Label from '../model/label';
 import * as Project from '../model/project';
 import * as User from '../model/user';
