@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import * as  projectsController from '../../controllers/v1/projectsController';
+import * as projectsController from '../../controllers/v1/projectsController';
 import * as projectValidation from '../../validations/project';
 import * as tenantValidations from '../../validations/tenant';
 import * as tenantControllers from '../../controllers/v1/tenantController';
@@ -32,7 +32,7 @@ import * as shortcutControllers from '../../controllers/v1/shortcutController';
 import * as shortcutValidation from '../../validations/shortcut';
 import * as labelController from '../../controllers/v1/labelController';
 import * as labelValidation from '../../validations/label';
-import * as multerMiddleware  from '../../middleware/multerMiddleware';
+import * as multerMiddleware from '../../middleware/multerMiddleware';
 import * as saasMiddlewareV2 from '../../middleware/saasMiddlewareV2';
 import * as userPageControllers from '../../controllers/v1/userPageController';
 import * as userPageValidation from '../../validations/userPage';
@@ -66,7 +66,6 @@ import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
 import { config } from '../../config/app';
 import { stringToBoolean } from '../../utils/stringToBoolean';
-
 
 // ----------------------- register -------------------------
 //apply tenant and register-stepOne-V2
@@ -274,7 +273,7 @@ router.put(
 router.delete(
   '/projects/:projectId/members/:userId',
   memberValidation.remove,
-  memberController.destory,
+  memberController.destroy,
 );
 router.post(
   '/projects/:projectId/members/invite',
@@ -284,13 +283,13 @@ router.post(
 
 // roleV2
 router.get('/permissions', permissionController.index);
-router.get('/roles', roleController.getDefaultRoles);
+router.get('/roles', roleController.defaultRoles);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
 router.get(
   '/projects/:projectId/roles/:roleId',
   roleValidation.projectAndRole,
-  roleController.getRoleById,
+  roleController.roleById,
 );
 // add new role
 router.put(

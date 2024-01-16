@@ -7,9 +7,11 @@ For more info please refer to
 - https://lilac-dancer-737.notion.site/Backend-8d15124cec444344bbd41935ed697b1e
 
 #### Master
+
 [![CircleCI](https://dl.circleci.com/status-badge/img/bb/010001/be.techscrum/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/bb/010001/be.techscrum/tree/master)
 
 #### Develop
+
 [![CircleCI](https://dl.circleci.com/status-badge/img/bb/010001/be.techscrum/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/bb/010001/be.techscrum/tree/develop)
 
 ### Tech Stack
@@ -65,6 +67,21 @@ Once the docs is generated you can visit the via
 - http://localhost:[YOUR_PORT_NUMBER]/api-docs
 
 To know more about this package you can visit https://www.npmjs.com/package/swagger-autogen
+
+### Folder structure (Devs)
+
+- config: Contains configuration files that store settings and parameters used to customize the behavior of an application.
+- controllers: Manages the flow of data between the front end (view) and the back end (services).
+- database: Should not be touching this
+- emailTemplate: email templates for AWS
+- middleware: filter or intermediary in the request-response cycle.
+- model: holds the data models of an application, defining the structure, relationships
+- routes: Define the various endpoints and paths of a web application, mapping them to the appropriate controller functions for handling requests.
+- services: Contains the business logic and data manipulation code.
+- types: Typescript types
+- utils: helper functions that provide common, reusable functionalities used across different parts of an application.
+- validation: process of ensuring that input data meets predefined criteria and is correct, complete, and secure before it's processed or used in an application.
+- loader: Stuff that starts the application
 
 ## Tests
 

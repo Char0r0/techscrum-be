@@ -1,6 +1,4 @@
-export {};
-const mongoose = require('mongoose');
-const { Types } = require('mongoose');
+import mongoose, { Types } from 'mongoose';
 
 const activitySchema = new mongoose.Schema(
   {

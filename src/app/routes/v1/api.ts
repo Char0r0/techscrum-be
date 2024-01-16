@@ -134,8 +134,6 @@ router.post('/tenants', tenantValidations.store, tenantControllers.store);
 
 router.post('/login', loginValidation.login, loginController.login);
 
-
-
 router.post(
   '/reset-password',
   forgetPasswordValidation.forgetPasswordApplication,
@@ -402,6 +400,5 @@ router.delete(
 
 // payment
 router.post('/payment', paymentController.createPayment);
-
 
 module.exports = router;

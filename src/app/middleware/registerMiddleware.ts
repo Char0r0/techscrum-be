@@ -23,7 +23,7 @@ const authenticationEmailTokenMiddleware = async (
   jwt.verify(token, config.emailSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
     const result: any = await jwt.verify(token, config.emailSecret);
-    const user = await User.getModel(req.dbConnection)
+    const user = await User.getModel(req.tenantsConnection)
       .findOne({ email: result.email, activeCode: result.activeCode })
       .exec();
     if (user && !user.active) {

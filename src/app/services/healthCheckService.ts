@@ -1,10 +1,14 @@
 export {};
-const aws = require('aws-sdk');
+import aws from 'aws-sdk';
 const { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } = require('../database/connections');
 import config from '../config/app';
-const whois = require('whois-json');
+import whois from 'whois-json';
 import awsConfig from '../config/aws';
 import { logger } from '../../loaders/logger';
+
+interface RegistrationData {
+  domainStatus?: string | undefined;
+}
 
 aws.config.update({
   region: awsConfig.awsRegion,
@@ -23,10 +27,10 @@ const hasAllRequiredTemplates = async () => {
     'contactPageEmailTemplate',
     'ForgotPassword',
   ];
-  const existingTemplates = awsRes.TemplatesMetadata.filter((template: any) =>
+  const existingTemplates = awsRes?.TemplatesMetadata?.filter((template: any) =>
     requiredTemplates.includes(template.TemplateName),
   );
-  return existingTemplates.length === requiredTemplates.length
+  return existingTemplates?.length === requiredTemplates.length
     ? '\x1b[32mSuccess\x1b[0m'
     : '\x1b[31mFailed\x1b[0m';
 };
@@ -37,13 +41,13 @@ const hasSES = async (domain: string) => {
 };
 
 const isValidDomain = async (domain: string) => {
-  const domainData = await whois(domain);
-  return domainData.domainStatus ? '\x1b[32mSuccess\x1b[0m' : '\x1b[31mFailed\x1b[0m';
+  const domainData = (await whois(domain)) as RegistrationData;
+  return domainData?.domainStatus ? '\x1b[32mSuccess\x1b[0m' : '\x1b[31mFailed\x1b[0m';
 };
 
 const DB_CONNECTED = 1;
 
-exports.healthCheck = async () => {
+export const healthCheck = async () => {
   const tenantsDbConnection = await tenantsDBConnection();
   const tenantDbConnection = await tenantDBConnection(PUBLIC_DB);
   const domain = config.mainDomain ?? '';
