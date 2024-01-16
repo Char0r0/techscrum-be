@@ -16,10 +16,8 @@ export const authenticationForgetPasswordMiddleware = async (
   const token = req.params.token;
   jwt.verify(token, config.forgotSecret, async (err: any) => {
     if (err) return res.status(status.FORBIDDEN).send();
-    const result:any = await jwt.verify(token, config.forgotSecret);
+    const result: any = await jwt.verify(token, config.forgotSecret);
     req.email = result.email;
     next();
   });
 };
-
-
