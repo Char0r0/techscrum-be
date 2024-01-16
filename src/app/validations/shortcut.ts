@@ -1,4 +1,3 @@
-export {};
 const { param, body } = require('express-validator');
 
 const store = [
@@ -19,8 +18,4 @@ const remove = [
   param('shortcutId').notEmpty().isString(),
 ];
 
-module.exports = {
-  store,
-  update,
-  remove,
-};
+export { store, update, remove };

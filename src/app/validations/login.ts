@@ -5,6 +5,5 @@ const login = [
   // username must be an email
   body('email').isEmail(),
 ];
-module.exports = {
-  login,
-};
+
+export { login };

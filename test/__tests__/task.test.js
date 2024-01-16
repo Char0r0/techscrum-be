@@ -1,20 +1,21 @@
-const request = require('supertest');
-const sinon = require('sinon');
-const dbHandler = require('../dbHandler');
-const saasMiddleware = require('../../src/app/middleware/saasMiddleware');
-const authMiddleware = require('../../src/app/middleware/authMiddleware');
-const User = require('../../src/app/model/user');
-import Project from '../../src/app/model/project';
-const Task = require('../../src/app/model/task');
-const Board = require('../../src/app/model/board');
-const Status = require('../../src/app/model/status');
-const Type = require('../../src/app/model/type');
-const fixture = require('../fixtures/task');
-const bcrypt = require('bcrypt');
-const { replaceId } = require('../../src/app/services/replaceService');
+import request from 'supertest';
+import sinon from 'sinon';
+import dbHandler from '../dbHandler';
+import * as saasMiddleware from '../../src/app/middleware/saasMiddlewareV2';
+import * as authMiddleware from '../../src/app/middleware/authMiddleware';
+import * as User from '../../src/app/model/user';
+import * as Project from '../../src/app/model/project';
+import * as Task  from '../../src/app/model/task';
+import * as Board from '../../src/app/model/board';
+import * as Status from '../../src/app/model/status';
+import * as Type from '../../src/app/model/type';
+import * as fixture from '../fixtures/task';
+import bcrypt from 'bcrypt';
+import { replaceId } from '../../src/app/services/replaceService';
 
 let application = null;
 let dbConnection = '';
+let tenantConnection = '';
 let token = '';
 
 const projectId = '6350d443bddbe8fed0138ffe';
@@ -25,10 +26,12 @@ const taskId = '6350e579d6a0ceeb4fc89fd9';
 const typeId = '63fe01c8f5b40ad08cfac583';
 
 beforeAll(async () => {
-  dbConnection = await dbHandler.connect();
+  let result = await dbHandler.connect();
+  dbConnection = result.mainConnection;
+  tenantConnection = result.tenantConnection;
   await dbHandler.clearDatabase();
 
-  await User.getModel(dbConnection).create({
+  await User.getModel(tenantConnection).create({
     _id: userId,
     name: 'Joe',
     email: 'test@gmail.com',
@@ -115,11 +118,16 @@ beforeAll(async () => {
   });
   sinon.stub(saasMiddleware, 'saas').callsFake(function (req, res, next) {
     req.dbConnection = dbConnection;
+    req.tenantsConnection = tenantConnection;
     return next();
   });
 
-  const app = require('../../src/loaders/express');
-  application = app();
+  async function loadApp() {
+    const appModule = await import('../../src/loaders/express');
+    const app = appModule.default;
+    application = app();
+  }
+  await loadApp();
 });
 
 afterAll(async () => {
@@ -130,7 +138,7 @@ afterAll(async () => {
 
 describe('Get One Task Test', () => {
   it('should show one task', async () => {
-    const res = await request(application).get(`/api/v1/tasks/${taskId}`);
+    const res = await request(application).get(`/api/v2/tasks/${taskId}`);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toEqual(replaceId(fixture.getTask()));
   });
@@ -146,7 +154,7 @@ describe('Post Task Test', () => {
       projectId: projectId,
     };
     const res = await request(application)
-      .post('/api/v1/tasks')
+      .post('/api/v2/tasks')
       .send(newTask)
       .set('Authorization', token);
 
@@ -161,6 +169,7 @@ describe('Post Task Test', () => {
       priority: 'Medium',
       projectId: '6350d443bddbe8fed0138ffe',
       sprintId: null,
+      isActive: true,
       status: {
         id: '6350d443bddbe8fed0138ff4',
         name: 'to do',
@@ -173,7 +182,7 @@ describe('Post Task Test', () => {
         id: '63fe01c8f5b40ad08cfac583',
         name: 'Story',
         slug: 'story',
-        icon: 'https://010001.atlassian.net/rest/api/2/univeedium',
+        icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
         updatedAt: expect.any(String),
       },
       storyPoint: 0,
@@ -203,7 +212,7 @@ describe('Post Task Test', () => {
     };
 
     const res = await request(application)
-      .post('/api/v1/tasks')
+      .post('/api/v2/tasks')
       .send(wrongTask)
       .set('Authorization', token);
 
@@ -217,7 +226,7 @@ describe('Post Task Test', () => {
       projectId: projectId,
     };
     const res = await request(application)
-      .post('/api/v1/tasks')
+      .post('/api/v2/tasks')
       .send(newTask)
       .set('Authorization', token);
     expect(res.statusCode).toEqual(422);
@@ -231,7 +240,7 @@ describe('Update Task Test', () => {
       priority: 'Lowest',
       typeId: '63fe01c8f5b40ad08cfac583',
     };
-    const res = await request(application).put(`/api/v1/tasks/${taskId}`).send(updatedField);
+    const res = await request(application).put(`/api/v2/tasks/${taskId}`).send(updatedField);
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual({
       id: taskId,
@@ -250,6 +259,7 @@ describe('Update Task Test', () => {
         name: 'Joe',
       },
       sprintId: null,
+      isActive: true,
       storyPoint: 0,
       tags: [],
       status: {
@@ -257,6 +267,15 @@ describe('Update Task Test', () => {
         name: 'to do',
         order: 0,
         slug: 'to-do',
+      },
+      typeId: {
+        id: '63fe01c8f5b40ad08cfac583',
+        slug: 'story',
+        name: 'Story',
+        createdAt: '2022-09-11T07:57:04.258Z',
+        updatedAt: '2022-09-11T07:57:04.258Z',
+        icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
+        __v: 0,
       },
       dueAt: '2022-10-20T06:06:45.946Z',
       createdAt: expect.any(String),
@@ -268,7 +287,7 @@ describe('Update Task Test', () => {
     const wrongId = '62e4bc9692266e6c8fcd0bb1';
     const newTask = { title: 'updated task' };
     const res = await request(application)
-      .put(`/api/v1/tasks/${wrongId}`)
+      .put(`/api/v2/tasks/${wrongId}`)
       .send({ ...newTask });
     expect(res.statusCode).toEqual(404);
   });
@@ -276,7 +295,7 @@ describe('Update Task Test', () => {
   it('should return 422 if title is an empty string', async () => {
     const newTask = { title: '', description: 'hello' };
     const res = await request(application)
-      .put(`/api/v1/tasks/${taskId}`)
+      .put(`/api/v2/tasks/${taskId}`)
       .send({ ...newTask });
     expect(res.statusCode).toEqual(422);
   });
@@ -284,14 +303,14 @@ describe('Update Task Test', () => {
 
 describe('Delete task test', () => {
   it('should delete task', async () => {
-    const res = await request(application).delete(`/api/v1/tasks/${taskId}`);
+    const res = await request(application).delete(`/api/v2/tasks/${taskId}`);
     expect(res.statusCode).toEqual(204);
     const checkDeleteTask = await Task.getModel(dbConnection).findById(taskId);
     expect(checkDeleteTask).toBeFalsy();
   });
   it('should return 404 not found', async () => {
     const wrongId = '62e4bc9692266e6c8fcddddd';
-    const res = await request(application).delete(`/api/v1/tasks/${wrongId}`);
+    const res = await request(application).delete(`/api/v2/tasks/${wrongId}`);
     expect(res.statusCode).toEqual(404);
   });
 });

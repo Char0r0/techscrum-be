@@ -4,7 +4,7 @@ import { replaceId } from '../../services/replaceService';
 import * as User from '../../model/user';
 import status from 'http-status';
 
-exports.index = async (req: Request, res: Response) => {
+export const index = async (req: Request, res: Response) => {
   const { tenantId, user } = req;
   const userModel = await User.getModel(req.tenantsConnection);
   const users = await userModel.find({ active: true, tenants:tenantId });
@@ -14,7 +14,7 @@ exports.index = async (req: Request, res: Response) => {
   res.send(replaceId(users));
 };
 
-exports.show = async (req: Request, res: Response) => {
+export const show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);

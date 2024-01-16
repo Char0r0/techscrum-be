@@ -1,4 +1,4 @@
-const { BOARD_SEED } = require('./board');
+import { BOARD_SEED } from './board';
 
 const STATUS_SEED = [
   {
@@ -63,7 +63,4 @@ const STATUS_TEST = [
   },
 ];
 
-module.exports = {
-  STATUS_SEED,
-  STATUS_TEST,
-};
+export { STATUS_SEED, STATUS_TEST };

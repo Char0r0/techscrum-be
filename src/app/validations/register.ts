@@ -1,5 +1,4 @@
-export {};
-const { param, body } = require('express-validator');
+import { param, body } from 'express-validator';
 
 const register = [
   param('email').isEmail(),
@@ -11,7 +10,4 @@ const store = [
   body('password').notEmpty(),
 ];
 
-module.exports = {
-  register,
-  store,
-};
+export { register, store };

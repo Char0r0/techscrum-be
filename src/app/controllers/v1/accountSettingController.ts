@@ -2,45 +2,25 @@ import { Response, Request, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
 import * as User from '../../model/user';
+import * as accountSettingService from '../../services/accountSettingService';
 
 const { passwordAuth } = require('../../services/passwordAuthService');
-const { encryption } = require('../../services/encryptionService');
 
 interface IUser {
   _id?: Object;
   password?: string;
 }
 
-exports.updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const { newPassword, oldPassword } = req.body;
-  const userId = req.body.userInfo.id;
-  const userModel = await User.getModel(req.tenantsConnection);
-  const user = await userModel.findOne({ _id: userId });
-  try {
-    const checkPasswordFlag = await passwordAuth(oldPassword, user.password);
-    if (!checkPasswordFlag) {
-      return res.sendStatus(status.NOT_ACCEPTABLE);
-    }
-    const newHashPassword = await encryption(newPassword);
-    const passwordUpdateFlag = await User.getModel(req.dbConnection).updateOne(
-      { _id: userId },
-      { password: newHashPassword },
-    );
-    if (!passwordUpdateFlag) {
-      return res.sendStatus(status.NOT_ACCEPTABLE);
-    }
-    return res.sendStatus(status.OK);
-  } catch (e) {
-    next(e);
-  }
-  res.sendStatus(status.UNPROCESSABLE_ENTITY);
+  const result = accountSettingService.updatePassword(req, res, next);
+  return res.sendStatus(!result ? status.NOT_ACCEPTABLE : status.OK);
 };
 
-exports.update = async (req: Request, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -79,7 +59,7 @@ exports.update = async (req: Request, res: Response) => {
   res.send(updateUser);
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

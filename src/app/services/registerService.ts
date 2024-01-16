@@ -1,5 +1,5 @@
-const { randomStringGenerator } = require('../utils/randomStringGenerator');
-const { emailSender } = require('../utils/emailSender');
+import { randomStringGenerator } from '../utils/randomStringGenerator';
+import { emailSender } from '../utils/emailSender';
 import * as User from '../model/user';
 import jwt from 'jsonwebtoken';
 import config from '../config/app';

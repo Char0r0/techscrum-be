@@ -1,66 +1,64 @@
-const express = require('express');
-const router = new express.Router();
-const projectsController = require('../../controllers/v1/projectsController');
-const projectValidation = require('../../validations/project');
-const tenantValidations = require('../../validations/tenant');
-const tenantControllers = require('../../controllers/v1/tenantController');
-const {
+import express from 'express';
+const router = express.Router();
+import * as projectsController from '../../controllers/v1/projectsController';
+import * as projectValidation from '../../validations/project';
+import * as tenantValidations from '../../validations/tenant';
+import * as tenantControllers from '../../controllers/v1/tenantController';
+import {
   authenticationTokenMiddleware,
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-} = require('../../middleware/authMiddleware');
-const { authenticationEmailTokenMiddlewareV2 } = require('../../middleware/registerMiddlewareV2');
-const {
-  authenticationForgetPasswordMiddleware,
-} = require('../../middleware/forgetPasswordMiddleware');
-const loginController = require('../../controllers/v1/loginController');
-const loginControllerV2 = require('../../controllers/v1/loginControllerV2');
-const loginValidation = require('../../validations/login');
+} from '../../middleware/authMiddleware';
+import { authenticationEmailTokenMiddlewareV2 } from '../../middleware/registerMiddlewareV2';
+import { authenticationForgetPasswordMiddleware } from '../../middleware/forgetPasswordMiddleware';
+// import * as loginController from '../../controllers/v1/loginController';
+import * as loginControllerV2 from '../../controllers/v1/loginControllerV2';
+import * as loginValidation from '../../validations/login';
 // const registerController = require('../../controllers/v1/registerController');
-const registerValidation = require('../../validations/register');
-const forgetPasswordController = require('../../controllers/v1/forgetPasswordController');
-const forgetPasswordValidation = require('../../validations/forgetPassword');
-const boardController = require('../../controllers/v1/boardController');
-const boardValidation = require('../../validations/board');
-const taskController = require('../../controllers/v1/taskController');
-const taskValidation = require('../../validations/task');
-const userControllers = require('../../controllers/v1/userController');
-const userValidation = require('../../validations/user');
-const commentControllers = require('../../controllers/v1/commentController');
-const commentValidation = require('../../validations/comment');
-const accountSettingControllers = require('../../controllers/v1/accountSettingController');
-const accountSettingValidation = require('../../validations/accountSetting');
-const shortcutControllers = require('../../controllers/v1/shortcutController');
-const shortcutValidation = require('../../validations/shortcut');
-const labelController = require('../../controllers/v1/labelController');
-const labelValidation = require('../../validations/label');
-const multerMiddleware = require('../../middleware/multerMiddleware');
-const saasMiddlewareV2 = require('../../middleware/saasMiddlewareV2');
-const userPageControllers = require('../../controllers/v1/userPageController');
-const userPageValidation = require('../../validations/userPage');
-const permissionMiddleware = require('../../middleware/permissionMiddleware');
-const memberController = require('../../controllers/v1/memberController');
-const memberValidation = require('../../validations/member');
-const roleController = require('../../controllers/v1/roleController');
-const roleValidation = require('../../validations/role');
-const permissionController = require('../../controllers/v1/permissionController');
-const typeController = require('../../controllers/v1/typeController');
-const contactController = require('../../controllers/v1/contactController');
-const contactValidation = require('../../validations/contact');
-const emailUsController = require('../../controllers/v1/emailUsController');
-const database = require('../../database/init');
-const domainController = require('../../controllers/v1/domainsController');
-const activityControllers = require('../../controllers/v1/activityController');
-const dailyScrumControllers = require('../../controllers/v1/dailyScrumController');
-const dailyScrumValidations = require('../../validations/dailyScrum');
-const paymentController = require('../../controllers/v1/paymentController');
-const stripeWebhookController = require('../../controllers/v1/stripeWebhookController');
-const registerV2Controller = require('../../controllers/v1/registerV2Controller');
-const dashboardController = require('../../controllers/v1/dashboardController');
-const healthCheckController = require('../../controllers/v1/healthCheckController');
-const dashboardValidations = require('../../validations/dashboard');
-const paymentInfoController = require('../../controllers/v1/paymentInfoDisplayController');
-const userCurrentPlanController = require('../../controllers/v1/userCurrentPlanController');
+import * as registerValidation from '../../validations/register';
+import * as forgetPasswordController from '../../controllers/v1/forgetPasswordController';
+import * as forgetPasswordValidation from '../../validations/forgetPassword';
+import * as boardController from '../../controllers/v1/boardController';
+import * as boardValidation from '../../validations/board';
+import * as taskController from '../../controllers/v1/taskController';
+import * as taskValidation from '../../validations/task';
+import * as userControllers from '../../controllers/v1/userController';
+import * as userValidation from '../../validations/user';
+import * as commentControllers from '../../controllers/v1/commentController';
+import * as commentValidation from '../../validations/comment';
+import * as accountSettingControllers from '../../controllers/v1/accountSettingController';
+import * as accountSettingValidation from '../../validations/accountSetting';
+import * as shortcutControllers from '../../controllers/v1/shortcutController';
+import * as shortcutValidation from '../../validations/shortcut';
+import * as labelController from '../../controllers/v1/labelController';
+import * as labelValidation from '../../validations/label';
+import * as multerMiddleware from '../../middleware/multerMiddleware';
+import * as saasMiddlewareV2 from '../../middleware/saasMiddlewareV2';
+import * as userPageControllers from '../../controllers/v1/userPageController';
+import * as userPageValidation from '../../validations/userPage';
+import * as permissionMiddleware from '../../middleware/permissionMiddleware';
+import * as memberController from '../../controllers/v1/memberController';
+import * as memberValidation from '../../validations/member';
+import * as roleController from '../../controllers/v1/roleController';
+import * as roleValidation from '../../validations/role';
+import * as permissionController from '../../controllers/v1/permissionController';
+import * as typeController from '../../controllers/v1/typeController';
+import * as contactController from '../../controllers/v1/contactController';
+import * as contactValidation from '../../validations/contact';
+import * as emailUsController from '../../controllers/v1/emailUsController';
+import * as database from '../../database/init';
+import * as domainController from '../../controllers/v1/domainsController';
+import * as activityControllers from '../../controllers/v1/activityController';
+import * as dailyScrumControllers from '../../controllers/v1/dailyScrumController';
+import * as dailyScrumValidations from '../../validations/dailyScrum';
+import * as paymentController from '../../controllers/v1/paymentController';
+import * as stripeWebhookController from '../../controllers/v1/stripeWebhookController';
+import * as registerV2Controller from '../../controllers/v1/registerV2Controller';
+import * as dashboardController from '../../controllers/v1/dashboardController';
+import * as healthCheckController from '../../controllers/v1/healthCheckController';
+import * as dashboardValidations from '../../validations/dashboard';
+import * as paymentInfoController from '../../controllers/v1/paymentInfoDisplayController';
+import * as userCurrentPlanController from '../../controllers/v1/userCurrentPlanController';
 import * as sprintController from '../../controllers/v1/sprintController';
 import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
@@ -195,7 +193,7 @@ router.get(
 router.get('/tasks/:id', taskValidation.show, taskController.show);
 router.post('/tasks', taskValidation.store, authenticationTokenMiddleware, taskController.store);
 router.put('/tasks/:id', taskValidation.update, taskController.update);
-router.delete('/tasks/:id', taskValidation.remove, taskController.delete);
+router.delete('/tasks/:id', taskValidation.remove, taskController.destroy);
 //TODO: s
 router.put(
   '/account/me',
@@ -222,7 +220,7 @@ router.post(
   '/auto-fetch-userInfo',
   authenticationTokenValidationMiddleware,
   authenticationRefreshTokenMiddleware,
-  loginController.autoFetchUserInfo,
+  loginControllerV2.autoFetchUserInfo,
 );
 
 router.get('/projects', authenticationTokenMiddleware, projectsController.index);
@@ -275,23 +273,23 @@ router.put(
 router.delete(
   '/projects/:projectId/members/:userId',
   memberValidation.remove,
-  memberController.delete,
+  memberController.destroy,
 );
 router.post(
   '/projects/:projectId/members/invite',
   memberValidation.invite,
-  memberController.invite,
+  memberController.inviteOne,
 );
 
 // roleV2
 router.get('/permissions', permissionController.index);
-router.get('/roles', roleController.getDefaultRoles);
+router.get('/roles', roleController.defaultRoles);
 // get all roles from peoject
 router.get('/projects/:projectId/roles', roleValidation.getProject, roleController.index);
 router.get(
   '/projects/:projectId/roles/:roleId',
   roleValidation.projectAndRole,
-  roleController.getRoleById,
+  roleController.roleById,
 );
 // add new role
 router.put(
@@ -312,10 +310,10 @@ router.delete(
   '/projects/:projectId/roles/:roleId',
   roleValidation.projectAndRole,
   authenticationTokenMiddleware,
-  roleController.delete,
+  roleController.destroy,
 );
 
-router.post('/uploads', multerMiddleware.array('photos'), (req: any, res: any) => {
+router.post('/uploads', multerMiddleware.upload.array('photos'), (req: any, res: any) => {
   res.status(200).json(req.files);
 });
 
@@ -337,7 +335,7 @@ router.get('/projects/:projectId/labels', labelController.index);
 router.post('/tasks/:taskId/labels', labelValidation.store, labelController.store);
 router.delete('/tasks/:taskId/labels/:labelId', labelValidation.eliminate, labelController.remove);
 router.put('/labels/:id', labelValidation.update, labelController.update);
-router.delete('/labels/:id', labelValidation.remove, labelController.delete);
+router.delete('/labels/:id', labelValidation.remove, labelController.destroy);
 
 // backlogs
 router.get('/projects/:projectId/backlogs', backlogController.index);

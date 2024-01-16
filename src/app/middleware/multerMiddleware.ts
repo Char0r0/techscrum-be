@@ -1,16 +1,16 @@
-const aws = require('aws-sdk');
-const multer = require('multer');
-const multerS3 = require('multer-s3');
+import AWS from 'aws-sdk';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
 import path from 'path';
 import awsConfig from '../config/aws';
 
-aws.config.update({
+AWS.config.update({
   region: awsConfig.awsRegion,
   accessKeyId: awsConfig.awsAccessKey,
   secretAccessKey: awsConfig.awsSecretKey,
 });
 
-const s3 = new aws.S3();
+const s3 = new AWS.S3();
 
 const storage = multerS3({
   s3: s3,
@@ -23,5 +23,6 @@ const storage = multerS3({
   },
 });
 
-const upload = multer({ storage });
-module.exports = upload;
+export const upload = multer({ storage });
+
+

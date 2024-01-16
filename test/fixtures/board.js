@@ -96,8 +96,4 @@ const BOARD_BY_LABELS = {
   updatedAt: expect.any(String),
 };
 
-module.exports = {
-  BOARD_SEED,
-  BOARD_TEST,
-  BOARD_BY_LABELS,
-};
+export { BOARD_SEED, BOARD_TEST, BOARD_BY_LABELS };

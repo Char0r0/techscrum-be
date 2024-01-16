@@ -1,9 +1,12 @@
+import { Request } from 'express';
 import { Mongoose } from 'mongoose';
 import * as Project from '../model/project';
 import * as Board from '../model/board';
 import * as Status from '../model/status';
 import * as Role from '../model/role';
+import * as User from '../model/user';
 
+import { Types } from 'mongoose';
 //Typo error
 
 export const initProject = async (
@@ -84,4 +87,46 @@ export const initProject = async (
   } catch (error: any) {
     throw new Error(error);
   }
+};
+
+export const updateProject = async (req: Request) => {
+  if (!Types.ObjectId.isValid(req.params.id)) {
+    throw new Error('Cannot find project');
+  }
+  const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
+    new Types.ObjectId(req.params.id),
+    req.body,
+    { new: true },
+  );
+  if (!project) {
+    throw new Error('Cannot find project');
+  }
+  return project;
+};
+
+export const deleteProject = (req: Request) => {
+  if (!Types.ObjectId.isValid(req.params.id)) {
+    throw new Error('Cannot find project');
+  }
+
+  Project.getModel(req.dbConnection).findByIdAndUpdate(new Types.ObjectId(req.params.id), {
+    isDelete: true,
+  });
+};
+
+export const showProject = async (req: Request) => {
+  const userModel = await User.getModel(req.tenantsConnection);
+  const project = await Project.getModel(req.dbConnection)
+    .findOne({ _id: req.params.id, isDelete: false })
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
+  return project;
+};
+
+export const getAllProjects = async (req: Request) => {
+  const userModel = await User.getModel(req.tenantsConnection);
+  return Project.getModel(req.dbConnection)
+    .find({ isDelete: false, tenantId: req.tenantId || req.userId })
+    .populate({ path: 'projectLeadId', model: userModel })
+    .populate({ path: 'ownerId', model: userModel });
 };

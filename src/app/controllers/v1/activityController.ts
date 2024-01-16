@@ -1,63 +1,31 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import status from 'http-status';
-import * as Activity from '../../model/activity';
-import * as User from '../../model/user';
+import { createActivity, deleteActivity, getActivity } from '../../services/activityService';
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const { tid } = req.params;
-  const userModel = await User.getModel(req.tenantsConnection);
-  try {
-    const result = await Activity.getModel(req.dbConnection)
-      .find({ taskId: tid })
-      .populate({ path: 'userId', model: userModel });
-    res.send(result);
-  } catch (e) {
-    res.send(e);
-    next(e);
-  }
+  const result = await getActivity(req);
+  res.send(result);
 };
 
-exports.store = async (req: Request, res: Response, next: NextFunction) => {
+export const store = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const { userId, taskId, operation } = req.body;
-
-  try {
-    const newAction = await Activity.getModel(req.dbConnection).create({
-      userId,
-      taskId,
-      operation,
-    });
-
-    if (!newAction) {
-      res.sendStatus(status.UNPROCESSABLE_ENTITY);
-      return;
-    }
-    res.send(newAction);
-  } catch (e) {
-    next(e);
-  }
+  const result = createActivity(req);
+  return res.send(result);
 };
 
-exports.destroy = async (req: Request, res: Response, next: NextFunction) => {
+export const destroy = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const taskId = req.params.id;
-  try {
-    await Activity.getModel(req.dbConnection).updateMany({ taskId: taskId }, { isDeleted: true });
-    const deletedActivities = await Activity.getModel(req.dbConnection).find({ taskId: taskId });
-    res.send(deletedActivities);
-    return;
-  } catch (e) {
-    next(e);
-  }
+  await deleteActivity(req);
+  return res.send(status.OK);
 };

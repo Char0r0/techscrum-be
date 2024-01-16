@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { asyncHandler } from '../../utils/helper';
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 import status from 'http-status';
-const Tenant = require('../../model/tenants');
+import * as Tenant from '../../model/tenants';
 import * as User from '../../model/user';
-const { emailRegister } = require('../../services/registerServiceV2');
+import { emailRegister } from '../../services/registerServiceV2';
 import { logger } from '../../../loaders/logger';
-const { tenantsDBConnection } = require('../../database/connections');
+import { tenantsDBConnection } from '../../database/connections';
 import config from '../../config/app';
 
 export const invalidSubdomains: { [key: string]: boolean } = {
@@ -72,10 +72,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       tenantsDbConnection,
       email,
       newTenants,
-      req.headers.origin,
+      req.headers.origin || null,
     );
 
-    newTenants.owner = mongoose.Types.ObjectId(newUser.id);
+    newTenants.owner = new mongoose.Types.ObjectId(newUser.id);
     await newTenants.save();
     return res
       .status(200)
@@ -89,7 +89,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //Active account
-exports.store = asyncHandler(async (req: Request, res: Response) => {
+export const store = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
@@ -112,7 +112,7 @@ exports.store = asyncHandler(async (req: Request, res: Response) => {
 });
 
 //Verify Email by token
-exports.verify = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+export const verify = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});

@@ -1,26 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import * as User from '../../model/user';
+import { Request, Response } from 'express';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
+import { updateUserSetting } from '../../services/userService';
 
-exports.update = async (req: Request, res: Response, next: NextFunction) => {
+export const update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  try {
-    const { id } = req.params;
-    const { name, jobTitle, department, location, avatarIcon, abbreviation, userName } = req.body;
-    const updateUserPageFlag = await User.getModel(req.dbConnection).findOneAndUpdate(
-      { userId: id },
-      { name, jobTitle, department, location, avatarIcon, abbreviation, userName },
-    );
-    if (!updateUserPageFlag) {
-      res.status(status.INTERNAL_SERVER_ERROR).send();
-    } else {
-      res.status(status.NO_CONTENT).send();
-    }
-  } catch (e) {
-    next(e);
-  }
+  await updateUserSetting(req);
+  return res.sendStatus(status.OK);
 };

@@ -4,7 +4,7 @@ import { replaceId } from '../../services/replaceService';
 import { deleteSprint, findSprint, updateSprint } from '../../services/sprintService';
 import { asyncHandler } from '../../utils/helper';
 import status from 'http-status';
-const Sprint = require('../../model/sprint');
+import * as Sprint from '../../model/sprint';
 // show
 export const show = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);

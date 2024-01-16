@@ -10,8 +10,4 @@ const update = [body('name').notEmpty().isString()];
 
 const remove = [body('password').notEmpty().isString()];
 
-module.exports = {
-  updatePassword,
-  update,
-  remove,
-};
+export { updatePassword, update, remove };

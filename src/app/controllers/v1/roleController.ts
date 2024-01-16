@@ -1,124 +1,70 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { asyncHandler } from '../../utils/helper';
-const Permission = require('../../model/permission');
-const Project = require('../../model/project');
-const Role = require('../../model/role');
 import status from 'http-status';
 import { validationResult } from 'express-validator';
-const { replaceId } = require('../../services/replaceService');
-const { Types } = require('mongoose');
+import { replaceId } from '../../services/replaceService';
+import {
+  createProjectNewRole,
+  deleteProjectRole,
+  getDefaultRoles,
+  getProjectRole,
+  getRoleById,
+  updateProjectRole,
+} from '../../services/roleService';
 
-exports.index = async (req: Request, res: Response, next: NextFunction) => {
+export const index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const { projectId } = req.params;
-    //use cache after all features moved to v2
-    const project = await Project.getModel(req.dbConnection)
-      .findById(projectId)
-      .populate({
-        path: 'roles.permission',
-        model: Permission.getModel(req.tenantsConnection),
-      });
-    const rolesArr = project.roles;
-    res.send(replaceId(rolesArr));
-  } catch (e) {
-    next(e);
-  }
+  const rolesArr = await getProjectRole(req);
+  res.send(replaceId(rolesArr));
 };
 
-exports.getRoleById = async (req: Request, res: Response, next: NextFunction) => {
+export const roleById = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  try {
-    const { projectId, roleId } = req.params;
-    //use cache after all features moved to v2
-    const project = await Project.getModel(req.dbConnection)
-      .findById(projectId)
-      .populate({
-        path: 'roles.permission',
-        model: Permission.getModel(req.tenantsConnection),
-      });
-
-    const rolesArr = project.roles.filter(
-      (element: { id: { toString: () => string } }) => element?.id?.toString() === roleId,
-    )[0];
-
-    res.send(replaceId(rolesArr));
-  } catch (e) {
-    next(e);
-  }
+  const rolesArr = getRoleById(req);
+  res.send(replaceId(rolesArr));
 };
 
-exports.addNewRole = asyncHandler(async (req: Request, res: Response) => {
+export const addNewRole = asyncHandler(async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const { projectId } = req.params;
-  const { roleName, permissions } = req.body;
-  if (Types.ObjectId.isValid(projectId)) {
-    const project = await Project.getModel(req.dbConnection).findByIdAndUpdate(
-      Types.ObjectId(projectId),
-      {
-        $push: {
-          roles: [{ name: roleName, slug: roleName, permission: permissions }],
-        },
-      },
-      { new: true },
-    );
-    if (project) return res.send(replaceId(project));
-    return res.sendStatus(status.BAD_REQUEST);
-  }
-  res.sendStatus(status.UNPROCESSABLE_ENTITY);
+
+  const result = await createProjectNewRole(req);
+  res.status(status.OK).send(result.data);
 });
 
-exports.update = async (req: Request, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const { roleId, projectId } = req.params;
-  const { permissions } = req.body;
-  const project = await Project.getModel(req.dbConnection).findById(projectId);
-
-  for (const element of project.roles) {
-    if (element?.id?.toString() === roleId) {
-      element.permission = permissions;
-    }
-  }
-
-  const updatedProject = await project.save();
+  const updatedProject = await updateProjectRole(req);
   res.send(replaceId(updatedProject));
 };
 
-exports.delete = async (req: Request, res: Response) => {
+export const destroy = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const { projectId, roleId } = req.params;
-  const project = await Project.getModel(req.dbConnection).findById(projectId);
-  const updatedProjectRoles = project.roles.filter((item: any) => {
-    return item._id?.toString() !== roleId;
-  });
-  project.roles = updatedProjectRoles;
-  const updateProject = await project.save();
+  const updateProject = await deleteProjectRole(req);
   res.send(replaceId(updateProject));
 };
 
-exports.getDefaultRoles = async (req: Request, res: Response) => {
+export const defaultRoles = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  //use cache after all features moved to v2 ????
-  const roles = await Role.getModel(req.tenantsConnection).find({});
+  const roles = await getDefaultRoles(req);
   return res.status(status.OK).json(replaceId(roles));
 };

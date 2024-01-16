@@ -1,4 +1,3 @@
-export {};
 const { param, body } = require('express-validator');
 
 const store = [
@@ -12,9 +11,4 @@ const remove = [param('id').notEmpty().isString()];
 
 const eliminate = [param('taskId').notEmpty().isString(), param('labelId').notEmpty().isString()];
 
-module.exports = {
-  store,
-  update,
-  remove,
-  eliminate,
-};
+export { store, update, remove, eliminate };

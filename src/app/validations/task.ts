@@ -1,5 +1,5 @@
-export {};
-const { param, body } = require('express-validator');
+import { body, param } from 'express-validator';
+
 
 const show = [param('id').notEmpty()];
 
@@ -13,9 +13,4 @@ const update = [
 
 const remove = [param('id').notEmpty().isString()];
 
-module.exports = {
-  show,
-  store,
-  update,
-  remove,
-};
+export { show, store, update, remove };

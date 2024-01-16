@@ -1,95 +1,38 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
-import { replaceId } from '../../services/replaceService';
-import { findDailyScrumsByProjectAndUser } from '../../services/dailyScrumService';
+import { generatePDFByProject, showDailyScrumsByProject } from '../../services/dailyScrumService';
 import logger from 'winston';
 import status from 'http-status';
-import { openai } from '../../services/openAiService';
-import { getDashboardCounts } from '../../services/dashboardService';
-import { GPT_MODEL, USER_ROLE } from '../../config/openAi';
+import { showDashboard } from '../../services/dashboardService';
 
-exports.show = async (req: Request, res: Response, next: NextFunction) => {
+export const show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-
-  const { projectId } = req.params;
-  const { userId } = req.query;
-
-  try {
-    const dashboardCounts = await getDashboardCounts(projectId, req.dbConnection);
-
-    // get the `complete` progresses of daily scrums for the project for initial user (who sends the request) - remember `progresses` is orignially an array and is sorted and returned the latest one in toJSON method before sending to front end
-    const dailyScrums = await findDailyScrumsByProjectAndUser(
-      projectId,
-      userId as string,
-      req.dbConnection,
-      req.tenantsConnection,
-    );
-
-    return res.status(200).json(
-      replaceId({
-        ...dashboardCounts,
-        dailyScrums,
-      }),
-    );
-  } catch (e) {
-    next(e);
-  }
+  const result = showDashboard(req);
+  return res.send(result);
 };
 
-exports.showDailyScrums = async (req: Request, res: Response, next: NextFunction) => {
+export const showDailyScrums = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const { projectId } = req.params;
-  const { userId } = req.query;
-
-  try {
-    const result = await findDailyScrumsByProjectAndUser(
-      projectId,
-      userId as string,
-      req.dbConnection,
-      req.tenantsConnection,
-    );
-
-    res.status(200).json(replaceId(result));
-  } catch (e) {
-    next(e);
-  }
+  const result = showDailyScrumsByProject(req);
+  return res.send(result);
 };
 
-exports.generatePDF = async (req: Request, res: Response, next: NextFunction) => {
+export const generatePDF = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
 
-  const { projectId } = req.params;
-
-  try {
-    const dashboardCounts = await getDashboardCounts(projectId, req.dbConnection);
-
-    const response = await openai.createChatCompletion({
-      model: GPT_MODEL,
-      messages: [
-        {
-          role: USER_ROLE,
-          content: `I am a business analyst and please help me generate a formal report based on the following data: ${JSON.stringify(
-            dashboardCounts,
-          )}`,
-        },
-      ],
-    });
-
-    res.send(response?.data?.choices?.[0]?.message);
-  } catch (e) {
-    next(e);
-  }
+  const result = await generatePDFByProject(req);
+  return res.send(result);
 };

@@ -1,4 +1,4 @@
-exports.getUsers = () => {
+export const getUsers = () => {
   return [
     {
       slug: 'story',

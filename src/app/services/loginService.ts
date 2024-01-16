@@ -1,5 +1,5 @@
 import { Mongoose } from 'mongoose';
-const Tenants = require('../model/tenants');
+import * as Tenants from '../model/tenants';
 import * as User from '../model/user';
 
 //TODO: checkUserTenants ??? getUserTenants

@@ -1,4 +1,4 @@
-exports.getTask = () => {
+export const getTask = () => {
   return {
     title: 'test task',
     tags: [],
@@ -26,8 +26,8 @@ exports.getTask = () => {
       _id: '63fe01c8f5b40ad08cfac583',
       slug: 'story',
       name: 'Story',
-      createdAt: '2023-02-28T13:29:44.719Z',
-      updatedAt: '2023-02-28T13:29:44.719Z',
+      createdAt: '2022-09-11T07:57:04.258Z',
+      updatedAt: '2022-09-11T07:57:04.258Z',
       icon: 'https://010001.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10315?size=medium',
       __v: 0,
     },
@@ -36,5 +36,6 @@ exports.getTask = () => {
     createdAt: '2022-10-20T06:06:49.590Z',
     updatedAt: '2022-10-20T06:06:49.590Z',
     _id: '6350e579d6a0ceeb4fc89fd9',
+    isActive: true,
   };
 };

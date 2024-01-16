@@ -1,7 +1,6 @@
-export {};
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
 
+const Schema = mongoose.Schema;
 const typeSchema = new Schema(
   {
     slug: {
@@ -32,7 +31,7 @@ typeSchema.methods.toJSON = function () {
   return typeObject;
 };
 
-module.exports.getModel = (connection: any) => {
+export const getModel = (connection: any) => {
   if (!connection) {
     throw new Error('No connection');
   }
