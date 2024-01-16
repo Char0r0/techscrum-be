@@ -65,6 +65,6 @@ export const defaultRoles = async (req: Request, res: Response) => {
   if (!errors.isEmpty()) {
     return res.status(status.UNPROCESSABLE_ENTITY).json({});
   }
-  const roles = getDefaultRoles(req);
+  const roles = await getDefaultRoles(req);
   return res.status(status.OK).json(replaceId(roles));
 };

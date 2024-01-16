@@ -13,12 +13,12 @@ import config from '../config/app';
 export const getProjectRole = async (req: Request) => {
   const { projectId } = req.params;
   //use cache after all features moved to v2
-  const project = await Project.getModel(req.dbConnection)
-    .findById(projectId)
-    .populate({
-      path: 'roles.permission',
-      model: Permission.getModel(req.tenantsConnection),
-    });
+  const projectModel = await Project.getModel(req.dbConnection);
+
+  const project = projectModel.findById(projectId).populate({
+    path: 'roles.permission',
+    model: await Permission.getModel(req.tenantsConnection),
+  });
   const rolesArr = project.roles;
   return rolesArr;
 };
