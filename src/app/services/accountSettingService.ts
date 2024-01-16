@@ -15,7 +15,7 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
       return res.sendStatus(status.NOT_ACCEPTABLE);
     }
     const newHashPassword = await encryption(newPassword);
-    const passwordUpdateFlag = await User.getModel(req.dbConnection).updateOne(
+    const passwordUpdateFlag = await User.getModel(req.tenantsConnection).updateOne(
       { _id: userId },
       { password: newHashPassword },
     );

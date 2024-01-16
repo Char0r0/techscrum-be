@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import status from 'http-status';
 import { validationResult } from 'express-validator';
 import { createShortcut, deleteShortcut, updateShortcut } from '../../services/shortcutService';
+
 export const store = async (req: Request, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -14,6 +15,7 @@ export const store = async (req: Request, res: Response) => {
     res.status(result.status).send(result.data);
   }
 };
+
 export const update = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -26,6 +28,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     next(e);
   }
 };
+
 export const destroy = async (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
