@@ -6,7 +6,6 @@ import { asyncHandler } from '../utils/helper';
 import status from 'http-status';
 import * as Tenant from '../model/tenants';
 import config from '../../app/config/app';
-import { isLocalHostAndNoConnectedTenant } from '../utils/tenantHelper';
 import { dataConnectionPool } from '../utils/dbContext';
 import { logger } from '../../loaders/logger';
 import { tenantsDBConnection, tenantDBConnection, PUBLIC_DB } from '../database/connections';
@@ -15,10 +14,13 @@ enum Plans {
   Free = 'Free',
 }
 
-const getTenant = async (host: string | undefined, connection: any) => {
+const getTenant = async (host: string | undefined, connection: any, isLocalEnv: boolean) => {
+  if (!host) {
+    return null;
+  }
   const tenantModel = Tenant.getModel(connection);
-  const tenant = isLocalHostAndNoConnectedTenant(host ?? '')
-    ? await tenantModel.findOne({ origin: { $regex: 'localhost' } })
+  const tenant = isLocalEnv
+    ? await tenantModel.findOne({ origin: { $regex: host } })
     : await tenantModel.findOne({ origin: host });
 
   if (!config?.emailSecret) {
@@ -37,15 +39,34 @@ const getConnectDatabase = (tenant: any): string => {
   return tenant?.plan !== Plans.Free ? tenant.id.toString() : PUBLIC_DB;
 };
 
+const getDomain = (req: Request, isLocalEnv: boolean) => {
+  const hasConnectedTenant = config.connectTenantOrigin && config.connectTenantOrigin !== '';
+
+  if (isLocalEnv) {
+    if (hasConnectedTenant) {
+      return `${config.protocol}${config.connectTenantOrigin}.${config.mainDomain}`;
+    }
+    if (req.headers.origin) {
+      return req.headers.origin;
+    }
+    if (config.postman_testing.toLocaleLowerCase() === 'true') {
+      return 'localhost';
+    }
+
+    return '';
+  }
+  return hasConnectedTenant
+    ? `${config.protocol}${config.connectTenantOrigin}.${config.mainDomain}`
+    : req.headers.origin;
+};
+
 const saas = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   //For more info: https://lucid.app/lucidspark/c24b6e6f-7e1a-439a-a4bf-699edd941d86/edit?viewport_loc=-151%2C-545%2C2560%2C1249%2C0_0&invitationId=inv_052c9ca7-93bd-491e-b621-f97c52fe116f
   try {
-    const hasConnectedTenant = config.connectTenantOrigin && config.connectTenantOrigin !== '';
-    const domain = hasConnectedTenant
-      ? `${config.protocol}${config.connectTenantOrigin}.${config.mainDomain}`
-      : req.headers.origin;
+    const isLocalEnv = config.environment === 'local';
+    const domain = getDomain(req, isLocalEnv);
     const tenantsConnection = await tenantsDBConnection();
-    const tenant = await getTenant(domain, tenantsConnection);
+    const tenant = await getTenant(domain, tenantsConnection, isLocalEnv);
     const tenantId = tenant?.id.toString();
     const connectTenantDbName = getConnectDatabase(tenant);
     const tenantConnection = await tenantDBConnection(connectTenantDbName);

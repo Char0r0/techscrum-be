@@ -2,7 +2,7 @@ import { Request } from 'express';
 import * as Tenant from '../model/tenants';
 
 import { tenantsDBConnection } from '../database/connections';
-import { isLocalHostAndNoConnectedTenant } from '../utils/tenantHelper';
+import config from '../config/app';
 
 export const getDomain = async (req: Request) => {
   const { userId } = req.body;
@@ -20,8 +20,9 @@ export const getIsValidDomain = async (req: Request) => {
   const tenantsConnection = await tenantsDBConnection();
   const domainURL = req.headers.origin;
   const tenantModel = await Tenant.getModel(tenantsConnection);
-  const tenantInfo = isLocalHostAndNoConnectedTenant(domainURL || '')
-    ? await tenantModel.findOne({ origin: { $regex: 'localhost' } }).exec()
-    : await tenantModel.findOne({ origin: domainURL }).exec();
+  const tenantInfo =
+    config.environment === 'local'
+      ? await tenantModel.findOne({ origin: { $regex: domainURL } }).exec()
+      : await tenantModel.findOne({ origin: domainURL }).exec();
   return !!tenantInfo;
 };
