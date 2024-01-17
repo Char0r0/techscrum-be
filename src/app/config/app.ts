@@ -19,12 +19,17 @@ export const config = {
   stripe: stripeAPI(process.env.STRIPE_PRIVATE_KEY) ?? null,
   stripeSecret: process.env.STRIPE_WEBHOOK_SECRET ?? null,
   //---------------------------v2--------------------------
-  tenantsDBConnection: process.env.TENANTS_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/users?authSource=admin',
-  publicConnection: process.env.PUBLIC_CONNECTION ?? 'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
+  tenantsDBConnection:
+    process.env.TENANTS_CONNECTION ??
+    'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/users?authSource=admin',
+  publicConnection:
+    process.env.PUBLIC_CONNECTION ??
+    'mongodb+srv://admin:admin@techscrum.p2i9wko.mongodb.net/publicdb?authSource=admin',
   connectTenantOrigin: process.env.CONNECT_TENANT ?? null,
   mainDomain: process.env.MAIN_DOMAIN ?? null,
   protocol: process.env.ENVIRONMENT === 'local' ? 'http://' : 'https://',
   devopsMode: process.env.DEVOPS_MODE ?? 'false',
+  postman_testing: process.env.POSTMAN_TESTING ?? 'false',
 };
 
 export default config;
