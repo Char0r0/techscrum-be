@@ -5,7 +5,7 @@ version: 2.1
 orbs:
   heroku: circleci/heroku@1.2.6
   snyk: snyk/snyk@1.2.3
-  sonarcloud: sonarsource/sonarcloud@1.0.3
+  sonarcloud: sonarsource/sonarcloud@2.0.0
   docker: circleci/docker@1.7.0
 
 executors:
