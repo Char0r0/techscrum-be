@@ -15,7 +15,7 @@ export const show = async (req: Request, res: Response) => {
     logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const result = showDailyScrum(req);
+  const result = await showDailyScrum(req);
   return res.send(result);
 };
 
