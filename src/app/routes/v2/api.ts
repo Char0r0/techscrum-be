@@ -64,6 +64,8 @@ import * as sprintValidation from '../../validations/sprintValidation';
 import * as backlogController from '../../controllers/v1/backlogController';
 import * as statusesController from '../../controllers/v1/statusController';
 import * as statuseValidation from '../../validations/statusValidation';
+import * as securityController from '../../controllers/v1/securityController';
+
 import { config } from '../../config/app';
 import { stringToBoolean } from '../../utils/stringToBoolean';
 
@@ -76,6 +78,7 @@ router.get('/domains', domainController.index);
 if (stringToBoolean(config.devopsMode)) {
   router.get('/envs', healthCheckController.envs);
 }
+router.get('/security', securityController.index);
 
 router.use(saasMiddlewareV2.saas);
 

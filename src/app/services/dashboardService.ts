@@ -5,7 +5,6 @@ import * as Task from '../model/task';
 import * as Status from '../model/status';
 import * as DailyScrum from '../model/dailyScrum';
 import { findDailyScrumsByProjectAndUser } from './dailyScrumService';
-import { replaceId } from './replaceService';
 
 const getDashboardCounts = async (projectId: string, dbConnection: Mongoose) => {
   const DailyScrumModel = DailyScrum.getModel(dbConnection);
@@ -116,10 +115,10 @@ export const showDashboard = async (req: Request) => {
     req.tenantsConnection,
   );
 
-  return replaceId({
+  return {
     ...dashboardCounts,
     dailyScrums,
-  });
+  };
 };
 
 export { getDashboardCounts };

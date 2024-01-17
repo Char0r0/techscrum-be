@@ -63,10 +63,11 @@ export const findDailyScrumsByProjectAndUser = async (
 export const showDailyScrum = async (req: Request) => {
   const { projectId } = req.params;
   const { userId } = req.query;
-  const DailyScrumModel = DailyScrum.getModel(req.dbConnection);
+  const dailyScrumModel = DailyScrum.getModel(req.dbConnection);
   const userModel = await User.getModel(req.tenantsConnection);
 
-  const results = await DailyScrumModel.find({ project: projectId, user: userId })
+  const results = await dailyScrumModel
+    .find({ project: projectId, user: userId })
     .populate({
       path: 'user',
       model: userModel,

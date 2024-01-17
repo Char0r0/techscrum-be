@@ -4,6 +4,7 @@ import { generatePDFByProject, showDailyScrumsByProject } from '../../services/d
 import logger from 'winston';
 import status from 'http-status';
 import { showDashboard } from '../../services/dashboardService';
+import { replaceId } from '../../services/replaceService';
 
 export const show = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -11,8 +12,8 @@ export const show = async (req: Request, res: Response) => {
     logger.error(errors);
     return res.sendStatus(status.UNPROCESSABLE_ENTITY);
   }
-  const result = showDashboard(req);
-  return res.send(result);
+  const result = await showDashboard(req);
+  return res.send(replaceId(result));
 };
 
 export const showDailyScrums = async (req: Request, res: Response) => {
