@@ -110,24 +110,6 @@ const askForDomain = (next: any) => {
   );
 };
 
-if (
-  process.env.ENVIRONMENT !== 'production' &&
-  process.env.ENVIRONMENT !== 'develop' &&
-  process.env.ENVIRONMENT !== 'local'
-) {
-  console.error('\x1b[31mABORT!!! ENVIRONMENT has not set up correctly in .env file\x1b[0m');
-  console.error(
-    '\x1b[31mPlease ensure that you have read the README.md or DEVOPS_README.md carefully, you are ignoring important information \x1b[0m',
-  );
-  process.exit();
-}
-
-if (process.env.ENVIRONMENT !== 'local' && config.devopsMode) {
-  console.log(
-    '\x1b[31mDEVOPS IMPORTANT!!! DON"T use the default email OR password for PRODUCTION environment, SERIOUS SECURITY ISSUE!!!\x1b[0m',
-  );
-}
-
 try {
   if (config.devopsMode) {
     fs.rmSync('.circleci', { recursive: true, force: true });
@@ -135,9 +117,26 @@ try {
   }
 } catch (e) {}
 
+if (
+  process.env.ENVIRONMENT !== 'production' &&
+  process.env.ENVIRONMENT !== 'develop' &&
+  process.env.ENVIRONMENT !== 'local'
+) {
+  console.error('\x1b[31mABORT!!! ENVIRONMENT has not set up correctly in .env file\x1b[0m');
+  console.error(
+    '\x1b[31mPlease ensure that you have read the README.md / DEVOPS_README.md carefully, you are ignoring important information \x1b[0m',
+  );
+  process.exit();
+}
+
+console.log(
+  '\x1b[31mDEVOPS IMPORTANT!!! DON"T use the default email OR password for PRODUCTION environment, SERIOUS SECURITY ISSUE!!!\x1b[0m',
+);
+
 rl.question('Please type confirm when you have READ ABOVE MESSAGE: ', async (answer: string) => {
   if (answer.toLowerCase() !== 'confirm') {
     console.log('\x1b[31mABORT!!! EXIT\x1b[0m');
+    console.error('\x1b[31mPlease be carefully, you are IGNORING IMPORTANT information\x1b[0m');
     process.exit();
   }
 
