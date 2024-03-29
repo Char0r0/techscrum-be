@@ -50,11 +50,6 @@ One time command
 - start application
 - Go to chrome paste this http://localhost:8000/api/v2/healthcheck
 
-### Devops(Extra)
-
-- Enable DEVOPS_MODE in .env (LOCAL ONLY)
-- Devops visit http://localhost:8000/api/v2/env
-
 ### Start application
 
 docker run -p 8000:8000 -d -v ${pwd}/.:/app techscrum:lastest (WINDOW ONLY)
