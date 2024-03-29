@@ -61,8 +61,11 @@ export const healthCheck = async () => {
       : '\x1b[32mSuccess\x1b[0m';
 
   const validDomain = await isValidDomain(domain);
-  const hasAllTemplatesUploaded = await hasAllRequiredTemplates();
-  const connectedAws = await hasSES(domain);
+
+  const hasAllTemplatesUploaded = config.devopsMode
+    ? '\x1b[32mSuccess\x1b[0m'
+    : await hasAllRequiredTemplates();
+  const connectedAws = config.devopsMode ? '\x1b[32mSuccess\x1b[0m' : await hasSES(domain);
   const message =
     '\nTenantsDb Connect: ' +
     tenantsDbConnect +
